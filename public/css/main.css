@@ -1,0 +1,147 @@
+body {
+  min-height: 2000px;
+  padding-top: 50px;
+  font-family: "Raleway", "sans-serif";
+}
+
+.politician-cover {
+  text-align: center;
+  background-color: #f8f8f8;
+  color: #FFF;
+  min-height: 550px;
+}
+
+#politician-carousel {
+  min-height: 550px;
+  background: #000;
+}
+
+#politician-carousel .carousel-inner {
+  position: absolute;
+}
+
+#politician-carousel .carousel-inner .item.active {
+  min-height: 550px;
+  background-size: cover; 
+  background-position: 50% 50%; 
+  background-repeat: initial initial;
+  display: block;
+  opacity: 0.2;
+}
+
+.politician-infos {
+  padding: 80px 40px 0px 40px;
+  position: relative;
+}
+
+.politician-photo {
+  width: 200px;
+  height: 200px;
+}
+
+.politician-party-photo {
+  width: 50px;
+  height: 50px;
+}
+
+.politician-promises-menu {
+  border-top: 5px solid #666;
+  background-color: #f8f8f8;
+}
+
+.politician-promises-menu ul {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.promises {
+  padding-top: 20px;
+  overflow: hidden;
+}
+
+
+.promises h1 {
+  padding-bottom: 40px;
+}
+
+.promises .panel-heading {
+  font-size: 20px;
+}
+
+.promises-categories {
+  width: 25%;
+  padding-left: 20px;
+}
+
+.promise-panel {
+  width: 45%;
+  float: left;
+  display: inline-block;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.promise-panel ul li {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.promise-panel ul li:hover {
+  background-color: #f8f8f8;
+}
+
+.promise-panel .panel-heading {
+  font-size: 20px;
+}
+
+.promise-label {
+  font-size: 14px;
+}
+
+.promise-title {
+  margin-top: 5px;
+}
+
+.nav-pills > li > a, .nav-pills > li > a:hover, .nav-pills > li > a:focus {
+  color: #777;
+  background-color: #f8f8f8;
+  border-bottom: 5px #e7e7e7 solid;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+  color: #777;
+  background-color: #f8f8f8;
+  border-bottom: 5px #428bca solid;
+}
+
+.text-bolder {
+  font-weight: bolder;
+}
+
+.board {
+  background-color: #f8f8f8;
+  margin: 20px;
+  padding: 20px;
+  height: auto;
+  width: auto;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.votes, .votes .vote {
+  display: inline-block;
+}
+
+.votes .vote .vote-count {
+  margin-top: 5px;
+  background-color: #f8f8f8;
+  border: 5px #e7e7e7 solid;
+  border-radius: 4px;
+  font-weight: bolder;
+  color: #333;
+  text-align: center;
+}

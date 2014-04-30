@@ -1,0 +1,27 @@
+{% macro promise_state_text(state) -%}
+  {% if state == "NONE" %}
+    Sem informação
+  {% elif state == "STARTED" %}
+    Iniciada
+  {% elif state == "PARTIALLY_FULFILLED" %}
+    Cumprida Parcialmente
+  {% elif state == "FULFILLED" %}
+    Cumprida
+  {% else %}
+    Descartada
+  {% endif %}
+{%- endmacro %}
+
+{% macro promise_state_label(state) -%}
+  {% if state == "NONE" -%}
+    default
+  {% elif state == "STARTED" %}
+    primary
+  {% elif state == "PARTIALLY_FULFILLED" %}
+    warning
+  {% elif state == "FULFILLED" %}
+    success
+  {% else %}
+    danger
+  {%- endif %}
+{%- endmacro %}

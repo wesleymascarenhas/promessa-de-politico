@@ -1,0 +1,137 @@
+{% extends "template.html" %}
+{% import "macros.html" as macros %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="politician-cover">
+    <div id="politician-carousel" class="carousel slide" data-ride="carousel">
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        {% for coverPhoto in politicianCoverPhotos %}
+          <div class="item {% if loop.first %}active{% endif %}" style="background-image: url('/img/politicians/cover/{{ coverPhoto.get('photo_path') }}');"></div>
+        {% endfor %}
+      </div>
+      <!-- Politician Infos -->
+      <div class="politician-infos">
+        <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">
+        <h1>
+          <p class="text-bolder">
+            {{ politician.get('name') }}
+            <img src="/img/pt.jpg" alt="PT" class="politician-party-photo img-circle">
+          </p>
+        </h1>
+        <h4>
+          <p class="text-bolder">
+            Partido: <a href="/partido/{{ politicalParty.get('acronym') }}">{{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})</a>
+            -
+            Cargo: {{ politicalOffice.get('title') }} {% if politicalOrgan.get('id') %} / {{ politicalOrgan.get('name') }} {% endif %}
+          </p>  
+          <p class="text-bolder">
+            {{ politician.get('biography') }}           
+          </p>
+        </h4>              
+      </div>
+      <div class="votes">
+        <div class="vote">
+          <div class="vote-up">
+            <button class="btn btn-success">
+              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
+            </button>
+          </div>
+          <div class="vote-count">
+            <span class="bolder">350</span>
+          </div>
+        </div>
+        <div class="vote">
+          <div class="vote-down">
+            <button class="btn btn-danger">
+              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
+            </button>
+          </div>
+          <div class="vote-count">
+            <span>350</span>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>
+  <div class="politician-promises-menu">    
+    <ul class="nav nav-pills nav-justified">
+      <li class="active">
+        <a href="/users/sandrocsimas">
+          <span class="glyphicon glyphicon-th-list"></span> Todas as Promessas
+        </a>
+      </li>   
+      <li class="">
+        <a href="/bucketlist" class="view-bucketlist">
+          <span class="glyphicon glyphicon-time"></span> Últimas Promessas
+        </a>   
+      </li>
+      <li class="">
+        <a href="/users/sandrocsimas/badges">
+          <span class="glyphicon glyphicon-globe"></span> Promessas mais Importantes
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="promises">  
+    <h1 class="text-center"><b>Todas as Promessas</b></h1>
+    <div id="accordion" class="panel-group">
+    {% for category in categories %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+              Collapsible Group Item #1
+            </a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+          <div class="panel-body">
+            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          </div>
+        </div>
+      </div> 
+    {% endfor %}     
+    </div>
+      <div class="promise-panel panel panel-default pull-left">
+        <div class="panel-heading text-bolder">{{ category.get('name') }}</div>
+        <ul class="list-group">
+          {% for promise in promisesByCategory[category.get('id')] %}
+          <li class="list-group-item">
+            <div class="promise">
+              <div class="promise-infos">
+                <span class="promise-label label label-{{ macros.promise_state_label(promise.get('state')) }}">
+                  {{ macros.promise_state_text(promise.get('state')) }}
+                </span>
+                <div class="votes" style="margin-left: 5px;">
+                  <div class="vote">
+                    <div class="vote-up">
+                      <span style="font-size: 12px;" class="btn btn-success glyphicon glyphicon-thumbs-up"> (300)</span>
+                    </div>                      
+                  </div>
+                  <div class="vote">
+                    <div class="vote-down">
+                        <span style="font-size: 12px;" class="btn btn-danger glyphicon glyphicon-thumbs-down"> (155)</span>
+                    </div>                      
+                  </div>
+                </div> 
+              </div>
+              <div class="promise-title">                  
+                <a href="/promessa/{{ politician.get('slug') }}/{{ promise.get('id') }}/{{ promise.get('slug') }}" class="NONE">{{ promise.get('title') }}</a>
+              </div>               
+            </div>
+          </li>            
+          {% endfor %}          
+        </ul>            
+      </div>
+    {% endfor %}      
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

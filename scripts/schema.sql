@@ -1,0 +1,124 @@
+create table user (
+  id int(11) not null auto_increment,
+  first_name varchar(100) not null,
+  last_name varchar(100) not null,
+  birth_date date not null,
+  gender enum('MALE', 'FEMALE') not null,
+  username varchar(100) not null,
+  email varchar(255) not null,
+  password varchar(255) not null,
+  facebook_id varchar(255) default null,
+  twitter_id varchar(255) default null,
+  google_id varchar(255) default null,
+  registration_date timestamp not null,
+  primary key (id),
+  unique key uq_user_username (username),
+  unique key uq_user_email (email),
+  unique key uq_user_facebook_id (facebook_id),
+  unique key uq_user_twitter_id (twitter_id),
+  unique key uq_user_google_id (google_id)
+) engine = innodb default charset = utf8;
+
+create table state (
+  id int(11) not null auto_increment,
+  name varchar(100) not null,
+  acronym varchar(20) not null,
+  primary key (id)
+) engine = innodb default charset = utf8;
+
+create table political_party (
+  id int(11) not null auto_increment,
+  name varchar(100) not null,
+  acronym varchar(20) not null,
+  primary key (id),
+  unique key uq_politician_party_name (name),
+  unique key uq_politician_party_acronym (acronym)
+) engine = innodb default charset = utf8;
+
+create table political_organ (
+  id int(11) not null auto_increment,
+  name varchar(100) not null,
+  primary key (id),
+  unique key uq_politician_organ_name (name)
+) engine = innodb default charset = utf8;
+
+create table political_office (
+  id int(11) not null auto_increment,
+  title varchar(100) not null,
+  description varchar(255) not null,
+  primary key (id),
+  unique key uq_politician_office_title (title)
+) engine = innodb default charset = utf8;
+
+create table politician (
+  id int(11) not null auto_increment,
+  name varchar(100) not null,
+  biography varchar(255) default null,
+  photo_path varchar(100) not null,
+  email varchar(100) default null,
+  slug varchar(100) not null,
+  state_id int(11) default null,
+  political_party_id int(11) not null,
+  political_organ_id int(11) default null,
+  political_office_id int(11) not null,
+  registered_by_user_id int(11) not null,
+  registration_date timestamp not null,
+  primary key (id),
+  unique key uq_politician_slug (slug),
+  unique key uq_politician_email (email),
+  key `fk_politician_registered_by_user` (`registered_by_user_id`),
+  key `fk_politician_political_office` (`political_office_id`),  
+  key `fk_politician_political_party` (`political_party_id`),
+  key `fk_politician_political_organ` (`political_organ_id`),
+  key `fk_politician_state` (`state_id`),
+  constraint `fk_politician_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`),
+  constraint `fk_politician_political_office` foreign key (`political_office_id`) references `political_office` (`id`),
+  constraint `fk_politician_political_party` foreign key (`political_party_id`) references `political_party` (`id`),
+  constraint `fk_politician_political_organ` foreign key (`political_organ_id`) references `political_organ` (`id`),
+  constraint `fk_politician_state` foreign key (`state_id`) references `state` (`id`)
+) engine = innodb default charset = utf8;
+
+create table politician_cover_photo (
+  id int(11) not null auto_increment,
+  photo_path varchar(100) not null,
+  politician_id int(11) not null,
+  primary key (id),
+  key `fk_politician_cover_photo_politician` (`politician_id`),
+  constraint `fk_politician_cover_photo_politician` foreign key (`politician_id`) references `politician` (`id`)
+) engine = innodb default charset = utf8;
+
+create table promise_category (
+  id int(11) not null auto_increment,
+  name varchar(100) not null,
+  slug varchar(100) not null,
+  primary key (id),
+  unique key uq_promise_category_slug (slug)
+) engine = innodb default charset = utf8;
+
+create table promise (
+  id int(11) not null auto_increment,
+  title text not null,
+  description text default null,
+  slug varchar(255) not null,
+  evidence_date date default null,
+  state enum('NONE', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'DISCARDED') not null,
+  category_id int(11) not null,
+  politician_id int(11) not null,
+  primary key (id),
+  key `fk_promise_category` (`category_id`),
+  key `fk_promise_politician` (`politician_id`),
+  constraint `fk_promise_category` foreign key (`category_id`) references `promise_category` (`id`),
+  constraint `fk_promise_politician` foreign key (`politician_id`) references `politician` (`id`)
+) engine = innodb default charset = utf8;
+
+create table promise_evidence (
+  id int(11) not null auto_increment,
+  title varchar(255) not null,
+  link varchar(255) not null,
+  type varchar(50) not null,
+  promise_id int(11) not null,
+  creation_date timestamp not null,
+  primary key (id),
+  key `fk_promise_evidence_promise` (`promise_id`),
+  constraint `fk_promise_evidence_promise` foreign key (`promise_id`) references `promise` (`id`)
+) engine = innodb default charset = utf8;

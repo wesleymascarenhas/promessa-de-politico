@@ -1,0 +1,39 @@
+{% extends "template.html" %}
+{% import "macros.html" as macros %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="board">
+      <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">
+      <h3>
+        <b>
+          {{ politician.get('name') }}
+          <img src="/img/pt.jpg" alt="PT" class="politician-party-photo img-circle">
+        </b>
+      </h3>
+      <h5>
+        <p class="text-bolder">
+          Partido: <a href="/partido/{{ politicalParty.get('acronym') }}">{{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})</a>
+        </p>
+        <p class="text-bolder">
+          Cargo: {{ politicalOffice.get('title') }} {% if politicalOrgan.get('id') %} / {{ politicalOrgan.get('name') }} {% endif %}
+        </p>             
+      </h5>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <h2>
+      {{ promise.get('title') }}
+      <span class="label label-info">{{ category.get('name') }}</span>
+    </h2>
+    <h3>{{ promise.get('description') }}</h3>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %} 
+{% endblock %}
