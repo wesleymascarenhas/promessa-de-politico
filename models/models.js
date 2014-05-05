@@ -1,40 +1,34 @@
 var settings  = require('../configs/settings'),
-    Bookshelf = require('bookshelf');
-    
-var Database = Bookshelf.initialize({
-  client: settings.databaseDialect,
-  debug: true,
-  connection: {
-    host: settings.databaseHost,
-    user: settings.databaseUser,
-    password: settings.databasePassword,
-    database: settings.databaseSchema,
-    charset: settings.databaseCharset
-  }
-});
+    Bookshelf = require('bookshelf').initialize({
+      client: settings.databaseDialect,
+      debug: true,
+      connection: {
+        host: settings.databaseHost,
+        user: settings.databaseUser,
+        password: settings.databasePassword,
+        database: settings.databaseSchema,
+        charset: settings.databaseCharset
+      }
+    });
 
-var User = Database.Model.extend({
+var User = Bookshelf.Model.extend({
   tableName: 'user'  
 });
 
-var PoliticalParty = Database.Model.extend({
+var PoliticalParty = Bookshelf.Model.extend({
   tableName: 'political_party',
   id: 'id'
 });
 
-var PoliticalOrgan = Database.Model.extend({
+var PoliticalOrgan = Bookshelf.Model.extend({
   tableName: 'political_organ'  
 });
 
-var PoliticalOffice = Database.Model.extend({
+var PoliticalOffice = Bookshelf.Model.extend({
   tableName: 'political_office'
 });
 
-var PoliticianCoverPhoto = Database.Model.extend({
-  tableName: 'politician_cover_photo'
-});
-
-var Politician = Database.Model.extend({
+var Politician = Bookshelf.Model.extend({
   tableName: 'politician',
   party: function() {
     return this.belongsTo(PoliticalParty, 'political_party_id');
@@ -50,11 +44,15 @@ var Politician = Database.Model.extend({
   }
 });
 
-var PromiseCategory = Database.Model.extend({
-  tableName: 'promise_category'  
+var PoliticianCoverPhoto = Bookshelf.Model.extend({
+  tableName: 'politician_cover_photo'
 });
 
-var Promise = Database.Model.extend({
+var PoliticianVote = Bookshelf.Model.extend({
+  tableName: 'politician_vote'  
+});
+
+var Promise = Bookshelf.Model.extend({
   tableName: 'promise',
   category: function() {
     return this.belongsTo(PromiseCategory, 'category_id');
@@ -64,8 +62,27 @@ var Promise = Database.Model.extend({
   }
 });
 
+var PromiseCategory = Bookshelf.Model.extend({
+  tableName: 'promise_category'  
+});
+
+var PromiseEvidence = Bookshelf.Model.extend({
+  tableName: 'promise_evidence'  
+});
+
+var PromisePriorityVote = Bookshelf.Model.extend({
+  tableName: 'promise_priority_vote'  
+});
+
 module.exports.User = User;
 module.exports.PoliticalParty = PoliticalParty;
+module.exports.PoliticalOrgan = PoliticalOrgan;
+module.exports.PoliticalOffice = PoliticalOffice;
 module.exports.Politician = Politician;
+module.exports.PoliticianCoverPhoto = PoliticianCoverPhoto;
+module.exports.PoliticianVote = PoliticianVote;
 module.exports.Promise = Promise;
 module.exports.PromiseCategory = PromiseCategory;
+module.exports.PromiseEvidence = PromiseEvidence;
+module.exports.PromisePriorityVote = PromisePriorityVote;
+module.exports.Bookshelf = Bookshelf;

@@ -1,3 +1,6 @@
 var slugify = require('slug');
 slugify.charmap['.'] = ' ';
-module.exports = slugify;
+
+exports.slug = function(str) {
+  return slugify(str).toLowerCase();
+}

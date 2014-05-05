@@ -5,13 +5,13 @@ var _nodeEnv = process.env.NODE_ENV || 'dev',
     _databaseHost = 'localhost',
     _databaseUser = 'root',
     _databasePassword = 'sandroa1s2d3',
-    _databaseSchema = 'promessas',
+    _databaseSchema = 'promessa_de_politico',
     _databaseCharset = 'utf8',
     _facebook = {
       dev: {
-        clientID: '1435485623336603',
-        clientSecret: '2d188ce45df24e3a28c948b46c4c05bd',
-        callbackURL: 'http://www.brasilpromessas.com.br:8000/auth/facebook/callback'
+        clientID: '235774129950285',
+        clientSecret: '329ada86e67ca322ae5c56af8f5a167d',
+        callbackURL: 'http://www.promessadepolitico.com.br:8000/auth/facebook/callback'
       }
     }
 

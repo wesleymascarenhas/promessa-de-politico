@@ -1,36 +1,100 @@
 {% extends "template.html" %}
-{% import "macros.html" as macros %}
 
 {% block stylesheets %}
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-4">
-    <div class="board">
-      <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">
-      <h3>
-        <b>
-          {{ politician.get('name') }}
-          <img src="/img/pt.jpg" alt="PT" class="politician-party-photo img-circle">
-        </b>
-      </h3>
-      <h5>
-        <p class="text-bolder">
-          Partido: <a href="/partido/{{ politicalParty.get('acronym') }}">{{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})</a>
-        </p>
-        <p class="text-bolder">
-          Cargo: {{ politicalOffice.get('title') }} {% if politicalOrgan.get('id') %} / {{ politicalOrgan.get('name') }} {% endif %}
-        </p>             
-      </h5>
-    </div>
+<div class="container">  
+  <div class="page-section align-right">
+    <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
+    <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
+    <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
   </div>
-  <div class="col-md-8">
-    <h2>
-      {{ promise.get('title') }}
-      <span class="label label-info">{{ category.get('name') }}</span>
-    </h2>
-    <h3>{{ promise.get('description') }}</h3>
+  <div class="page-section row">
+    <div class="page-section col-md-3 align-center">
+      <a href="/politico/{{ politician.get('slug') }}">
+        <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">
+      </a>
+      <h3>
+        <b><a href="/politico/{{ politician.get('slug') }}">{{ politician.get('name') }}</a></b>
+      </h3>
+      <h5 class="align-left">
+        Partido: <a href="/partido/{{ politicalParty.get('acronym') }}">{{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})</a>
+      </h5>
+      <h5 class="align-left">
+        Cargo: {{ politicalOffice.get('title') }} {% if politicalOrgan.get('id') %} / {{ politicalOrgan.get('name') }} {% endif %}
+      </h5>
+      <div class="votes">
+        <div class="vote">
+          <div class="vote-up">
+            <button type="button" class="btn btn-success">
+              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
+            </button>
+          </div>
+          <div class="vote-count">
+            <span class="bolder">350</span>
+          </div>
+        </div>
+        <div class="vote">
+          <div class="vote-down">
+            <button type="button" class="btn btn-danger">
+              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
+            </button>
+          </div>
+          <div class="vote-count">
+            <span>350</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="promise page-section col-md-9">
+      <div class="title">
+        <h2>
+          {{ promise.get('title') }}
+        </h2>
+        <h4>{{ promise.get('description') }}</h4>
+        <h4>
+          <span class="label label-info">{{ category.get('name') }}</span>
+          <span class="label label-{{ macros.promise_state_css_class(promise.get('state')) }}">
+            {{ macros.promise_state_label(promise.get('state')) }}
+          </span>          
+          <span class="aditional-infos">
+            Promessa feita há 2 anos • Registrada por 
+            <a href="/usuario/sandro.csimas">Sandro Simas</a>
+            há 1 mês
+          </span>
+        </h4>
+      </div>
+      <div class="evidences page-section">       
+        
+      </div>
+      <div class="comments page-section">     
+        <div class="comments-title">
+          <label>26 Comentários</label>            
+        </div>    
+        <div class="comments-box">
+          <ul class="comments-list">
+            <li>
+              <div class="commenter-image">
+                <img src="http://lorempixel.com/50/50/people/6" />
+              </div>
+              <div class="comment-text">
+                <p class="">Hello this is a test comment.</p> 
+                <span class="date comment-date">on March 5th, 2014</span>
+              </div>
+            </li>            
+          </ul>
+          <form class="form-inline" role="form">
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="Your comments" />
+            </div>
+            <div class="form-group">
+              <button class="btn btn-default">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

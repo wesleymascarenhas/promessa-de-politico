@@ -3,10 +3,10 @@
  */
 var express  = require('express'),
 		passport = require('passport'),
+    auth     = require('./configs/authentication'),
 		settings = require('./configs/settings'),
     engine   = require('./configs/engine'),
 		routes   = require('./configs/routes'),
-    auth     = require('./configs/authentication'),
 		path     = require('path'),
 		app      = express();
 
@@ -19,10 +19,9 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser({ keepExtensions: true, uploadDir: __dirname + "/public/uploads" }));
 app.use(express.methodOverride());
-app.use(express.cookieParser('promessas'));
-app.use(express.session('promessas'));
+app.use(express.cookieParser('promessa-de-politico'));
+app.use(express.session('promessa-de-politico'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(app.router);
 
 // development only
 if ('dev' == app.get('env')) {
@@ -30,8 +29,8 @@ if ('dev' == app.get('env')) {
 }
 
 engine.configure(app);
-routes.configure(app, passport);
 auth.configure(app, passport);
+routes.configure(app, passport);
 var server = app.listen(app.get('port'), function() {
   console.log('Server listening on port ' + app.get('port'));
 });

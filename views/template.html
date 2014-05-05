@@ -1,3 +1,4 @@
+{% import "macros.html" as macros %}
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -8,9 +9,10 @@
   <meta name="author" content="Sandro Simas e Maday Avila">
   <title>Fixed Top Navbar Example for Bootstrap</title>
   <link href="/img/favicon.ico" rel="shortcut icon" >
-  <link href="http://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+  <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/main.css" rel="stylesheet">
+  <link href="/css/nprogress.css" rel="stylesheet">
   {% block stylesheets %}
   {% endblock %}
 
@@ -49,25 +51,54 @@
               <li><a href="#">One more separated link</a></li>
             </ul>
           </li>
-        </ul>
+        </ul>        
+        {% if user %}
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../navbar/">Default</a></li>
-          <li><a href="../navbar-static-top/">Static top</a></li>
-          <li class="active"><a href="./">Fixed top</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              {{ user.get('name') }} 
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="/usuario/{{ user.get('username') }}">Perfil</a></li>
+              <li><a href="/logout">Sair</a></li>
+            </ul>
+          </li>
         </ul>
+        {% endif %}
       </div>
     </div>
   </header>
 
-  <div class="container-fluid">
+  <main class="content">
     {% block content %}
     {% endblock %}
-  </div>
+  </main>
 
   <script src="/js/jquery-2.1.0.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/underscore-min.js"></script>
   <script src="/js/backbone-min.js"></script>
+  <script src="/js/nprogress.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    $(document).ajaxStart(function() {
+      NProgress.start();
+    });
+    $(document).ajaxStop(function() {
+      NProgress.done();
+    });
+    // Show the progress bar 
+    NProgress.start();
+    // Increase randomly
+    var interval = setInterval(function() { NProgress.inc(); }, 1000);        
+    // Trigger finish when page fully loaded
+    jQuery(window).load(function () {
+        clearInterval(interval);
+        NProgress.done();
+    });
+
+  </script>
   {% block scripts %}
   {% endblock %}
 </body>

@@ -1,5 +1,5 @@
 {
-  "name": "promessas",
+  "name": "promessa-de-politico",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -16,6 +16,8 @@
     "knex": "0.5.13",
     "mysql": "2.1.1",
     "slug": "0.4.2",
-    "underscore": "1.6.0"
+    "underscore": "1.6.0",
+    "bluebird": "1.2.4",
+    "async": "0.8.0"
   }
 }

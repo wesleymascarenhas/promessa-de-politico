@@ -12,7 +12,8 @@ module.exports = function(app) {
 		res.status(500);
     res.render('error.html', {
       statusCode: 500,
-      statusMessage: 'Erro interno'
+      statusMessage: 'Erro interno',
+      errorMessage: err
     });
 	});
 

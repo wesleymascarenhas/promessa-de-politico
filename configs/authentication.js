@@ -15,31 +15,49 @@ exports.configure = function(app, passport) {
   });
 
   passport.deserializeUser(function(id, done) {
-    userService.findByID(id, function(err, user) {
-      if(err) {
-        done(err);
-      }
+    userService.findByID(id)
+    .then(function(user) {
       if(user) {
-        done(null, user);
-      }
-    });
+        return user;
+      }   
+      throw new Error("Error deserializing user with id " + id);    
+    }).nodeify(done);
   });
 
-  passport.use(new FacebookStrategy({ clientID: settings.facebook.clientID,
+  passport.use(new FacebookStrategy({ 
+      clientID: settings.facebook.clientID,
       clientSecret: settings.facebook.clientSecret,
       callbackURL: settings.facebook.callbackURL
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log(profile);
-      userService.findByFacebookID(profile._json.id, function(err, user) {
-        if(err) { return done(err); }
-        if(!user) {
-          user = userService.create(profile._json.name, profile._json.username, profile._json.email, profile._json.gender, profile._json.id, function(err, user) {
-            if(err) { return done(err); }
-            done(null, user);            
-          });            
+      var profileInfos = profile._json;
+      userService.findByFacebookAccount(profileInfos.id)
+      .then(function(user) {
+        if(user) {          
+          return user; 
         }
-      });
+        return userService.findByEmail(profileInfos.email)
+        .then(function(user) {
+          if(user) {
+            user.set('facebook_account', profileInfos.id);
+            return userService.update(user, ['facebook_account'])
+            .then(function(user) {
+              if(user) {
+                return user;
+              }
+              throw new Error("Error associating existing account with Facebook");
+            });
+          } else {
+            return userService.createByFacebookAccount(profileInfos.name, profileInfos.gender, profileInfos.username, profileInfos.email, profileInfos.id)
+            .then(function(user) {
+              if(user) {
+                return user;
+              }
+              throw new Error("Error creating account associated with Facebook");
+            });
+          }
+        });
+      }).nodeify(done);
     }
   ));
 }

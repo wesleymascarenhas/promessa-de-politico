@@ -1,44 +1,59 @@
-var User  = require('../models/models').User;
+var User           = require('../models/models').User,
+    bookshelfUtils = require('../utils/bookshelfUtils'),
+    slugify        = require('../utils/slugify'),
+    _              = require('underscore');
 
-exports.create = function(name, username, email, gender, facebookID, callback) {
-	User.forge({ name: name, username: username, email: email, gender: gender, facebook_id: facebookID })
-			.save().then(function(err, model) {
-				callback(err, model);
-			});
+function forgeUser(attributes) {
+  var user = User.forge(attributes);
+  if(!user.get('username')) {
+    user.set('username', slugify.slug(user.get('name')));
+  }
+  return user;
 }
 
-exports.update = function(userData, callback) {
-	User.forge(userData).save().then(function(err, model) { 
-		callback(err, model);	
-	});
+exports.createByFacebookAccount = function(name, gender, username, email, facebook_account) {
+  return forgeUser({ name: name, gender: gender, username: username, email: email, facebook_account: facebook_account })
+    .save();
 }
 
-exports.findAll = function(callback) {
-	User.forge().fetch().then(function(model) {
-		callback(err, model);
-	});
+exports.createByTwitterAccout = function(name, gender, username, email, twitter_account) {
+  return forgeUser({ name: name, gender: gender, username: username, email: email, twitter_account: twitter_account })
+    .save();
 }
 
-exports.findByID = function(id, callback) {
-	User.forge({ id: id }).fetch().then(function(err, model) {
-		callback(err, model);
-	});
+exports.createByGoogleAccount = function(name, gender, username, email, google_account) {
+  return forgeUser({ name: name, gender: gender, username: username, email: email, google_account: google_account })
+    .save();
 }
 
-exports.findByFacebookID = function(facebookID, callback) {
-	User.forge({ facebook_id: facebookID }).fetch().then(function(err, model) {
-		callback(err, model);
-	});
+exports.update = function(user, attributes) {
+  return user.save(bookshelfUtils.getAttributesMap(user, attributes), {patch: true});
 }
 
-exports.findByEmail = function(email, callback) {
-	User.forge({ email: email }).fetch().then(function(err, model) {
-		callback(err, model);
-	});
+exports.findAll = function() {
+  return User.forge().fetch();
 }
 
-exports.findByUsername = function(username, callback) {
-	User.forge({ username: username }).fetch().then(function(err, model) {
-		callback(err, model);
-	});
+exports.findByID = function(id) {
+  return User.forge({ id: id }).fetch();
+}
+
+exports.findByFacebookAccount = function(facebook_account) {
+  return User.forge({ facebook_account: facebook_account }).fetch();
+}
+
+exports.findByTwitterAccount = function(twitter_account) {
+  return User.forge({ twitter_account: twitter_account }).fetch();
+}
+
+exports.findByGoogleAccount = function(google_account) {
+  return User.forge({ google_account: google_account }).fetch();
+}
+
+exports.findByEmail = function(email) {
+  return User.forge({ email: email }).fetch();
+}
+
+exports.findByUsername = function(username) {
+  return User.forge({ username: username }).fetch();
 }

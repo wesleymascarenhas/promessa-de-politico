@@ -1,43 +1,65 @@
 {% extends "template.html" %}
-{% import "macros.html" as macros %}
 
 {% block stylesheets %}
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="politician-cover">
-    <div id="politician-carousel" class="carousel slide" data-ride="carousel">
-      <!-- Wrapper for slides -->
-      <div class="carousel-inner">
-        {% for coverPhoto in politicianCoverPhotos %}
-          <div class="item {% if loop.first %}active{% endif %}" style="background-image: url('/img/politicians/cover/{{ coverPhoto.get('photo_path') }}');"></div>
-        {% endfor %}
+<section class="politician-cover">
+  <div id="politician-carousel" class="carousel slide" data-ride="carousel">
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      {% for coverPhoto in politicianCoverPhotos.models %}
+        <div class="item {{ 'active' if loop.first  }}" style="background-image: url('/img/politicians/cover/{{ coverPhoto.get('photo_path') }}');"></div>
+      {% endfor %}
+    </div>
+    <!-- Politician Infos -->
+    <div class="politician-infos">
+      <div>
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">        
+            <h1>
+              <p class="bolder-text">
+                {{ politician.get('name') }}                
+              </p>
+            </h1>
+          </div>
+          <div class="promises-stats col-md-4">
+            <div>
+              <input type="text" value="{{ promisesFulfilledPercentage }}" data-readOnly="true" data-width="100" data-height="100" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
+              <h4>Promessas cumpridas (%)</h4>
+            </div>
+            <div>
+              <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
+              <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
+              <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+            </div>
+          </div>
+        </div>
       </div>
-      <!-- Politician Infos -->
-      <div class="politician-infos">
-        <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">
-        <h1>
-          <p class="text-bolder">
-            {{ politician.get('name') }}
-            <img src="/img/pt.jpg" alt="PT" class="politician-party-photo img-circle">
-          </p>
-        </h1>
-        <h4>
-          <p class="text-bolder">
-            Partido: <a href="/partido/{{ politicalParty.get('acronym') }}">{{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})</a>
+      <div>
+        <h4 class="bolder-text">
+          <span>
+            Partido: 
+            <a href="/partido/{{ politicalParty.get('acronym') }}">
+              {{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})
+            </a>
+          </span>
             -
-            Cargo: {{ politicalOffice.get('title') }} {% if politicalOrgan.get('id') %} / {{ politicalOrgan.get('name') }} {% endif %}
-          </p>  
-          <p class="text-bolder">
-            {{ politician.get('biography') }}           
-          </p>
-        </h4>              
-      </div>
+          <span>
+            Cargo: {{ politicalOffice.get('title') }} 
+            {{ "/ politicalOrgan.get('name')" if politicalOrgan.id }}
+          </span>
+        </h4>  
+        <h4 class="bolder-text">
+          {{ politician.get('biography') }}           
+        </h4>
+        </h4>
+      </div>             
       <div class="votes">
         <div class="vote">
           <div class="vote-up">
-            <button class="btn btn-success">
+            <button type="button" class="btn btn-success">
               <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
             </button>
           </div>
@@ -47,7 +69,7 @@
         </div>
         <div class="vote">
           <div class="vote-down">
-            <button class="btn btn-danger">
+            <button type="button" class="btn btn-danger">
               <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
             </button>
           </div>
@@ -55,83 +77,232 @@
             <span>350</span>
           </div>
         </div>
-      </div> 
+      </div>             
     </div>
   </div>
-  <div class="politician-promises-menu">    
-    <ul class="nav nav-pills nav-justified">
-      <li class="active">
-        <a href="/users/sandrocsimas">
-          <span class="glyphicon glyphicon-th-list"></span> Todas as Promessas
-        </a>
-      </li>   
-      <li class="">
-        <a href="/bucketlist" class="view-bucketlist">
-          <span class="glyphicon glyphicon-time"></span> Últimas Promessas
-        </a>   
-      </li>
-      <li class="">
-        <a href="/users/sandrocsimas/badges">
-          <span class="glyphicon glyphicon-globe"></span> Promessas mais Importantes
-        </a>
-      </li>
-    </ul>
+</section>
+<div class="promises-menu">    
+  <ul class="nav nav-pills nav-justified">
+    <li class="">
+      <a href="/bucketlist" class="view-bucketlist">
+        <span class="glyphicon glyphicon-time"></span> Últimas Promessas
+      </a>   
+    </li>
+    <li class="">
+      <a href="/users/sandrocsimas/badges">
+        <span class="glyphicon glyphicon-globe"></span> Promessas mais Importantes
+      </a>
+    </li>
+    <li class="">
+      <a href="/users/sandrocsimas/badges">
+        <span class="glyphicon glyphicon-globe"></span> Promessas mais Antigas
+      </a>
+    </li>
+    <li class="active">
+      <a href="/users/sandrocsimas">
+        <span class="glyphicon glyphicon-th-list"></span> 
+        Todas as Promessas ({{ promisesCount if promisesCount else 0 }})
+      </a>
+    </li>   
+  </ul>
+</div>
+<section class="promises container">   
+  <div class="row">
+    <div class="col-md-8 font-big">
+      <span class="promise-count">
+        <span class="label label-{{ macros.promise_state_css_class('NONE') }}">
+          {{ macros.promise_state_label('NONE') }}
+          &nbsp;({{ promisesCountsByState['NONE'] if promisesCountsByState else 0 }})
+        </span>
+      </span>
+      <span class="promise-count">        
+        <span class="label label-{{ macros.promise_state_css_class('STARTED') }}">
+          {{ macros.promise_state_label('STARTED') }}
+          &nbsp;({{ promisesCountsByState['STARTED'] if promisesCountsByState else 0 }})
+        </span>
+      </span>
+      <span class="promise-count">        
+        <span class="label label-{{ macros.promise_state_css_class('FULFILLED') }}">
+          {{ macros.promise_state_label('FULFILLED') }}
+          &nbsp;({{ promisesCountsByState['FULFILLED'] if promisesCountsByState else 0 }})
+        </span>
+      </span>
+      <span class="promise-count">        
+        <span class="label label-{{ macros.promise_state_css_class('DISCARDED') }}">
+          {{ macros.promise_state_label('DISCARDED') }}
+          &nbsp;({{ promisesCountsByState['DISCARDED'] if promisesCountsByState else 0 }})
+        </span>
+      </span>
+    </div>
+    <div class="col-md-4 align-right">    
+      <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-promise">
+        <span class="glyphicon glyphicon-plus"></span>
+        Registrar Promessa
+      </button>
+    </div>
   </div>
-  <div class="promises">  
-    <h1 class="text-center"><b>Todas as Promessas</b></h1>
-    <div id="accordion" class="panel-group">
-    {% for category in categories %}
+  {% if categories.length > 0 %}
+  <div class="row">
+    <div class="col-md-12 align-center">
+      <div class="page-header">
+        <h1>
+          Todas as promessas
+        </h1>
+        <h3><span class="label label-info">{{ category.get('name') }} ({{ promises.length }})</span></h3>
+      </div>      
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-              Collapsible Group Item #1
-            </a>
-          </h4>
+        <div class="panel-heading">Categorias ({{ categories.length }})</div>
+        <div class="list-group">
+          {% for promiseCategory in categories.models %}
+          <a href="#" class="list-group-item {{ 'active' if category.id == promiseCategory.id }}">
+            {{ promiseCategory.get("name") }}
+          </a>
+          {% endfor %}
         </div>
-        <div id="collapseOne" class="panel-collapse collapse in">
-          <div class="panel-body">
-            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-          </div>
-        </div>
-      </div> 
-    {% endfor %}     
-    </div>
-      <div class="promise-panel panel panel-default pull-left">
-        <div class="panel-heading text-bolder">{{ category.get('name') }}</div>
-        <ul class="list-group">
-          {% for promise in promisesByCategory[category.get('id')] %}
-          <li class="list-group-item">
-            <div class="promise">
-              <div class="promise-infos">
-                <span class="promise-label label label-{{ macros.promise_state_label(promise.get('state')) }}">
-                  {{ macros.promise_state_text(promise.get('state')) }}
-                </span>
-                <div class="votes" style="margin-left: 5px;">
-                  <div class="vote">
-                    <div class="vote-up">
-                      <span style="font-size: 12px;" class="btn btn-success glyphicon glyphicon-thumbs-up"> (300)</span>
-                    </div>                      
-                  </div>
-                  <div class="vote">
-                    <div class="vote-down">
-                        <span style="font-size: 12px;" class="btn btn-danger glyphicon glyphicon-thumbs-down"> (155)</span>
-                    </div>                      
-                  </div>
-                </div> 
-              </div>
-              <div class="promise-title">                  
-                <a href="/promessa/{{ politician.get('slug') }}/{{ promise.get('id') }}/{{ promise.get('slug') }}" class="NONE">{{ promise.get('title') }}</a>
-              </div>               
-            </div>
-          </li>            
-          {% endfor %}          
-        </ul>            
       </div>
-    {% endfor %}      
+    </div>      
+    <div class="col-md-9">      
+      <ul class="promises-list list-unstyled">
+            
+      </ul>                  
+    </div>
+  </div>
+  {% else %}
+  <div class="row">
+    <div class="col-md-12 align-center">
+      <div class="page-header">
+        <h1>
+          Nenhuma promessa registrada
+        </h1>        
+      </div>      
+    </div>
+  </div>
+  {% endif %}
+</section>
+<div class="modal fade" id="add-promise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Registro de Promessa</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="/js/jquery.knob.js"></script>
+<script type="text/template" id="promise_item_template">  
+  <div class="promise-item">
+    <div class="promise-title">         
+      <h4>         
+        <a href="/promessa/<%= promise.slug %>/<%= promise.id %>/<%= promise.slug %>" class="NONE">
+          <%= promise.title %>
+        </a>
+      </h4>
+    </div>               
+    <div class="promise-infos">
+      <div class="row">
+        <div class="col-md-10">
+          <div class="promise-state">
+            <span class="state label label-<%= window.viewHelpers.getPromiseStateCssClass(promise.state) %>" title="Prioridade">
+              <%= window.viewHelpers.getPromiseStateLabel(promise.state) %>
+            </span>
+          </div>
+          <div class="promise-actions">
+            <span>
+              <a class="promise-vote">
+                Prioridade
+                <%= promise.voted === true ? "(Desfazer)" : "" %>
+              </a>
+            </span>
+            • 
+            <span>
+              <a href="#">
+                <span class="glyphicon glyphicon-thumbs-up"></span> <%= promise.totalVotes %>
+                <span class="glyphicon glyphicon-comment"></span> <%= promise.totalComments %>                 
+                <span class="glyphicon glyphicon-paperclip"></span> <%= promise.totalEvidences %>
+              </a>
+            </span>
+            •
+            <span class="aditional-infos">
+              <%= promise.evidence_date !== null ? "Promessa feita há 2 anos •" : "" %>
+              Registrada por <a href="/usuario/sandro.csimas">Sandro Simas</a>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <span class="social pull-right">              
+            <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
+            <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
+            <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>            
+</script> 
+<script>
+  $('.promises-stats input').knob();
+
+  var PromiseModel = Backbone.Model.extend({
+    defaults: {
+      totalVotes: 0,
+      totalComments: 0,
+      totalEvidences: 0,
+    }
+  });
+  var PromisesCollection = Backbone.Collection.extend({model: PromiseModel});
+  var PromiseView = Backbone.View.extend({
+    template: _.template($("#promise_item_template").html()),
+    tagName: "li",
+    events: {
+      "click .promise-vote": "voteInPromise"
+    },
+    initialize: function() {
+      this.listenTo(this.model, 'change', this.render);
+    },
+    render: function() {      
+      this.$el.html(this.template({promise: this.model.toJSON()}));
+      this.promiseVoteLink = this.$(".promise-vote");
+      return this;
+    },
+    voteInPromise: function() {
+      if(this.model.get("voted")) {
+        this.model.set({"voted": false, "totalVotes": this.model.get("totalVotes") - 1});
+      } else {
+        this.model.set({"voted": true, "totalVotes": this.model.get("totalVotes") + 1});
+      }
+    }
+  });
+  var PromisesView = Backbone.View.extend({
+    el: ".promises-list",
+    initialize: function() {
+      this.render();
+    },
+    render: function() { 
+      var view = this;     
+      this.collection.forEach(function(model) {
+        var promiseView = new PromiseView({model: model});
+        view.$el.append(promiseView.render().el);
+      });
+      return this;
+    }
+  });
+
+  var promisesCollection = new PromisesCollection({{ promises|jsonString }});
+  var promisesView = new PromisesView({collection: promisesCollection});
+</script>
 {% endblock %}

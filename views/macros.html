@@ -1,27 +1,27 @@
-{% macro promise_state_text(state) -%}
-  {% if state == "NONE" %}
+{% macro promise_state_label(state) %}
+  {%- if state == "NONE" -%}
     Sem informação
-  {% elif state == "STARTED" %}
+  {%- elif state == "STARTED" -%}
     Iniciada
-  {% elif state == "PARTIALLY_FULFILLED" %}
-    Cumprida Parcialmente
-  {% elif state == "FULFILLED" %}
+  {%- elif state == "FULFILLED" -%}
     Cumprida
-  {% else %}
+  {%- else -%}
     Descartada
-  {% endif %}
-{%- endmacro %}
+  {%- endif -%}
+{% endmacro %}
 
-{% macro promise_state_label(state) -%}
-  {% if state == "NONE" -%}
-    default
-  {% elif state == "STARTED" %}
-    primary
-  {% elif state == "PARTIALLY_FULFILLED" %}
+{% macro promise_state_css_class(state, button=false) %}
+  {%- if state == "NONE" -%}
+    {%- if button -%}
+      none
+    {%- else -%}
+      default
+    {%- endif -%}
+  {%- elif state == "STARTED" -%}
     warning
-  {% elif state == "FULFILLED" %}
+  {%- elif state == "FULFILLED" -%}
     success
-  {% else %}
+  {%- else -%}
     danger
-  {%- endif %}
-{%- endmacro %}
+  {%- endif -%}
+{% endmacro %}
