@@ -1,57 +1,67 @@
 var promiseCategoryService = require('../apis/promiseCategoryService'),
     politicianService      = require('../apis/politicianService'),
     promiseService         = require('../apis/promiseService'),
-    helper                 = require('../utils/helper');
+    viewService            = require('../apis/viewService'),
+    helper                 = require('../utils/helper'),
+    Promise                = require('bluebird');
 
 module.exports = function(app, passport) {
-  
+
+  app.get('/politico/:politicianId/categoria/:categoryId/promessas', function(req, res, next) {
+    var user = req.user;
+    var politician = politicianService.forge({id: req.params.politicianId});
+    var category = promiseCategoryService.forge({id: req.params.categoryId});
+
+    var results = {politician: politician, category: category};
+    viewService.loadPromises(politician, category, user, results)
+    .then(function() {
+      if(results.next && results.next === true) {
+        next();
+      } else {
+        res.json(results);
+      }
+    }).catch(function(err) {
+      console.log(err.stack);
+      next(err);
+    });
+  });
+
   app.get('/politico/:politicianSlug', function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;
-    politicianService.findBySlug(slug, ['party', 'organ', 'office', 'coverPhotos']).bind({})    
+    var results = {};
+    politicianService.findBySlug(slug, ['party', 'organ', 'office', 'coverPhotos'])
     .then(function(politician) {
       if(!politician) {
-        throw new Error("Politician with slug " + slug + " was no found");
+        results.next = true;
+      } else {
+        results.politician = politician;
+        return promiseService.count(politician)
+        .then(function(totalPromises) {   
+          results.totalPromises = totalPromises;
+          if(totalPromises > 0) {
+            return Promise.all([promiseCategoryService.findByPolitician(results.politician), promiseService.countGroupingByState(results.politician), promiseService.countGroupingByCategory(results.politician)])
+            .spread(function(categories, totalPromisesByState, totalPromisesByCategory) {
+              results.categories = categories;
+              results.category = categories.at(helper.randomIndex(categories));    
+              results.totalPromisesByCategory = totalPromisesByCategory;          
+              results.totalPromisesByState = totalPromisesByState;
+              results.promisesFulfilledPercentage = results.totalPromisesByState['FULFILLED'] * results.totalPromises / 100;
+              return viewService.loadPromises(results.politician, results.category, user, results);
+            });
+          }
+        });
       }
-      this.politician = politician;
-      return fillPoliticianPage(user, this);   
-    }).then(function() {          
-      this.politicianCoverPhotos = this.politician.related('coverPhotos'),
-      this.politicalParty = this.politician.related('party'),
-      this.politicalOrgan = this.politician.related('organ'),
-      this.politicalOffice = this.politician.related('office'),
-      res.render('politician.html', this);
+    }).then(function() {
+      if(results.next && results.next === true) {
+        next();
+      } else {
+        res.render("politician.html", {data: results});
+      }
     }).catch(function(err) {
+      console.log(err.stack);
       next(err);
     });    
   });
 
-  function fillPoliticianPage(user, result) {
-    return promiseService.count(result.politician)
-    .then(function(promisesCount) {        
-      result.promisesCount = promisesCount;
-      if(result.promisesCount > 0) {             
-        return promiseCategoryService.findByPolitician(result.politician)
-        .then(function(categories) {
-          result.categories = categories;
-          return promiseService.countGroupingByState(result.politician)
-          .then(function(promisesCountsByState) {              
-            result.promisesCountsByState = promisesCountsByState;
-            result.promisesFulfilledPercentage = result.promisesCountsByState['FULFILLED'] * result.promisesCount / 100;
-            result.category = result.categories.at(helper.randomIndex(result.categories));
-            return promiseService.findAllByPoliticianAndCategory(result.politician, result.category, [])
-            .then(function(promises) {
-              result.promises = promises;
-              if(user) {
-                return promiseService.findPriorityVotes(user, result.promises)
-                .then(function(promisesVotes) {                
-                  result.promisesVotes = promisesVotes;
-                });
-              }
-            });
-          });
-        });  
-      }
-    });
-  }
 }

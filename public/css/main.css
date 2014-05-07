@@ -212,7 +212,11 @@ margin: 20px;
 }
 
 .promise-infos .promise-state {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+ 
+.promise-infos .promise-state .state {
+  margin-right: 5px;
 }
 
 .votes, .votes .vote {

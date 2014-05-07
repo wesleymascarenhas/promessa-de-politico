@@ -152,3 +152,16 @@ create table promise_priority_vote (
   constraint `fk_promise_priority_vote_user` foreign key (`user_id`) references `user` (`id`),
   constraint `fk_promise_priority_vote_promise` foreign key (`promise_id`) references `promise` (`id`)
 ) engine = innodb default charset = utf8;
+
+create table promise_comment (
+  id int(11) not null auto_increment,
+  user_id int(11) not null,
+  promise_id int(11) not null,
+  comment_date timestamp not null,
+  content text not null,
+  primary key (id),
+  key `fk_promise_comment_user` (`user_id`),
+  key `fk_promise_comment_promise` (`promise_id`),
+  constraint `fk_promise_comment_user` foreign key (`user_id`) references `user` (`id`),
+  constraint `fk_promise_comment_promise` foreign key (`promise_id`) references `promise` (`id`)
+) engine = innodb default charset = utf8;

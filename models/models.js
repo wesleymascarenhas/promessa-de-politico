@@ -59,6 +59,9 @@ var Promise = Bookshelf.Model.extend({
   },
   politician: function() {
     return this.belongsTo(Politician, 'politician_id');
+  },
+  registered_by_user: function() {
+    return this.belongsTo(User, 'registered_by_user_id');
   }
 });
 
@@ -74,15 +77,22 @@ var PromisePriorityVote = Bookshelf.Model.extend({
   tableName: 'promise_priority_vote'  
 });
 
-module.exports.User = User;
-module.exports.PoliticalParty = PoliticalParty;
-module.exports.PoliticalOrgan = PoliticalOrgan;
-module.exports.PoliticalOffice = PoliticalOffice;
-module.exports.Politician = Politician;
-module.exports.PoliticianCoverPhoto = PoliticianCoverPhoto;
-module.exports.PoliticianVote = PoliticianVote;
-module.exports.Promise = Promise;
-module.exports.PromiseCategory = PromiseCategory;
-module.exports.PromiseEvidence = PromiseEvidence;
-module.exports.PromisePriorityVote = PromisePriorityVote;
-module.exports.Bookshelf = Bookshelf;
+var PromiseComment = Bookshelf.Model.extend({
+  tableName: 'promise_comment'  
+});
+
+module.exports = {
+  User: User,
+  PoliticalParty: PoliticalParty,
+  PoliticalOrgan: PoliticalOrgan,
+  PoliticalOffice: PoliticalOffice,
+  Politician: Politician,
+  PoliticianCoverPhoto: PoliticianCoverPhoto,
+  PoliticianVote: PoliticianVote,
+  Promise: Promise,
+  PromiseCategory: PromiseCategory,
+  PromiseEvidence: PromiseEvidence,
+  PromisePriorityVote: PromisePriorityVote,
+  PromiseComment: PromiseComment,
+  Bookshelf: Bookshelf
+}

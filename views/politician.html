@@ -8,7 +8,7 @@
   <div id="politician-carousel" class="carousel slide" data-ride="carousel">
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
-      {% for coverPhoto in politicianCoverPhotos.models %}
+      {% for coverPhoto in data.politician.related('coverPhotos').models %}
         <div class="item {{ 'active' if loop.first  }}" style="background-image: url('/img/politicians/cover/{{ coverPhoto.get('photo_path') }}');"></div>
       {% endfor %}
     </div>
@@ -17,22 +17,22 @@
       <div>
         <div class="row">
           <div class="col-md-4 col-md-offset-4">
-            <img src="/img/politicians/{{ politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">        
+            <img src="/img/politicians/{{ data.politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">        
             <h1>
               <p class="bolder-text">
-                {{ politician.get('name') }}                
+                {{ data.politician.get('name') }}                
               </p>
             </h1>
           </div>
           <div class="promises-stats col-md-4">
             <div>
-              <input type="text" value="{{ promisesFulfilledPercentage }}" data-readOnly="true" data-width="100" data-height="100" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
+              <input type="text" value="{{ data.promisesFulfilledPercentage }}" data-readOnly="true" data-width="100" data-height="100" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
               <h4>Promessas cumpridas (%)</h4>
             </div>
             <div>
-              <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
-              <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
-              <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Facebook" class="icon icon-facebook"></a>
+              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Twitter" class="icon icon-twitter"></a>
+              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Google+" class="icon icon-googleplus"></a>
             </div>
           </div>
         </div>
@@ -41,18 +41,18 @@
         <h4 class="bolder-text">
           <span>
             Partido: 
-            <a href="/partido/{{ politicalParty.get('acronym') }}">
-              {{ politicalParty.get('name') }} ({{ politicalParty.get('acronym') }})
+            <a href="/partido/{{ data.politician.related('party').get('acronym') }}">
+              {{ data.politician.related('party').get('name') }} ({{ data.politician.related('party').get('acronym') }})
             </a>
           </span>
             -
           <span>
-            Cargo: {{ politicalOffice.get('title') }} 
-            {{ "/ politicalOrgan.get('name')" if politicalOrgan.id }}
+            Cargo: {{ data.politician.related('office').get('title') }} 
+            {{ "/ politician.related('organ').get('name')" if data.politician.related('organ').id }}
           </span>
         </h4>  
         <h4 class="bolder-text">
-          {{ politician.get('biography') }}           
+          {{ data.politician.get('biography') }}           
         </h4>
         </h4>
       </div>             
@@ -101,7 +101,7 @@
     <li class="active">
       <a href="/users/sandrocsimas">
         <span class="glyphicon glyphicon-th-list"></span> 
-        Todas as Promessas ({{ promisesCount if promisesCount else 0 }})
+        Todas as Promessas ({{ data.totalPromises if data.totalPromises else 0 }})
       </a>
     </li>   
   </ul>
@@ -112,25 +112,25 @@
       <span class="promise-count">
         <span class="label label-{{ macros.promise_state_css_class('NONE') }}">
           {{ macros.promise_state_label('NONE') }}
-          &nbsp;({{ promisesCountsByState['NONE'] if promisesCountsByState else 0 }})
+          &nbsp;({{ data.totalPromisesByState['NONE'] if data.totalPromisesByState else 0 }})
         </span>
       </span>
       <span class="promise-count">        
         <span class="label label-{{ macros.promise_state_css_class('STARTED') }}">
           {{ macros.promise_state_label('STARTED') }}
-          &nbsp;({{ promisesCountsByState['STARTED'] if promisesCountsByState else 0 }})
+          &nbsp;({{ data.totalPromisesByState['STARTED'] if data.totalPromisesByState else 0 }})
         </span>
       </span>
       <span class="promise-count">        
         <span class="label label-{{ macros.promise_state_css_class('FULFILLED') }}">
           {{ macros.promise_state_label('FULFILLED') }}
-          &nbsp;({{ promisesCountsByState['FULFILLED'] if promisesCountsByState else 0 }})
+          &nbsp;({{ data.totalPromisesByState['FULFILLED'] if data.totalPromisesByState else 0 }})
         </span>
       </span>
       <span class="promise-count">        
         <span class="label label-{{ macros.promise_state_css_class('DISCARDED') }}">
           {{ macros.promise_state_label('DISCARDED') }}
-          &nbsp;({{ promisesCountsByState['DISCARDED'] if promisesCountsByState else 0 }})
+          &nbsp;({{ data.totalPromisesByState['DISCARDED'] if data.totalPromisesByState else 0 }})
         </span>
       </span>
     </div>
@@ -141,47 +141,9 @@
       </button>
     </div>
   </div>
-  {% if categories.length > 0 %}
-  <div class="row">
-    <div class="col-md-12 align-center">
-      <div class="page-header">
-        <h1>
-          Todas as promessas
-        </h1>
-        <h3><span class="label label-info">{{ category.get('name') }} ({{ promises.length }})</span></h3>
-      </div>      
-    </div>
+  <div class="promises-section">
+  
   </div>
-  <div class="row">
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-heading">Categorias ({{ categories.length }})</div>
-        <div class="list-group">
-          {% for promiseCategory in categories.models %}
-          <a href="#" class="list-group-item {{ 'active' if category.id == promiseCategory.id }}">
-            {{ promiseCategory.get("name") }}
-          </a>
-          {% endfor %}
-        </div>
-      </div>
-    </div>      
-    <div class="col-md-9">      
-      <ul class="promises-list list-unstyled">
-            
-      </ul>                  
-    </div>
-  </div>
-  {% else %}
-  <div class="row">
-    <div class="col-md-12 align-center">
-      <div class="page-header">
-        <h1>
-          Nenhuma promessa registrada
-        </h1>        
-      </div>      
-    </div>
-  </div>
-  {% endif %}
 </section>
 <div class="modal fade" id="add-promise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -204,12 +166,70 @@
 
 {% block scripts %}
 <script src="/js/jquery.knob.js"></script>
+<script type="text/template" id="promises_section_template">
+  <% if(model.promises.length > 0) { %>
+  <div class="row">
+    <div class="col-md-12 align-center">
+      <div class="page-header">
+        <h1>
+        <% if(model.tabId === "allPromises") { %>
+          Todas as promessas
+        <% } else if(model.tabId === "lastPromises") { %>
+          Últimas promessas
+        <% } else if(model.tabId === "majorPromises") { %>
+          Promessas mais Importantes
+        <% } else if(model.tabId === "olderPromises") { %>
+          Promessas mais antigas
+        <% }%>
+        </h1>
+        <% if(model.tabId === "allPromises") { %>          
+        <h3>
+          <span class="label label-info"><%= model.category.name %> (<%= model.promises.length %>)</span>
+        </h3>
+        <% } %>
+      </div>      
+    </div>
+  </div>
+  <div class="row">
+    <div class="categories-list col-md-3">
+      
+    </div>      
+    <div class="col-md-9">      
+      <ul class="promises-list list-unstyled">
+            
+      </ul>                  
+    </div>
+  </div>
+  <% } else { %>
+  <div class="row">
+    <div class="col-md-12 align-center">
+      <div class="page-header">
+        <h1>
+          Nenhuma promessa registrada
+        </h1>        
+      </div>      
+    </div>
+  </div>
+  <% } %>
+</script>
+<script type="text/template" id="categories_list_template">
+  <div class="panel panel-default">
+    <div class="panel-heading">Categorias (<%= collection.length %>)</div>
+    <div class="list-group">
+      <% _.each(collection, function(model) { %>
+      <a class="list-group-item <%= model.id === data.category.id ? 'active' : '' %>" data-category="<%= model.id %>">
+        <%= model.name %>
+      </a>
+      <% }); %>
+    </div>
+  </div>
+</script>
 <script type="text/template" id="promise_item_template">  
   <div class="promise-item">
     <div class="promise-title">         
       <h4>         
-        <a href="/promessa/<%= promise.slug %>/<%= promise.id %>/<%= promise.slug %>" class="NONE">
-          <%= promise.title %>
+        <a href="/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" class="NONE">
+          <%= model.title %>
         </a>
       </h4>
     </div>               
@@ -217,37 +237,38 @@
       <div class="row">
         <div class="col-md-10">
           <div class="promise-state">
-            <span class="state label label-<%= window.viewHelpers.getPromiseStateCssClass(promise.state) %>" title="Prioridade">
-              <%= window.viewHelpers.getPromiseStateLabel(promise.state) %>
-            </span>
-          </div>
-          <div class="promise-actions">
-            <span>
-              <a class="promise-vote">
-                Prioridade
-                <%= promise.voted === true ? "(Desfazer)" : "" %>
-              </a>
-            </span>
-            • 
-            <span>
-              <a href="#">
-                <span class="glyphicon glyphicon-thumbs-up"></span> <%= promise.totalVotes %>
-                <span class="glyphicon glyphicon-comment"></span> <%= promise.totalComments %>                 
-                <span class="glyphicon glyphicon-paperclip"></span> <%= promise.totalEvidences %>
-              </a>
+            <span class="state label label-<%= window.viewHelpers.getPromiseStateCssClass(model.state) %>">
+              <%= window.viewHelpers.getPromiseStateLabel(model.state) %>
             </span>
             •
-            <span class="aditional-infos">
-              <%= promise.evidence_date !== null ? "Promessa feita há 2 anos •" : "" %>
-              Registrada por <a href="/usuario/sandro.csimas">Sandro Simas</a>
+            <span>
+              <a class="promise-vote">
+                Prioritária
+                <%= model.voted === true ? "(Desfazer)" : "" %>
+              </a>
+            </span>            
+            <span>
+              •
+              <span class="glyphicon glyphicon-star"></span> <%= model.totalVotes %>
+              •
+              <span class="glyphicon glyphicon-comment"></span> <%= model.totalComments %>                 
+              •
+              <span class="glyphicon glyphicon-paperclip"></span> <%= model.totalEvidences %>              
             </span>
+          </div>
+          <div class="promise-author">            
+            <%= model.evidence_date !== null ? "Promessa feita há " + moment(model.evidence_date).fromNow() + " • " : "" %>
+            Registrada por 
+            <a href="/usuario/<%= model.registered_by_user.username %>">
+              <%= model.registered_by_user.name %>
+            </a>
           </div>
         </div>
         <div class="col-md-2">
           <span class="social pull-right">              
-            <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
-            <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
-            <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+            <a class="icon icon-facebook" href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+            <a class="icon icon-twitter" href="http://twitter.com/share?url=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+            <a class="icon icon-googleplus" href="https://plus.google.com/share?url=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Google+" target="_blank"></a>
           </span>
         </div>
       </div>
@@ -255,7 +276,35 @@
   </div>            
 </script> 
 <script>
-  $('.promises-stats input').knob();
+  $(".promises-stats input").knob();
+
+  var CategoryModel = Backbone.Model.extend();
+  var CategoriesCollection = Backbone.Collection.extend({model: CategoryModel});
+  var CategoriesView = Backbone.View.extend({
+    el: ".categories-list",
+    template: _.template($("#categories_list_template").html()),
+    events: {
+      "click .list-group-item": "selectCategory"
+    },
+    initialize: function(options) {      
+      _.extend(this, _.pick(options, "data"));        
+      this.render();
+    },
+    render: function() {
+      this.$el.html(this.template({collection: this.collection.toJSON(), data: this.data}));
+      return this;
+    },
+    selectCategory: function(ev) {
+      var view = this;
+      var target = $(ev.currentTarget);
+      $.get("/politico/" + this.data.politician.id + "/categoria/" + target.data("category") + "/promessas", function(data) {
+        view.data.promisesView.collection.set(window.viewHelpers.getPromises(data));
+        view.data.promisesView.render();
+        view.data.category
+        view.render();
+      });
+    }
+  });
 
   var PromiseModel = Backbone.Model.extend({
     defaults: {
@@ -275,7 +324,7 @@
       this.listenTo(this.model, 'change', this.render);
     },
     render: function() {      
-      this.$el.html(this.template({promise: this.model.toJSON()}));
+      this.$el.html(this.template({model: this.model.toJSON()}));
       this.promiseVoteLink = this.$(".promise-vote");
       return this;
     },
@@ -293,7 +342,8 @@
       this.render();
     },
     render: function() { 
-      var view = this;     
+      var view = this; 
+      view.$el.empty();    
       this.collection.forEach(function(model) {
         var promiseView = new PromiseView({model: model});
         view.$el.append(promiseView.render().el);
@@ -302,7 +352,40 @@
     }
   });
 
-  var promisesCollection = new PromisesCollection({{ promises|jsonString }});
-  var promisesView = new PromisesView({collection: promisesCollection});
+  var PromisesSectionModel = Backbone.View.extend();
+  var PromisesSectionView = Backbone.View.extend({
+    template: _.template($("#promises_section_template").html()),
+    el: ".promises-section",
+    initialize: function() {            
+      this.render();
+    },
+    render: function() {
+      console.log(this.template)
+      console.log(this.$el)
+      console.log(this.model)
+      this.$el.html(this.template({model: this.model.toJSON()}));
+      this.renderCategories();
+      this.renderPromises();
+      return this;
+    },
+    renderCategories: function() {
+      var categoriesCollection = new CategoriesCollection(this.model.categories);
+      this.categoriesView = new CategoriesView({
+        collection: categoriesCollection,
+        data: {politician: data.politician, category: data.category}
+      });
+    },
+    renderPromises: function() {
+      var promises = window.viewHelpers.getPromises(this.model);
+      var promisesCollection = new PromisesCollection(promises);
+      this.promisesView = new PromisesView({collection: promisesCollection});
+    }
+  });
+
+  var data = {{ data|jsonString }};
+
+  var promisesSectionModel = new PromisesSectionModel(data);
+  var promisesSectionView = new PromisesSectionView({model: promisesSectionModel});
+  
 </script>
 {% endblock %}

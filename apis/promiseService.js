@@ -18,9 +18,73 @@ exports.findAllByPoliticianAndCategory = function(politician, category, relateds
 }
 
 exports.findPriorityVotes = function(user, promises) {
-  return PromisePriorityVote.collection().query(function(qb) {
-    qb.where('user_id', user.id).whereIn('promise_id', bookshelfUtils.getIds(promises));
-  }).fetch();
+  return new BluebirdPromise(function(revolse, reject) {
+    return PromisePriorityVote.collection().query(function(qb) {
+      qb.where('user_id', user.id).whereIn('promise_id', bookshelfUtils.getIds(promises));
+    }).fetch().then(function(priorityVotes) {
+      var priorityVotesMap = {};
+      priorityVotes.forEach(function(priorityVote) {
+        priorityVotesMap[priorityVote.promise_id] = priorityVote
+      });
+      resolve(priorityVotesMap);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.countPriorityVotes = function(promises) {
+  return new BluebirdPromise(function(resolve, reject) {
+    Bookshelf.knex('promise_priority_vote')
+    .select(Bookshelf.knex.raw('promise_id, count(*) as votes'))
+    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .groupBy('promise_id')
+    .then(function(counts) {      
+      var countsMap = {};
+      _.each(counts, function(count) {
+        countsMap[count.promise_id] = count.votes;
+      });
+      resolve(countsMap);
+    }).catch(function(err) {
+      reject(err);
+    });
+  }); 
+}
+
+exports.countComments = function(promises) {
+  return new BluebirdPromise(function(resolve, reject) {
+    Bookshelf.knex('promise_comment')
+    .select(Bookshelf.knex.raw('promise_id, count(*) as comments'))
+    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .groupBy('promise_id')
+    .then(function(counts) {      
+      var countsMap = {};
+      _.each(counts, function(count) {
+        countsMap[count.promise_id] = count.comments;
+      });
+      resolve(countsMap);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.countEvidences = function(promises) {
+  return new BluebirdPromise(function(resolve, reject) {
+    Bookshelf.knex('promise_evidence')
+    .select(Bookshelf.knex.raw('promise_id, count(*) as evidences'))
+    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .groupBy('promise_id')
+    .then(function(counts) {      
+      var countsMap = {};
+      _.each(counts, function(count) {
+        countsMap[count.promise_id] = count.evidences;
+      });
+      resolve(countsMap);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
 }
 
 exports.count = function(politician) {
@@ -64,6 +128,24 @@ exports.countGroupingByState = function(politician) {
         mapByState['DISCARDED'] = 0;
       }
       resolve(mapByState);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.countGroupingByCategory = function(politician) {
+  return new BluebirdPromise(function(resolve, reject) {    
+    Bookshelf.knex('promise')
+    .select(Bookshelf.knex.raw('category_id, count(*) as promises'))
+    .where('politician_id', politician.id)
+    .groupBy('category_id')
+    .then(function(promisesCountsByCategory) {     
+      var mapByCategory = {};
+      _.each(promisesCountsByCategory, function(promiseCountByCategory) {
+        mapByCategory[promiseCountByCategory.state] = promiseCountByCategory.promises;
+      });      
+      resolve(mapByCategory);
     }).catch(function(err) {
       reject(err);
     });
