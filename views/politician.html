@@ -4,160 +4,297 @@
 {% endblock %}
 
 {% block content %}
-<section class="politician-cover">
-  <div id="politician-carousel" class="carousel slide" data-ride="carousel">
-    <!-- Wrapper for slides -->
-    <div class="carousel-inner">
-      {% for coverPhoto in data.politician.related('coverPhotos').models %}
-        <div class="item {{ 'active' if loop.first  }}" style="background-image: url('/img/politicians/cover/{{ coverPhoto.get('photo_path') }}');"></div>
-      {% endfor %}
+<div ng-app="politicianApp" ng-controller="politicianController">
+  <section class="politician-cover">
+    <div id="politician-carousel" class="carousel slide" data-ride="carousel">
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        <div ng-repeat="coverPhoto in politician.coverPhotos" class="item" ng-class="{'active': isFirstIndex($index)}" ng-style="{'background-image': 'url(/img/politicians/cover/<% coverPhoto.photo_path %>)'}"></div>
+      </div>
+      <!-- Politician Infos -->
+      <div class="politician-infos">
+        <div>
+          <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+              <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">        
+              <h1>
+                <p class="bolder-text">
+                  <% politician.name %>                
+                </p>
+              </h1>
+            </div>
+            <div class="promises-stats col-md-4">
+              <div>
+                <input type="text" ng-model="promisesFulfilledPercentage" data-readOnly="true" data-width="100" data-height="100" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
+                <h4>Promessas cumpridas (%)</h4>
+              </div>
+              <div>
+                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Facebook" class="icon icon-facebook"></a>
+                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Twitter" class="icon icon-twitter"></a>
+                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Google+" class="icon icon-googleplus"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h4 class="bolder-text">
+            <span>
+              Partido: 
+              <a ng-href="/partido/<% politician.party.acronym %>">
+                <% politician.party.name %> (<% politician.party.acronym %>)
+              </a>
+            </span>
+              -
+            <span>
+              Cargo: <% politician.office.title %>
+              <span ng-if="politician.organ">
+                / <% politician.organ.name %>
+              </span>
+            </span>
+          </h4>  
+          <h4 class="bolder-text">
+            <% politician.biography %>
+          </h4>
+          </h4>
+        </div>             
+        <div class="votes">
+          <div class="vote">
+            <div class="vote-up">
+              <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('UP'), 'btn-success': votedInPolitician('UP')}" ng-click="voteInPolitician('UP')">
+                <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
+              </button>
+            </div>
+            <div class="vote-count">
+              <span><% totalPoliticianUpUsersVotes() %></span>
+            </div>
+          </div>
+          <div class="vote">
+            <div class="vote-down">
+              <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('DOWN'), 'btn-danger': votedInPolitician('DOWN')}" ng-click="voteInPolitician('DOWN')">
+                <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
+              </button>
+            </div>
+            <div class="vote-count">
+              <span><% totalPoliticianDownUsersVotes() %></span>
+            </div>
+          </div>
+        </div>             
+      </div>
     </div>
-    <!-- Politician Infos -->
-    <div class="politician-infos">
-      <div>
+  </section>
+  <div class="promises-menu">    
+    <ul class="nav nav-pills nav-justified">
+      <li ng-class="{'active': isCurrentTab('LatestPromises')}">
+        <a ng-click="selectTab('LatestPromises')">
+          <span class="glyphicon glyphicon-time"></span> 
+          Promessas mais recentes
+        </a>   
+      </li>
+      <li ng-class="{'active': isCurrentTab('OlderPromises')}">
+        <a ng-click="selectTab('OlderPromises')">
+          <span class="glyphicon glyphicon-time"></span> 
+          Promessas mais antigas
+        </a>
+      </li>
+      <li ng-class="{'active': isCurrentTab('MajorPromises')}">
+        <a ng-click="selectTab('MajorPromises')">
+          <span class="glyphicon glyphicon-star"></span> 
+          Promessas mais importantes
+        </a>
+      </li>
+      <li ng-class="{'active': isCurrentTab('AllPromises')}">
+        <a ng-click="selectTab('AllPromises')">
+          <span class="glyphicon glyphicon-th-list"></span> 
+          Todas as promessas (<% totalPromises %>)
+        </a>
+      </li>   
+    </ul>
+  </div>
+  <section class="promises container">   
+    <div class="row">
+      <div class="col-md-8 font-big">
+        <span class="promise-count">      
+          <promise-state for="NONE" count="<% totalPromisesByState['NONE'] %>"/>
+        </span>
+        <span class="promise-count">        
+          <promise-state for="STARTED" count="<% totalPromisesByState['STARTED'] %>"/>
+        </span>
+        <span class="promise-count">        
+          <promise-state for="FULFILLED" count="<% totalPromisesByState['FULFILLED'] %>"/>
+        </span>
+        <span class="promise-count">        
+          <promise-state for="DISCARDED" count="<% totalPromisesByState['DISCARDED'] %>"/>
+        </span>
+      </div>
+      <div class="col-md-4 align-right">    
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-promise">
+          <span class="glyphicon glyphicon-plus"></span>
+          Registrar Promessa
+        </button>
+      </div>
+    </div>
+    <div class="promises-section">
+      <div class="row">
+        <div class="col-md-12 align-center">
+          <div class="page-header">
+            <h1 ng-switch="tabId">
+              <span ng-switch-when="AllPromises">Todas as promessas</span>
+              <span ng-switch-when="LatestPromises">Promessas mais recentes</span>
+              <span ng-switch-when="MajorPromises">Promessas mais importantes</span>
+              <span ng-switch-when="OlderPromises">Promessas mais antigas</span>
+            </h1>          
+            <h3 ng-if="isCurrentTab('AllPromises')">
+              <span class="label label-info"><% category.name %> (<% promises.length %>)</span>
+            </h3>
+          </div>      
+        </div>
         <div class="row">
-          <div class="col-md-4 col-md-offset-4">
-            <img src="/img/politicians/{{ data.politician.get('photo_path') }}" alt="Dilma Roussef" class="politician-photo img-circle">        
-            <h1>
-              <p class="bolder-text">
-                {{ data.politician.get('name') }}                
-              </p>
-            </h1>
-          </div>
-          <div class="promises-stats col-md-4">
-            <div>
-              <input type="text" value="{{ data.promisesFulfilledPercentage }}" data-readOnly="true" data-width="100" data-height="100" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
-              <h4>Promessas cumpridas (%)</h4>
+          <div class="categories-list col-md-3" ng-if="isCurrentTab('AllPromises')">
+            <div class="panel panel-default">
+              <div class="panel-heading"><h4><% categories.length %> Categorias</h4></div>
+              <div class="list-group">
+                <a ng-repeat="category in categories" class="list-group-item" ng-class="{'active': isCurrentCategory(category)}" ng-click="selectCategory(category)">
+                  <% category.name %> (<% totalPromisesOfCategory(category) %>)
+                </a>
+              </div>
             </div>
-            <div>
-              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Facebook" class="icon icon-facebook"></a>
-              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Twitter" class="icon icon-twitter"></a>
-              <a href="#" title="Compartilhe as promessas de {{ data.politician.get('name') }} no Google+" class="icon icon-googleplus"></a>
+          </div>      
+          <div ng-class="{'col-md-9': isCurrentTab('AllPromises'), 'col-md-12': !isCurrentTab('AllPromises')}">      
+            <ul class="promises-list list-unstyled">
+              <li ng-repeat="promise in promises">
+                <div class="promise-item">
+                  <div class="promise-title grey-text">         
+                    <h4>         
+                      <a href="/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>">
+                        <% promise.title %>
+                      </a>
+                    </h4>
+                  </div>               
+                  <div class="promise-infos">
+                    <div class="row">
+                      <div class="col-md-10">
+                        <div class="promise-state">
+                          <span ng-if="!isCurrentTab('AllPromises')">
+                            <span class="label label-info promise-label-info">
+                              <% promise.category.name %>
+                            </span> 
+                            &nbsp;•
+                          </span>
+                          <span>
+                            <promise-state for="<% promise.state %>" class="promise-label-info"></promise-state>
+                          </span>
+                          •
+                          <span>
+                            <a class="promise-vote" ng-click="voteOnPromise(promise)">
+                              Prioridade! <span ng-show="votedOnPromise(promise)">(Desfazer)</span>
+                            </a>
+                          </span>
+                          <span>
+                            •
+                            <span class="glyphicon glyphicon-star"></span>
+                            <% totalPromiseUsersVotes(promise) %>
+                            •
+                            <span class="glyphicon glyphicon-comment"></span>
+                            <% totalPromiseUsersComments(promise) %>          
+                            •
+                            <span class="glyphicon glyphicon-paperclip"></span>
+                            <% totalPromiseEvidences(promise) %>
+                          </span>
+                        </div>
+                        <div class="promise-author">
+                          <span ng-if="promise.evidence_date">           
+                            Promessa feita há <span am-time-ago="promise.evidence_date"></span>
+                            •
+                          </span> 
+                          Registrada por
+                          <a href="/usuario/<% promise.registered_by_user.username %>">
+                            <% promise.registered_by_user.name %>
+                          </a>
+                          há <span am-time-ago="promise.registration_date"></span>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <span class="social pull-right">              
+                          <a class="icon icon-facebook" href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+                          <a class="icon icon-twitter" href="http://twitter.com/share?url=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+                          <a class="icon icon-googleplus" href="https://plus.google.com/share?url=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Google+" target="_blank"></a>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>       
+              </li>
+            </ul>                  
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="add-promise" tabindex="-1" role="dialog" aria-labelledby="promise-registering" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="promise-registering">Promessa de <% politician.name %></h4>
+        </div>
+        <div class="modal-body">
+          <form role="form" ng-submit="registerPromise()">
+            <div class="form-group">
+              <label for="promise-title">Título*</label>
+              <input ng-model="newPromise.title" type="text" class="form-control" id="promise-title"required>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="promise-description">Descrição</label>
+              <textarea ng-model="newPromise.description" class="form-control" id="promise-description"></textarea>
+            </div> 
+            <div class="form-group">
+              <label for="promise-category">Categoria*</label>
+              <select ng-model="newPromise.category" ng-options="category.name for category in categories" class="form-control"></select>
+            </div>
+            <div class="form-group">
+              <label for="promise-evidence-date">Data em que a promessa foi feita*</label>
+              <input ng-model="newPromise.evidence_date" type="date" class="form-control" id="promise-evidence-date" min="1980-01-01" required/>
+            </div>
+            <div class="form-group">
+              <label for="promise-evidence-date">Estado atual da promessa*</label>
+              <div>
+                <button type="button" class="btn" ng-click="choosePromiseState('STARTED')" ng-class="
+                  {
+                    'btn-default': !isPromiseStateChoosed('STARTED'),
+                    'btn-info': isPromiseStateChoosed('STARTED')
+                  }
+                ">Iniciada</button>
+                <button type="button" class="btn" ng-click="choosePromiseState('FULFILLED')" ng-class="
+                  {
+                    'btn-default': !isPromiseStateChoosed('FULFILLED'),
+                    'btn-success': isPromiseStateChoosed('FULFILLED')
+                  }
+                ">Cumprida</button>
+                <button type="button" class="btn" ng-click="choosePromiseState('PARTIALLY_FULFILLED')" ng-class="
+                  {
+                    'btn-default': !isPromiseStateChoosed('PARTIALLY_FULFILLED'),
+                    'btn-warning': isPromiseStateChoosed('PARTIALLY_FULFILLED')
+                  }
+                ">Cumprida Parcialmente</button>
+                <button type="button" class="btn" ng-click="choosePromiseState('DISCARDED')" ng-class="
+                  {
+                    'btn-default': !isPromiseStateChoosed('DISCARDED'),
+                    'btn-danger': isPromiseStateChoosed('DISCARDED')
+                  }
+                ">Descartada</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="promise-evidence-date">Links de vídeos ou notícias que comprovam essa promessa*</label>
+              <input ng-repeat="evidence in newPromise.evidences track by $index" ng-model="evidence" type="url" class="form-control" id="promise-evidence" required/>
+              <a ng-click="addOneMoreEvidence()">Adicionar outra evidência</a>
+            </div>           
+          </form>
         </div>
-      </div>
-      <div>
-        <h4 class="bolder-text">
-          <span>
-            Partido: 
-            <a href="/partido/{{ data.politician.related('party').get('acronym') }}">
-              {{ data.politician.related('party').get('name') }} ({{ data.politician.related('party').get('acronym') }})
-            </a>
-          </span>
-            -
-          <span>
-            Cargo: {{ data.politician.related('office').get('title') }} 
-            {{ "/ politician.related('organ').get('name')" if data.politician.related('organ').id }}
-          </span>
-        </h4>  
-        <h4 class="bolder-text">
-          {{ data.politician.get('biography') }}           
-        </h4>
-        </h4>
-      </div>             
-      <div class="votes">
-        <div class="vote">
-          <div class="vote-up">
-            <button type="button" class="btn btn-success">
-              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
-            </button>
-          </div>
-          <div class="vote-count">
-            <span class="bolder">350</span>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" ng-click="registerPromise()">Registrar</button>
         </div>
-        <div class="vote">
-          <div class="vote-down">
-            <button type="button" class="btn btn-danger">
-              <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
-            </button>
-          </div>
-          <div class="vote-count">
-            <span>350</span>
-          </div>
-        </div>
-      </div>             
-    </div>
-  </div>
-</section>
-<div class="promises-menu">    
-  <ul class="nav nav-pills nav-justified">
-    <li class="">
-      <a href="/bucketlist" class="view-bucketlist">
-        <span class="glyphicon glyphicon-time"></span> Últimas Promessas
-      </a>   
-    </li>
-    <li class="">
-      <a href="/users/sandrocsimas/badges">
-        <span class="glyphicon glyphicon-globe"></span> Promessas mais Importantes
-      </a>
-    </li>
-    <li class="">
-      <a href="/users/sandrocsimas/badges">
-        <span class="glyphicon glyphicon-globe"></span> Promessas mais Antigas
-      </a>
-    </li>
-    <li class="active">
-      <a href="/users/sandrocsimas">
-        <span class="glyphicon glyphicon-th-list"></span> 
-        Todas as Promessas ({{ data.totalPromises if data.totalPromises else 0 }})
-      </a>
-    </li>   
-  </ul>
-</div>
-<section class="promises container">   
-  <div class="row">
-    <div class="col-md-8 font-big">
-      <span class="promise-count">
-        <span class="label label-{{ macros.promise_state_css_class('NONE') }}">
-          {{ macros.promise_state_label('NONE') }}
-          &nbsp;({{ data.totalPromisesByState['NONE'] if data.totalPromisesByState else 0 }})
-        </span>
-      </span>
-      <span class="promise-count">        
-        <span class="label label-{{ macros.promise_state_css_class('STARTED') }}">
-          {{ macros.promise_state_label('STARTED') }}
-          &nbsp;({{ data.totalPromisesByState['STARTED'] if data.totalPromisesByState else 0 }})
-        </span>
-      </span>
-      <span class="promise-count">        
-        <span class="label label-{{ macros.promise_state_css_class('FULFILLED') }}">
-          {{ macros.promise_state_label('FULFILLED') }}
-          &nbsp;({{ data.totalPromisesByState['FULFILLED'] if data.totalPromisesByState else 0 }})
-        </span>
-      </span>
-      <span class="promise-count">        
-        <span class="label label-{{ macros.promise_state_css_class('DISCARDED') }}">
-          {{ macros.promise_state_label('DISCARDED') }}
-          &nbsp;({{ data.totalPromisesByState['DISCARDED'] if data.totalPromisesByState else 0 }})
-        </span>
-      </span>
-    </div>
-    <div class="col-md-4 align-right">    
-      <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#add-promise">
-        <span class="glyphicon glyphicon-plus"></span>
-        Registrar Promessa
-      </button>
-    </div>
-  </div>
-  <div class="promises-section">
-  
-  </div>
-</section>
-<div class="modal fade" id="add-promise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Registro de Promessa</h4>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-        <button type="button" class="btn btn-primary">Salvar</button>
       </div>
     </div>
   </div>
@@ -166,226 +303,171 @@
 
 {% block scripts %}
 <script src="/js/jquery.knob.js"></script>
-<script type="text/template" id="promises_section_template">
-  <% if(model.promises.length > 0) { %>
-  <div class="row">
-    <div class="col-md-12 align-center">
-      <div class="page-header">
-        <h1>
-        <% if(model.tabId === "allPromises") { %>
-          Todas as promessas
-        <% } else if(model.tabId === "lastPromises") { %>
-          Últimas promessas
-        <% } else if(model.tabId === "majorPromises") { %>
-          Promessas mais Importantes
-        <% } else if(model.tabId === "olderPromises") { %>
-          Promessas mais antigas
-        <% }%>
-        </h1>
-        <% if(model.tabId === "allPromises") { %>          
-        <h3>
-          <span class="label label-info"><%= model.category.name %> (<%= model.promises.length %>)</span>
-        </h3>
-        <% } %>
-      </div>      
-    </div>
-  </div>
-  <div class="row">
-    <div class="categories-list col-md-3">
-      
-    </div>      
-    <div class="col-md-9">      
-      <ul class="promises-list list-unstyled">
-            
-      </ul>                  
-    </div>
-  </div>
-  <% } else { %>
-  <div class="row">
-    <div class="col-md-12 align-center">
-      <div class="page-header">
-        <h1>
-          Nenhuma promessa registrada
-        </h1>        
-      </div>      
-    </div>
-  </div>
-  <% } %>
-</script>
-<script type="text/template" id="categories_list_template">
-  <div class="panel panel-default">
-    <div class="panel-heading">Categorias (<%= collection.length %>)</div>
-    <div class="list-group">
-      <% _.each(collection, function(model) { %>
-      <a class="list-group-item <%= model.id === data.category.id ? 'active' : '' %>" data-category="<%= model.id %>">
-        <%= model.name %>
-      </a>
-      <% }); %>
-    </div>
-  </div>
-</script>
-<script type="text/template" id="promise_item_template">  
-  <div class="promise-item">
-    <div class="promise-title">         
-      <h4>         
-        <a href="/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" class="NONE">
-          <%= model.title %>
-        </a>
-      </h4>
-    </div>               
-    <div class="promise-infos">
-      <div class="row">
-        <div class="col-md-10">
-          <div class="promise-state">
-            <span class="state label label-<%= window.viewHelpers.getPromiseStateCssClass(model.state) %>">
-              <%= window.viewHelpers.getPromiseStateLabel(model.state) %>
-            </span>
-            •
-            <span>
-              <a class="promise-vote">
-                Prioritária
-                <%= model.voted === true ? "(Desfazer)" : "" %>
-              </a>
-            </span>            
-            <span>
-              •
-              <span class="glyphicon glyphicon-star"></span> <%= model.totalVotes %>
-              •
-              <span class="glyphicon glyphicon-comment"></span> <%= model.totalComments %>                 
-              •
-              <span class="glyphicon glyphicon-paperclip"></span> <%= model.totalEvidences %>              
-            </span>
-          </div>
-          <div class="promise-author">            
-            <%= model.evidence_date !== null ? "Promessa feita há " + moment(model.evidence_date).fromNow() + " • " : "" %>
-            Registrada por 
-            <a href="/usuario/<%= model.registered_by_user.username %>">
-              <%= model.registered_by_user.name %>
-            </a>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <span class="social pull-right">              
-            <a class="icon icon-facebook" href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
-            <a class="icon icon-twitter" href="http://twitter.com/share?url=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
-            <a class="icon icon-googleplus" href="https://plus.google.com/share?url=www.promessadepolitico.com.br/promessa/<%= model.politicianSlug %>/<%= model.id %>/<%= model.slug %>" title="Compartilhe essa promessa no Google+" target="_blank"></a>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>            
-</script> 
+<script src="/js/commonComponents.js"></script>
 <script>
   $(".promises-stats input").knob();
 
-  var CategoryModel = Backbone.Model.extend();
-  var CategoriesCollection = Backbone.Collection.extend({model: CategoryModel});
-  var CategoriesView = Backbone.View.extend({
-    el: ".categories-list",
-    template: _.template($("#categories_list_template").html()),
-    events: {
-      "click .list-group-item": "selectCategory"
-    },
-    initialize: function(options) {      
-      _.extend(this, _.pick(options, "data"));        
-      this.render();
-    },
-    render: function() {
-      this.$el.html(this.template({collection: this.collection.toJSON(), data: this.data}));
-      return this;
-    },
-    selectCategory: function(ev) {
-      var view = this;
-      var target = $(ev.currentTarget);
-      $.get("/politico/" + this.data.politician.id + "/categoria/" + target.data("category") + "/promessas", function(data) {
-        view.data.promisesView.collection.set(window.viewHelpers.getPromises(data));
-        view.data.promisesView.render();
-        view.data.category
-        view.render();
-      });
-    }
-  });
-
-  var PromiseModel = Backbone.Model.extend({
-    defaults: {
-      totalVotes: 0,
-      totalComments: 0,
-      totalEvidences: 0,
-    }
-  });
-  var PromisesCollection = Backbone.Collection.extend({model: PromiseModel});
-  var PromiseView = Backbone.View.extend({
-    template: _.template($("#promise_item_template").html()),
-    tagName: "li",
-    events: {
-      "click .promise-vote": "voteInPromise"
-    },
-    initialize: function() {
-      this.listenTo(this.model, 'change', this.render);
-    },
-    render: function() {      
-      this.$el.html(this.template({model: this.model.toJSON()}));
-      this.promiseVoteLink = this.$(".promise-vote");
-      return this;
-    },
-    voteInPromise: function() {
-      if(this.model.get("voted")) {
-        this.model.set({"voted": false, "totalVotes": this.model.get("totalVotes") - 1});
-      } else {
-        this.model.set({"voted": true, "totalVotes": this.model.get("totalVotes") + 1});
-      }
-    }
-  });
-  var PromisesView = Backbone.View.extend({
-    el: ".promises-list",
-    initialize: function() {
-      this.render();
-    },
-    render: function() { 
-      var view = this; 
-      view.$el.empty();    
-      this.collection.forEach(function(model) {
-        var promiseView = new PromiseView({model: model});
-        view.$el.append(promiseView.render().el);
-      });
-      return this;
-    }
-  });
-
-  var PromisesSectionModel = Backbone.View.extend();
-  var PromisesSectionView = Backbone.View.extend({
-    template: _.template($("#promises_section_template").html()),
-    el: ".promises-section",
-    initialize: function() {            
-      this.render();
-    },
-    render: function() {
-      console.log(this.template)
-      console.log(this.$el)
-      console.log(this.model)
-      this.$el.html(this.template({model: this.model.toJSON()}));
-      this.renderCategories();
-      this.renderPromises();
-      return this;
-    },
-    renderCategories: function() {
-      var categoriesCollection = new CategoriesCollection(this.model.categories);
-      this.categoriesView = new CategoriesView({
-        collection: categoriesCollection,
-        data: {politician: data.politician, category: data.category}
-      });
-    },
-    renderPromises: function() {
-      var promises = window.viewHelpers.getPromises(this.model);
-      var promisesCollection = new PromisesCollection(promises);
-      this.promisesView = new PromisesView({collection: promisesCollection});
-    }
-  });
-
   var data = {{ data|jsonString }};
-
-  var promisesSectionModel = new PromisesSectionModel(data);
-  var promisesSectionView = new PromisesSectionView({model: promisesSectionModel});
   
+  angular
+    .module("politicianApp", ["commonComponents", "angularMoment"])
+      .config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol("<%");
+        $interpolateProvider.endSymbol("%>");
+      })    
+      .controller("politicianController", ["$scope", "politicianService", "promisesService", function($scope, politicianService, promisesService) {
+        $scope.mergeData = function(data) {
+          for (var attr in data) { 
+            $scope[attr] = data[attr]; 
+          }        
+        };
+        $scope.mergeData(data);
+        $scope.tabId = "LatestPromises";
+        $scope.newPromise = {state: "", evidence_date: moment().toDate(), evidences: [""]};
+        $scope.totalPoliticianUpUsersVotes = function() {
+          return "UP" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["UP"] : 0;
+        };   
+        $scope.totalPoliticianDownUsersVotes = function() {
+          return "DOWN" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["DOWN"] : 0;
+        };  
+        $scope.incrementTotalPoliticianUsersVotes = function(vote_type) {
+          $scope.totalPoliticianUsersVotes[vote_type] = vote_type in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes[vote_type] + 1 : 1;
+        };
+        $scope.decrementTotalPoliticianUsersVotes = function(vote_type) {
+          $scope.totalPoliticianUsersVotes[vote_type] = vote_type in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes[vote_type] + -1 : 0;
+        };
+        $scope.votedInPolitician = function(vote_type) {
+          return $scope.politicianUserVote && $scope.politicianUserVote.vote_type === vote_type;
+        };
+        $scope.voteInPolitician = function(vote_type) { 
+          if($scope.user) { 
+            var oldPoliticianUserVote = $scope.politicianUserVote;
+            politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {
+              if(response.data.result === "SUCCESS") {
+                $scope.politicianUserVote = response.data.data.politicianUserVote;
+                if($scope.politicianUserVote) {
+                  if($scope.politicianUserVote.vote_type === "UP") {                    
+                    $scope.incrementTotalPoliticianUsersVotes("UP");
+                  } else {
+                    $scope.incrementTotalPoliticianUsersVotes("DOWN");
+                  }
+                  if(oldPoliticianUserVote) {
+                    $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
+                  }
+                } else {
+                  $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);
+                }
+              }
+            });
+          }
+        };
+        $scope.totalPromisesOfCategory = function(category) {     
+          var totalPromises = $scope.totalPromisesByCategory[category.id];
+          if(!totalPromises) {
+            totalPromises = 0;
+          }
+          return totalPromises;
+        };
+        $scope.totalPromiseUsersVotes = function(promise) {
+          var totalVotes = $scope.totalUsersVotesByPromise[promise.id];
+          if(!totalVotes) {
+            totalVotes = 0;
+          }
+          return totalVotes;
+        };
+        $scope.incrementTotalPromiseUsersVotes = function(promise) {
+          var totalVotes = $scope.totalPromiseUsersVotes(promise);
+          totalVotes++;
+          $scope.totalUsersVotesByPromise[promise.id] = totalVotes;
+        };
+        $scope.decrementTotalPromiseUsersVotes = function(promise) {
+          var totalVotes = $scope.totalPromiseUsersVotes(promise);
+          if(totalVotes > 0) {
+            totalVotes--;
+          }
+          $scope.totalUsersVotesByPromise[promise.id] = totalVotes;
+        };
+        $scope.totalPromiseUsersComments = function(promise) {    
+          var totalUsersComments = $scope.totalUsersCommentsByPromise[promise.id];
+          if(!totalUsersComments) {
+            totalUsersComments = 0;
+          }
+          return totalUsersComments;
+        };
+        $scope.totalPromiseEvidences = function(promise) {
+          var totalEvidences = $scope.totalEvidencesByPromise[promise.id];
+          if(!totalEvidences) {
+            totalEvidences = 0;
+          }
+          return totalEvidences;
+        };
+        $scope.votedOnPromise = function(promise) {
+          var voted = false;
+          if($scope.userVotesByPromise) { 
+            voted = promise.id in $scope.userVotesByPromise;          
+          }
+          return voted;
+        };
+        $scope.voteOnPromise = function(promise) {
+          if($scope.user) {
+            promisesService.voteOnPromise($scope.user, promise).then(function(response) {
+              if(response.data.result === "SUCCESS") {
+                var promiseUserVote = response.data.data.promiseUserVote;
+                if(promiseUserVote) {
+                  $scope.userVotesByPromise[promise.id] = promiseUserVote;
+                  $scope.incrementTotalPromiseUsersVotes(promise);
+                } else {
+                  delete $scope.userVotesByPromise[promise.id];
+                  $scope.decrementTotalPromiseUsersVotes(promise);                  
+                }
+              } else {
+
+              }
+            });
+          }
+        };   
+        $scope.isCurrentCategory = function(category) {
+          return $scope.category.id === category.id;
+        };
+        $scope.selectCategory = function(category) {
+          promisesService.getPromises($scope.politician, category).then(function(response) {
+            $scope.mergeData(response.data.data);            
+            $scope.category = category;
+          });
+        };
+        $scope.isCurrentTab = function(tabId) {
+          return $scope.tabId === tabId;
+        };
+        $scope.selectTab = function(tabId) {
+          var resources = {
+            "AllPromises": promisesService.getAllPromises,
+            "LatestPromises": promisesService.getLatestPromises,
+            "MajorPromises": promisesService.getMajorPromises,
+            "OlderPromises": promisesService.getOlderPromises
+          }
+          NProgress.start();
+          NProgress.set(50);
+          resources[tabId]($scope.politician).then(function(response) {
+            $scope.mergeData(response.data.data);
+            $scope.tabId = tabId;
+            NProgress.done();
+          });          
+        };
+        $scope.isFirstIndex = function(index) {
+          return index === 0;
+        };
+        $scope.isPromiseStateChoosed = function(state) {
+          return $scope.newPromise.state === state;
+        };
+        $scope.choosePromiseState = function(state) {
+          return $scope.newPromise.state = state;
+        };
+        $scope.addOneMoreEvidence = function() {
+          $scope.newPromise.evidences.push("");
+        }
+        $scope.registerPromise = function() {
+          console.log($scope.newPromise);
+        }
+      }]);
 </script>
 {% endblock %}

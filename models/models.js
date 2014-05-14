@@ -48,8 +48,9 @@ var PoliticianCoverPhoto = Bookshelf.Model.extend({
   tableName: 'politician_cover_photo'
 });
 
-var PoliticianVote = Bookshelf.Model.extend({
-  tableName: 'politician_vote'  
+var PoliticianUserVote = Bookshelf.Model.extend({
+  tableName: 'politician_user_vote',
+  idAttribute: ['politician_id', 'user_id']
 });
 
 var Promise = Bookshelf.Model.extend({
@@ -62,6 +63,9 @@ var Promise = Bookshelf.Model.extend({
   },
   registered_by_user: function() {
     return this.belongsTo(User, 'registered_by_user_id');
+  },
+  evidences: function() {
+    return this.hasMany(PromiseEvidence, 'promise_id');
   }
 });
 
@@ -73,12 +77,14 @@ var PromiseEvidence = Bookshelf.Model.extend({
   tableName: 'promise_evidence'  
 });
 
-var PromisePriorityVote = Bookshelf.Model.extend({
-  tableName: 'promise_priority_vote'  
+var PromiseUserVote = Bookshelf.Model.extend({
+  tableName: 'promise_user_vote',
+  idAttribute: ['promise_id', 'user_id']
 });
 
-var PromiseComment = Bookshelf.Model.extend({
-  tableName: 'promise_comment'  
+var PromiseUserComment = Bookshelf.Model.extend({
+  tableName: 'promise_user_comment',
+  idAttribute: ['promise_id', 'user_id'] 
 });
 
 module.exports = {
@@ -88,11 +94,11 @@ module.exports = {
   PoliticalOffice: PoliticalOffice,
   Politician: Politician,
   PoliticianCoverPhoto: PoliticianCoverPhoto,
-  PoliticianVote: PoliticianVote,
+  PoliticianUserVote: PoliticianUserVote,
   Promise: Promise,
   PromiseCategory: PromiseCategory,
   PromiseEvidence: PromiseEvidence,
-  PromisePriorityVote: PromisePriorityVote,
-  PromiseComment: PromiseComment,
+  PromiseUserVote: PromiseUserVote,
+  PromiseUserComment: PromiseUserComment,
   Bookshelf: Bookshelf
 }

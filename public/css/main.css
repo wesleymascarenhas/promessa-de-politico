@@ -1,7 +1,15 @@
 body {
   min-height: 2000px;
   padding-top: 50px;
-  font-family: "Ubuntu", "sans-serif";
+  font-family: "Open Sans", "sans-serif";
+}
+
+.grey-text {
+  color: #555;
+}
+
+.grey-text a {
+  color: #555;
 }
 
 a:hover {
@@ -63,6 +71,10 @@ a:hover {
 
 .page-section {
   margin-top: 10px;
+}
+
+.space {
+  margin: 10px;
 }
 
 .icon {
@@ -167,11 +179,11 @@ a:hover {
 }
 
 .politician-infos .popover {
-position: relative;
-display: block;
-float: right;
-width: 260px;
-margin: 20px;
+  position: relative;
+  display: block;
+  float: right;
+  width: 260px;
+  margin: 20px;
 }
 
 .promises-menu {
@@ -203,7 +215,6 @@ margin: 20px;
 }
 
 .promise-title a {
-  color: #555;
   line-height: 150%;
 }
 
@@ -232,13 +243,35 @@ margin: 20px;
   text-align: center;
 }
 
+.promise .header {
+  border-bottom: 1px solid #ddd;
+  color: #555;
+}
+
 .promise .title {
-  border-bottom: solid 1px #e7e7e7;
+  font-size: 30px;
+}
+
+.promise .description {
+  text-align: justify;
+}
+
+.promise .dates {
+  margin-top: 20px;
+}
+
+.promise .evidences .media {
+  display: inline-block;
+  margin-bottom: 0px;
 }
 
 .promise .aditional-infos {
   margin-left: 20px;
   font-size: 16px;
+}
+
+.promise-label-info {
+  font-size: 12px;
 }
 
 .comments {

@@ -5,3 +5,9 @@ exports.randomInt = function(min, max) {
 exports.randomIndex = function(collection) {
   return this.randomInt(0, collection.length - 1);
 }
+
+exports.merge = function(first, second) {
+  for (var attr in first) { 
+    second[attr] = first[attr]; 
+  }
+}

@@ -1,30 +1,11 @@
-var promiseCategoryService = require('../apis/promiseCategoryService'),
-    politicianService      = require('../apis/politicianService'),
+var politicianService      = require('../apis/politicianService'),
     promiseService         = require('../apis/promiseService'),
+    promiseCategoryService = require('../apis/promiseCategoryService'),
     viewService            = require('../apis/viewService'),
-    helper                 = require('../utils/helper'),
-    Promise                = require('bluebird');
+    BluebirdPromise        = require('bluebird'),
+    helper                 = require('../utils/helper');
 
 module.exports = function(app, passport) {
-
-  app.get('/politico/:politicianId/categoria/:categoryId/promessas', function(req, res, next) {
-    var user = req.user;
-    var politician = politicianService.forge({id: req.params.politicianId});
-    var category = promiseCategoryService.forge({id: req.params.categoryId});
-
-    var results = {politician: politician, category: category};
-    viewService.loadPromises(politician, category, user, results)
-    .then(function() {
-      if(results.next && results.next === true) {
-        next();
-      } else {
-        res.json(results);
-      }
-    }).catch(function(err) {
-      console.log(err.stack);
-      next(err);
-    });
-  });
 
   app.get('/politico/:politicianSlug', function(req, res, next) {
     var user = req.user;
@@ -34,32 +15,37 @@ module.exports = function(app, passport) {
     .then(function(politician) {
       if(!politician) {
         results.next = true;
-      } else {
-        results.politician = politician;
-        return promiseService.count(politician)
-        .then(function(totalPromises) {   
-          results.totalPromises = totalPromises;
-          if(totalPromises > 0) {
-            return Promise.all([promiseCategoryService.findByPolitician(results.politician), promiseService.countGroupingByState(results.politician), promiseService.countGroupingByCategory(results.politician)])
-            .spread(function(categories, totalPromisesByState, totalPromisesByCategory) {
-              results.categories = categories;
-              results.category = categories.at(helper.randomIndex(categories));    
-              results.totalPromisesByCategory = totalPromisesByCategory;          
-              results.totalPromisesByState = totalPromisesByState;
-              results.promisesFulfilledPercentage = results.totalPromisesByState['FULFILLED'] * results.totalPromises / 100;
-              return viewService.loadPromises(results.politician, results.category, user, results);
-            });
-          }
-        });
-      }
-    }).then(function() {
+        return results;
+      } 
+      results.user = user;
+      results.politician = politician;
+      return BluebirdPromise.all([promiseCategoryService.findAll(), promiseService.count(politician), politicianService.countUsersVotes(politician), user ? politicianService.getUserVote(user, politician) : null])
+      .spread(function(categories, totalPromises, totalPoliticianUsersVotes, politicianUserVote) {   
+        results.categories = categories;
+        results.totalPromises = totalPromises;
+        results.totalPoliticianUsersVotes = totalPoliticianUsersVotes;
+        results.politicianUserVote = politicianUserVote;
+        if(totalPromises === 0) {
+          return results;
+        } else {
+          return promiseService.countGroupingByState(results.politician)
+          .then(function(totalPromisesByState) {
+            results.totalPromisesByState = totalPromisesByState;
+            results.promisesFulfilledPercentage = totalPromisesByState['FULFILLED'] * results.totalPromises / 100;              
+            return viewService.getLatestPromises(results.user, results.politician).then(function(vars) {
+              helper.merge(vars, results);
+              return results;
+            });               
+          });
+        }
+      });     
+    }).then(function() {      
       if(results.next && results.next === true) {
         next();
       } else {
         res.render("politician.html", {data: results});
       }
     }).catch(function(err) {
-      console.log(err.stack);
       next(err);
     });    
   });

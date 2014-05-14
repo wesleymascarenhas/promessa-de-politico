@@ -1,13 +1,72 @@
-var Politician = require('../models/models').Politician;
+var Politician          = require('../models/models').Politician,
+    PoliticianUserVote  = require('../models/models').PoliticianUserVote,
+    Bookshelf           = require('../models/models').Bookshelf,
+    BluebirdPromise     = require('bluebird'),
+    _                   = require('underscore');
 
 exports.forge = function(data) {
   return Politician.forge(data);
 }
 
 exports.findById = function(politician_id, relateds) {
-  return Politician.forge({politician_id: politician_id}).fetch({withRelated: relateds});
+  return this.forge({politician_id: politician_id}).fetch({withRelated: relateds});
 }
 
 exports.findBySlug = function(slug, relateds) {
-  return Politician.forge({slug: slug}).fetch({withRelated: relateds});
+  return this.forge({slug: slug}).fetch({withRelated: relateds});
+}
+
+exports.getUserVote = function(user, politician) {
+  return PoliticianUserVote.forge({user_id: user.id, politician_id: politician.id}).fetch();
+}
+
+exports.vote = function(user, politician, vote_type) {
+  return new BluebirdPromise(function(resolve, reject) {
+    var politicianUserVote = PoliticianUserVote.forge({user_id: user.id, politician_id: politician.id});
+    politicianUserVote.fetch().then(function(userVote) {
+      if(userVote) {
+        if(vote_type === userVote.get('vote_type')) {
+          Bookshelf.knex('politician_user_vote')        
+          .where('user_id', user.id)
+          .andWhere('politician_id', politician.id)
+          .del().then(function(rowsDeleted) {
+            resolve(null);
+          }).catch(function(err) {
+            reject(err);
+          });          
+        } else {
+          Bookshelf.knex('politician_user_vote')        
+          .where('user_id', user.id)
+          .andWhere('politician_id', politician.id)
+          .update({'vote_type': vote_type}).then(function(rowsUpdated) {
+            politicianUserVote.set('vote_type', vote_type);
+            resolve(politicianUserVote);
+          }).catch(function(err) {
+            reject(err);
+          });
+        }
+      } else {
+        politicianUserVote.set('vote_type', vote_type);
+        resolve(politicianUserVote.save());
+      }
+    });
+  });
+}
+
+exports.countUsersVotes = function(politician) {
+  return new BluebirdPromise(function(resolve, reject) {
+    Bookshelf.knex('politician_user_vote')
+    .select(Bookshelf.knex.raw('vote_type, count(*) as votes'))
+    .where('politician_id', politician.id)
+    .groupBy('vote_type')
+    .then(function(counts) {      
+      var countsMap = {};
+      _.each(counts, function(count) {
+        countsMap[count.vote_type] = count.votes;
+      });
+      resolve(countsMap);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
 }
