@@ -39,6 +39,32 @@ module.exports = function(app, passport) {
     getLatestPromises: function(user, params) {
       var politician = politicianService.forge({id: params[0]});
       return viewService.getLatestPromises(user, politician);
+    },
+    getAllCategories: function(user, params) {
+      return viewService.getAllCategories();
+    },
+    editPromise: function(user, params) {
+      var promiseData = params[0];
+      var promiseDataFormatted = {
+        id: promiseData.id,
+        title: promiseData.title,
+        description: promiseData.description,
+        evidence_date: promiseData.evidence_date,
+        state: promiseData.state,
+        category_id: promiseData.category_id,
+      };
+      var evidencesData = [];
+      for(index in promiseData.evidences) {
+        var evidence = promiseData.evidences[index];
+        if(!evidence.id && evidence.url) {
+          evidence.promise_id = promiseDataFormatted.id;
+          evidence.registered_by_user_id = user.id;
+          evidencesData.push(evidence);
+        }
+      }      
+      var promise = promiseService.forge(promiseDataFormatted);    
+      var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
+      return viewService.editPromise(promise, evidences);
     }
   }
 

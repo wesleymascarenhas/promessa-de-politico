@@ -38,8 +38,8 @@
         },
         relativeTime : {
             future : "em %s",
-            past : "%s atrás",
-            s : "segundos",
+            past : "há %s",
+            s : "alguns segundos",
             m : "um minuto",
             mm : "%d minutos",
             h : "uma hora",

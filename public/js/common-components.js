@@ -10,14 +10,16 @@ angular
         replace: true,
         template: "<span class='label label-<% getCssClass(for) %>'><% getLabelText(for, count) %></span>",
         link: function($scope, element, attrs) {       
-          $scope.getCssClass = function(value) {
-            var cssClass = "";
-            if (value === "NONE") {
+          $scope.getCssClass = function(forValue) {
+            var cssClass = ""; 
+            if(forValue === "NON_STARTED") {
               cssClass = "default";
-            } else if(value === "STARTED") {
-              cssClass = "warning";              
-            } else if(value === "FULFILLED") {
+            } else if(forValue === "STARTED") {
+              cssClass = "info";              
+            } else if(forValue === "FULFILLED") {
               cssClass = "success";
+            } else if(forValue === "PARTIALLY_FULFILLED") {
+              cssClass = "warning"
             } else {
               cssClass = "danger";
             }
@@ -25,12 +27,14 @@ angular
           };
           $scope.getLabelText = function(forValue, countValue) {
             var labelText = "";
-            if (forValue === "NONE") {
-              labelText = "Sem informação";
+            if(forValue === "NON_STARTED") {
+              labelText = "Não iniciou";
             } else if(forValue === "STARTED") {
               labelText = "Iniciada";              
             } else if(forValue === "FULFILLED") {
               labelText = "Cumprida";
+            } else if (forValue === "PARTIALLY_FULFILLED") {
+              labelText = "Cumprida Parcialmente";
             } else {
               labelText = "Descartada";
             }
@@ -47,7 +51,7 @@ angular
         return $http.post("/ajax", {key: "voteInPolitician", params: [politician.id, vote_type]});
       }  
     }])
-    .service("promisesService", ["$http", function($http) {
+    .service("promiseService", ["$http", function($http) {
       this.getPromises = function(politician, category) {
         return $http.get("/ajax?key=getPromises&params[0]=" + politician.id + "&params[1]=" + category.id);
       }
@@ -63,7 +67,15 @@ angular
       this.getLatestPromises = function(politician) {
         return $http.get("/ajax?key=getLatestPromises&params[0]=" + politician.id);
       }
-      this.voteOnPromise = function(user, promise) {
+      this.voteOnPromise = function(promise) {
         return $http.post("/ajax", {key: "voteOnPromise", params: [promise.id]});
+      }
+      this.editPromise = function(data) {
+        return $http.post("/ajax", {key: "editPromise", params: [data]});
+      }
+    }])
+    .service("promiseCategoryService", ["$http", function($http) {
+      this.getAllCategories = function() {
+        return $http.get("/ajax?key=getAllCategories");
       }
     }]);

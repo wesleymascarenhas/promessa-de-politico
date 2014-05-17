@@ -1,6 +1,7 @@
 var Bookshelf           = require('../models/models').Bookshelf,
     Promise             = require('../models/models').Promise,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
+    PromiseEvidences     = require('../models/models').PromiseEvidences,
     bookshelfUtils      = require('../utils/bookshelfUtils'),
     BluebirdPromise     = require('bluebird'),
     _                   = require('underscore');
@@ -10,7 +11,11 @@ exports.forge = function(data) {
 }
 
 exports.forgeCollection = function(data) {
-  return Promise.collection.forge(data);
+  return Promise.collection().forge(data);
+}
+
+exports.forgeEvidenceCollection = function(data) {
+  return PromiseEvidences.forge(data);
 }
 
 exports.findById = function(promise_id, relateds) {
@@ -199,14 +204,17 @@ exports.countGroupingByState = function(politician) {
       _.each(promisesCountsByState, function(promiseCountByState) {
         mapByState[promiseCountByState.state] = promiseCountByState.promises;
       });
-      if(!mapByState['NONE']) {
-        mapByState['NONE'] = 0;
+      if(!mapByState['NON_STARTED']) {
+        mapByState['NON_STARTED'] = 0;
       }
       if(!mapByState['STARTED']) {
         mapByState['STARTED'] = 0;
       }
       if(!mapByState['FULFILLED']) {
         mapByState['FULFILLED'] = 0;
+      }
+      if(!mapByState['PARTIALLY_FULFILLED']) {
+        mapByState['PARTIALLY_FULFILLED'] = 0;
       }
       if(!mapByState['DISCARDED']) {
         mapByState['DISCARDED'] = 0;
@@ -256,4 +264,8 @@ exports.vote = function(user, promise) {
       }
     });
   });
+}
+
+exports.update = function(promise) {
+  return promise.save();
 }

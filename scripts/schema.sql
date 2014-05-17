@@ -106,23 +106,26 @@ create table promise_category (
 ) engine = innodb default charset = utf8;
 
 create table promise (
-  id                    int(11) not null auto_increment,
-  title                 text not null,
-  description           text default null,
-  slug                  varchar(255) not null,
-  evidence_date         date default null,
-  state                 enum('NONE', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'DISCARDED') not null,
-  category_id           int(11) not null,
-  politician_id         int(11) not null,
-  registered_by_user_id int(11) not null,
-  registration_date     timestamp default current_timestamp,
+  id                      int(11) not null auto_increment,
+  title                   text not null,
+  description             text default null,
+  slug                    varchar(255) not null,
+  evidence_date           date default null,
+  state                   enum('NON_STARTED', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'DISCARDED') not null,
+  category_id             int(11) not null,
+  politician_id           int(11) not null,
+  registered_by_user_id   int(11) not null,
+  last_edited_by_user_id  int(11) not null,
+  registration_date       timestamp default current_timestamp,
   primary key (id),
   key `fk_promise_category` (`category_id`),
   key `fk_promise_politician` (`politician_id`),
   key `fk_promise_registered_by_user` (`registered_by_user_id`),
+  key `fk_promise_last_edited_by_user` (`last_edited_by_user_id`),
   constraint `fk_promise_category` foreign key (`category_id`) references `promise_category` (`id`),
   constraint `fk_promise_politician` foreign key (`politician_id`) references `politician` (`id`),
-  constraint `fk_promise_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`)
+  constraint `fk_promise_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`),
+  constraint `fk_promise_last_edited_by_user` foreign key (`last_edited_by_user_id`) references `user` (`id`)
 ) engine = innodb default charset = utf8;
 
 create table promise_evidence (

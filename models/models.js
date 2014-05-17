@@ -77,6 +77,10 @@ var PromiseEvidence = Bookshelf.Model.extend({
   tableName: 'promise_evidence'  
 });
 
+var PromiseEvidences = Bookshelf.Collection.extend({
+  model: PromiseEvidence
+});
+
 var PromiseUserVote = Bookshelf.Model.extend({
   tableName: 'promise_user_vote',
   idAttribute: ['promise_id', 'user_id']
@@ -98,6 +102,7 @@ module.exports = {
   Promise: Promise,
   PromiseCategory: PromiseCategory,
   PromiseEvidence: PromiseEvidence,
+  PromiseEvidences: PromiseEvidences,
   PromiseUserVote: PromiseUserVote,
   PromiseUserComment: PromiseUserComment,
   Bookshelf: Bookshelf

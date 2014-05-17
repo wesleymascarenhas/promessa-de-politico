@@ -7,6 +7,10 @@ var politicianService      = require('../apis/politicianService'),
 
 module.exports = function(app, passport) {
 
+  app.get('/index.html', function(req, res, next) {
+    res.render('index.html');
+  });
+
   app.get('/politico/:politicianSlug', function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;

@@ -36,11 +36,13 @@ exports.getPromises = function(user, politician, category) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
     var vars = {};
-    that.findAllByPoliticianAndCategory(politician, category, ['registered_by_user'])
+    promiseService.findAllByPoliticianAndCategory(politician, category, ['registered_by_user'])
     .then(function(promises) {         
       vars.promises = promises;
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
+      }).catch(function(err) {
+        reject(err);
       });
     });
   });
@@ -60,7 +62,11 @@ exports.getAllPromises = function(user, politician) {
         vars.promises = promises;
         that.fillPromises(user, vars).then(function() {
           resolve(vars);
+        }).catch(function(err) {
+          reject(err);
         });
+      }).catch(function(err) {
+        reject(err);
       });
     });
   });
@@ -77,6 +83,8 @@ exports.getOlderPromises = function(user, politician) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
+      }).catch(function(err) {
+        reject(err);
       });
     });
   });
@@ -89,7 +97,21 @@ exports.getLatestPromises = function(user, politician) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
+      }).catch(function(err) {
+        reject(err);
       });
+    });
+  });
+}
+
+exports.getAllCategories = function() {
+  return new BluebirdPromise(function(resolve, reject) {
+    var vars = {};
+    promiseCategoryService.findAll().then(function(categories) {
+      vars.categories = categories;
+      resolve(vars);
+    }).catch(function(err) {
+      reject(err);
     });
   });
 }
@@ -108,6 +130,21 @@ exports.voteInPolitician = function(user, promise, vote_type) {
   return new BluebirdPromise(function(resolve, reject) {
     politicianService.vote(user, promise, vote_type).then(function(politicianUserVote) {
       resolve({politicianUserVote: politicianUserVote});
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.editPromise = function(promise, evidences) {
+  return new BluebirdPromise(function(resolve, reject) {
+    promiseService.update(promise).then(function(promise) {
+      evidences.invokeThen('save').then(function(evidences) {
+        BluebirdPromise.all([promiseService.findById(promise.id, ['category', 'evidences']), promiseService.countEvidences(promise)])
+        .spread(function(promise, totalPromiseEvidences) {
+          resolve({promise: promise, totalPromiseEvidences: totalPromiseEvidences});        
+        });
+      });
     }).catch(function(err) {
       reject(err);
     });

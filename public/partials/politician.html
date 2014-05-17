@@ -1,10 +1,4 @@
-{% extends "template.html" %}
-
-{% block stylesheets %}
-{% endblock %}
-
-{% block content %}
-<div ng-app="politicianApp" ng-controller="politicianController">
+<div ng-controller="politicianController">
   <section class="politician-cover">
     <div id="politician-carousel" class="carousel slide" data-ride="carousel">
       <!-- Wrapper for slides -->
@@ -237,9 +231,8 @@
     </div>
   </section>
 </div>
-{% endblock %}
 
-{% block scripts %}
+
 <script src="/js/jquery.knob.js"></script>
 <script src="/js/common-components.js"></script>
 <script>
@@ -396,4 +389,3 @@
         };       
       }]);
 </script>
-{% endblock %}

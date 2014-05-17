@@ -11,7 +11,6 @@ exports.getAttributesMap = function(model, attributes) {
 exports.getIds = function(collection) {
   var ids = [];
   collection.forEach(function(model) {
-    console.log("ID: " + model.id)
     ids.push(model.id);
   });
   return ids;
