@@ -115,19 +115,25 @@
         </div>      
       </div>   
       <div ng-show="isRegistering() || isEditing()" class="header">
-        <form>
+        <form name="promiseForm" novalidate>
           <div class="form-group" ng-if="isEditing()">
-            <button ng-click="saveEdition()" type="button" class="btn btn-primary">Salvar</button>
+            <button ng-click="saveEdition()" type="button" class="btn btn-primary" ng-disabled="promiseForm.$invalid">Salvar</button>
             <button ng-click="cancelEdition()" type="button" class="btn btn-default">Cancelar</button>
           </div>
           <div class="form-group" ng-if="isRegistering()">
             <button ng-click="registerPromise()" type="button" class="btn btn-primary">Registar</button>
           </div>
-          <div class="form-group">
-            <input ng-model="editedPromise.title" type="text" class="form-control" placeholder="O título da promessa" required>
+          <div class="form-group" ng-class="{'has-error': promiseForm.title.$invalid && !promiseForm.title.$pristine}">
+            <label class="control-label" for="title" ng-show="promiseForm.title.$invalid && !promiseForm.title.$pristine">É obrigatório informar o título da promessa</label>
+            <div class="required-field-block">
+              <input ng-model="editedPromise.title" type="text" id="title" name="title" class="form-control" placeholder="O título da promessa" required>
+              <div class="required-icon">
+                  <div class="text">*</div>
+              </div>
+            </div>
           </div>
           <div class="form-group">
-            <textarea ng-model="editedPromise.description" class="form-control" placeholder="Um resumo da promessa"></textarea>
+            <textarea ng-model="editedPromise.description" name="description" class="form-control" placeholder="Uma breve descrição da promessa"></textarea>
           </div> 
           <div class="form-group" style="height: 33px;">
             <div class="pull-left" style="width: 270px; margin-right: 10px;">                    
@@ -178,11 +184,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Data em que a promessa foi feita *</label>
-            <input ng-model="editedPromise.evidence_date" type="date" class="form-control" style="width: 270px;" min="1980-01-01" required/>
+            <label>Data em que a promessa foi feita</label>
+            <input ng-model="editedPromise.evidence_date" type="date" class="form-control" style="width: 270px;" min="1980-01-01"/>
           </div>        
           <div class="evidences form-group">
-            <label>Links de vídeos ou notícias que comprovam essa promessa *</label>
+            <label>Links de vídeos ou notícias que comprovam essa promessa</label>
             <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
               <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
             </div>
