@@ -4,19 +4,21 @@
 {% endblock %}
 
 {% block content %}
-<div class="container" ng-app="promiseApp" ng-controller="promiseController">  
+<div class="container" ng-controller="promiseController">  
   <div class="page-section align-right">
-    <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
-    <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
-    <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+    <div ng-if="!isRegistering()">
+      <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
+      <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
+      <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+    </div>
   </div>
   <div class="row">
     <div class="politician well col-md-3 align-center">
-      <a ng-href="/politico/<% promise.politician.slug %>">
-        <img ng-src="/img/politicians/<% promise.politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">
+      <a ng-href="/politico/<% politician.slug %>">
+        <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">
       </a>
       <h3>
-        <b><a href="/politico/<% promise.politician.slug %>"><% promise.politician.name %></a></b>
+        <b><a href="/politico/<% politician.slug %>"><% politician.name %></a></b>
       </h3>
       <div class="votes">
         <div class="vote">
@@ -42,329 +44,196 @@
       </div>
     </div>
     <div class="promise col-md-9">
-      <div ng-show="!isEditing()" class="header">
-        <p class="title"><% promise.title %></p>
-        <p class="description"><% promise.description %></p>
-        <h4>
-          <span class="label label-info"><% promise.category.name %></span>
-          <span>
-            <promise-state for="<% promise.state %>"/></promise-state>
-          <span>
-            •
-            <a class="vote" ng-click="voteOnPromise()">
-              Prioridade! <span ng-show="votedOnPromise()">(Desfazer)</span>
-            </a>
-          </span>
-          <span>
-            •
-            <span class="glyphicon glyphicon-star"></span>
-            <% totalPromiseUsersVotes %>
-            •
-            <span class="glyphicon glyphicon-comment"></span>
-            <% totalPromiseUsersComments %>          
-            •
-            <span class="glyphicon glyphicon-paperclip"></span>
-            <% totalPromiseEvidences %>
-          </span>
-        </h4>
-        <div class="overflow-hidden">
-          <div class="pull-left">
-            <h4 class="dates">
-                <span ng-if="promise.evidence_date">           
-                  Promessa feita <span am-time-ago="promise.evidence_date"></span>
-                  •
-                </span> 
-                Registrada por
-                <a href="/usuario/<% promise.registered_by_user.username %>">
-                  <% promise.registered_by_user.name %>
-                </a>
-                <span am-time-ago="promise.registration_date"></span>
-            </h4>
+      <div ng-if="!isRegistering()">
+        <div ng-show="!isEditing()" class="header">
+          <p class="title"><% promise.title %></p>
+          <p class="description"><% promise.description %></p>
+          <h4>
+            <span class="label label-info"><% promise.category.name %></span>
+            <span>
+              <promise-state for="<% promise.state %>"/></promise-state>
+            </span>
+            <span>
+              •
+              <a class="vote" ng-click="voteOnPromise()">
+                Prioridade! <span ng-show="votedOnPromise()">(Desfazer)</span>
+              </a>
+            </span>
+            <span>
+              •
+              <span class="glyphicon glyphicon-star"></span>
+              <% totalPromiseUsersVotes %>
+              •
+              <span class="glyphicon glyphicon-comment"></span>
+              <% totalPromiseUsersComments %>          
+              •
+              <span class="glyphicon glyphicon-paperclip"></span>
+              <% totalPromiseEvidences %>
+            </span>
+          </h4>
+          <div class="overflow-hidden">
+            <div class="pull-left">
+              <h4 class="dates">
+                  <span ng-show="promise.evidence_date">           
+                    Promessa feita <span am-time-ago="promise.evidence_date"></span>
+                    •
+                  </span> 
+                  Registrada por
+                  <a href="/usuario/<% promise.registered_by_user.username %>">
+                    <% promise.registered_by_user.name %>
+                  </a>
+                  <span am-time-ago="promise.registration_date"></span>
+              </h4>
+            </div>
+            <div class="pull-right">
+              <button ng-click="edit()" type="button" class="btn btn-default btn-small">Editar</button>
+            </div>
           </div>
-          <div class="pull-right">
-            <button ng-click="edit()" type="button" class="btn btn-default btn-small">Editar</button>
+          <div class="evidences page-section">
+            <div ng-repeat="evidence in promise.evidences" class="media" ng-class="{'hide': isHiddenEvidence($index)}">
+              <a class="pull-left" ng-href="<% evidence.url %>" target="_blank">
+                <img ng-show="!evidence.thumbnail" class="media-object" src="/img/news_64_64.png">
+                <img ng-show="evidence.thumbnail" class="media-object" ng-src="<% evidence.thumbnail %>" width="165">
+              </a>
+              <div class="media-body">
+                <h4 class="media-heading">
+                  <a ng-href="<% evidence.url %>" target="_blank"><% evidence.title %></a>
+                </h4>
+                <p>
+                  <% evidence.description %>
+                </p>
+                <a ng-href="<% evidence.url %>" target="_blank"><% evidence.host %></a>
+                <div class="media-host">
+                  Adicionado por 
+                  <a ng-href="/usuario/<% evidence.registered_by_user.username %>"><% evidence.registered_by_user.name %></a>
+                  <span am-time-ago="evidence.registration_date"></span>
+                </div>
+              </div>
+            </div>
+            <button ng-show="isHiddenEvidence(promise.evidences.length - 1)" ng-click="showAllEvidences()" class="btn btn-block btn-none" style="margin-top: 10px;">Exibir todas as evidências</button> 
           </div>
+        </div>      
+      </div>   
+      <div ng-show="isRegistering() || isEditing()" class="header">
+        <form>
+          <div class="form-group" ng-if="isEditing()">
+            <button ng-click="saveEdition()" type="button" class="btn btn-primary">Salvar</button>
+            <button ng-click="cancelEdition()" type="button" class="btn btn-default">Cancelar</button>
+          </div>
+          <div class="form-group" ng-if="isRegistering()">
+            <button ng-click="registerPromise()" type="button" class="btn btn-primary">Registar</button>
+          </div>
+          <div class="form-group">
+            <input ng-model="editedPromise.title" type="text" class="form-control" placeholder="O título da promessa" required>
+          </div>
+          <div class="form-group">
+            <textarea ng-model="editedPromise.description" class="form-control" placeholder="Um resumo da promessa"></textarea>
+          </div> 
+          <div class="form-group" style="height: 33px;">
+            <div class="pull-left" style="width: 270px; margin-right: 10px;">                    
+              <div class="btn-group" style="width: 100%;">
+                <button type="button" class="btn btn-info" style="width: 90%;"><% editedPromise.category.name %></button>
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-scroll" role="menu">
+                  <li ng-repeat="category in categories">
+                    <a ng-click="selectCategory(category)"><% category.name %></a>
+                  </li>                
+                </ul>
+              </div>
+            </div>          
+            <div class="pull-right">
+              <button type="button" class="btn" ng-click="choosePromiseState('NON_STARTED')" ng-class="
+                {
+                  'btn-default': !isPromiseStateChoosed('NON_STARTED'),
+                  'btn-none': isPromiseStateChoosed('NON_STARTED')
+                }
+              ">Não iniciou</button>
+              <button type="button" class="btn" ng-click="choosePromiseState('STARTED')" ng-class="
+                {
+                  'btn-default': !isPromiseStateChoosed('STARTED'),
+                  'btn-info': isPromiseStateChoosed('STARTED')
+                }
+              ">Iniciada</button>
+              <button type="button" class="btn" ng-click="choosePromiseState('FULFILLED')" ng-class="
+                {
+                  'btn-default': !isPromiseStateChoosed('FULFILLED'),
+                  'btn-success': isPromiseStateChoosed('FULFILLED')
+                }
+              ">Cumprida</button>
+              <button type="button" class="btn" ng-click="choosePromiseState('PARTIALLY_FULFILLED')" ng-class="
+                {
+                  'btn-default': !isPromiseStateChoosed('PARTIALLY_FULFILLED'),
+                  'btn-warning': isPromiseStateChoosed('PARTIALLY_FULFILLED')
+                }
+              ">Cumprida Parcialmente</button>
+              <button type="button" class="btn" ng-click="choosePromiseState('DISCARDED')" ng-class="
+                {
+                  'btn-default': !isPromiseStateChoosed('DISCARDED'),
+                  'btn-danger': isPromiseStateChoosed('DISCARDED')
+                }
+              ">Descartada</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Data em que a promessa foi feita *</label>
+            <input ng-model="editedPromise.evidence_date" type="date" class="form-control" style="width: 270px;" min="1980-01-01" required/>
+          </div>        
+          <div class="evidences form-group">
+            <label>Links de vídeos ou notícias que comprovam essa promessa *</label>
+            <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
+              <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
+            </div>
+            <form class="form-horizontal">
+              <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
+                <div>
+                  <div class="well">
+                    <div class="media-url input-group">
+                      <input ng-model="evidence.url" ng-paste="getEvidenceInfos(evidence, $event)" type="url" class="form-control" placeholder="Cole aqui a url da notícia ou vídeo" />
+                      <span class="input-group-btn" ng-show="!isLastEvidence($index)">
+                        <button ng-click="removeEvidence($index)" ng-confirm-click="Deseja realmente remover essa evidência ?" class="btn btn-danger" type="button">
+                          <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                      </span>
+                      <span class="input-group-btn" ng-show="isLastEvidence($index)">
+                        <button ng-click="addEvidence($index)" class="btn btn-success" type="button">
+                          <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                      </span>
+                    </div>
+                    <div ng-show="evidence.title" class="media grey-text">
+                      <a nf-show="evidence.thumbnail" class="pull-left" ng-href="<% evidence.url %>" target="_blank">
+                        <img class="media-object" ng-src="<% evidence.thumbnail %>" width="165">
+                      </a>
+                      <div class="media-body">
+                        <div class="form-group">
+                          <input ng-model="evidence.title" class="form-control" placeholder="Título da notícia/vídeo">
+                        </div>                      
+                        <div class="form-group">
+                          <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da notícia/vídeo" rows="3"></textarea>
+                        </div>
+                        <a ng-href="<% evidence.url %>"><% evidence.host %></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>   
+              </div>          
+            </form>          
+          </div>           
+        </form>
       </div>
-      <div class="evidences page-section">
-        <div ng-repeat="evidence in promise.evidences" class="media well grey-text">
-          <a class="pull-left" ng-href="<% evidence.url %>" target="_blank">
-            <img ng-if="isTextEvidence(evidence)" class="media-object" src="/img/news_64_64.png">
-            <img ng-if="isVideoEvidence(evidence)" class="media-object" src="/img/video_64_64.png">
-          </a>
-          <div class="media-body">
-            <h4 class="media-heading">
-              <a ng-href="<% evidence.url %>" target="_blank"><% evidence.title %></a>
-            </h4>
-            <a ng-href="<% evidence.url %>" target="_blank"><% evidence.domain %></a>
-          </div>
+      <div ng-if="!isRegistering()">
+        <div ng-show="!isEditing()" class="comments page-section">     
+             
         </div>    
       </div>
-    </div>
-    <div ng-show="isEditing()" class="header">
-      <form>
-        <div class="form-group">
-          <button ng-click="saveEdition()" type="button" class="btn btn-primary">Salvar</button>
-          <button ng-click="cancelEdition()" type="button" class="btn btn-default">Cancelar</button>
-        </div>
-        <div class="form-group">
-          <input ng-model="editedPromise.title" type="text" class="form-control" placeholder="O título da promessa" required>
-        </div>
-        <div class="form-group">
-          <textarea ng-model="editedPromise.description" class="form-control" placeholder="Um resumo da promessa"></textarea>
-        </div> 
-        <div class="form-group" style="height: 33px;">
-          <div class="pull-left" style="width: 270px; margin-right: 10px;">                    
-            <div class="btn-group" style="width: 100%;">
-              <button type="button" class="btn btn-info" style="width: 90%;"><% editedPromise.category.name %></button>
-              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu dropdown-scroll" role="menu">
-                <li ng-repeat="category in categories">
-                  <a ng-click="selectCategory(category)"><% category.name %></a>
-                </li>                
-              </ul>
-            </div>
-          </div>          
-          <div class="pull-right">
-            <button type="button" class="btn" ng-click="choosePromiseState('NON_STARTED')" ng-class="
-              {
-                'btn-default': !isPromiseStateChoosed('NON_STARTED'),
-                'btn-none': isPromiseStateChoosed('NON_STARTED')
-              }
-            ">Não iniciou</button>
-            <button type="button" class="btn" ng-click="choosePromiseState('STARTED')" ng-class="
-              {
-                'btn-default': !isPromiseStateChoosed('STARTED'),
-                'btn-info': isPromiseStateChoosed('STARTED')
-              }
-            ">Iniciada</button>
-            <button type="button" class="btn" ng-click="choosePromiseState('FULFILLED')" ng-class="
-              {
-                'btn-default': !isPromiseStateChoosed('FULFILLED'),
-                'btn-success': isPromiseStateChoosed('FULFILLED')
-              }
-            ">Cumprida</button>
-            <button type="button" class="btn" ng-click="choosePromiseState('PARTIALLY_FULFILLED')" ng-class="
-              {
-                'btn-default': !isPromiseStateChoosed('PARTIALLY_FULFILLED'),
-                'btn-warning': isPromiseStateChoosed('PARTIALLY_FULFILLED')
-              }
-            ">Cumprida Parcialmente</button>
-            <button type="button" class="btn" ng-click="choosePromiseState('DISCARDED')" ng-class="
-              {
-                'btn-default': !isPromiseStateChoosed('DISCARDED'),
-                'btn-danger': isPromiseStateChoosed('DISCARDED')
-              }
-            ">Descartada</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Data em que a promessa foi feita *</label>
-          <input ng-model="editedPromise.evidence_date" type="date" class="form-control" style="width: 270px;" min="1980-01-01" required/>
-        </div>        
-        <div class="form-group">
-          <label>Links de vídeos ou notícias que comprovam essa promessa *</label>
-          <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
-            <div class="entry input-group">
-              <input ng-model="evidence.url" class="form-control" type="text" placeholder="Cole aqui a url do site" />
-              <span class="input-group-btn" ng-if="!isLastEvidence($index)">
-                <button ng-click="removeEvidence($index)" ng-confirm-click="Deseja realmente remover essa evidência ?" class="btn btn-danger" type="button">
-                  <span class="glyphicon glyphicon-minus"></span>
-                </button>
-              </span>
-              <span class="input-group-btn" ng-if="isLastEvidence($index)">
-                <button ng-click="addEvidence($index)" class="btn btn-success" type="button">
-                  <span class="glyphicon glyphicon-plus"></span>
-                </button>
-              </span>
-            </div>
-          </div>
-          <div style="margin-left: 0px; margin-top: 5px;">
-            <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
-          </div>
-        </div>           
-      </form>
-    </div>
-    <div ng-show="!isEditing()" class="comments page-section">     
-      <div id="disqus_thread"></div>
-      <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'promessadepolitico';
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-      </script>
-      <noscript>
-        Please enable JavaScript to view the 
-        <a href="http://disqus.com/?ref_noscript">Comments powered by Disqus.</a>
-      </noscript>      
     </div>
   </div>
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script src="/js/common-components.js"></script>
-<script>
-  var data = {{ data|jsonString }};
-
-  angular
-    .module("promiseApp", ["commonComponents", "angularMoment"])
-      .config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol("<%");
-        $interpolateProvider.endSymbol("%>");
-      })    
-      .controller("promiseController", ["$scope", "politicianService", "promiseService", "promiseCategoryService", function($scope, politicianService, promiseService, promiseCategoryService) {
-
-        $scope.editing = false;
-        $scope.editedPromise = {};
-
-        $scope.mergeData = function(data) {
-          for (var attr in data) { 
-            $scope[attr] = data[attr]; 
-          }        
-        };
-        $scope.mergeAttrs = function(data, target) {
-          for (var attr in data) { 
-            console.log(attr)
-            target[attr] = data[attr]; 
-          }  
-        };
-        $scope.mergeData(data);
-                  
-        $scope.votedOnPromise = function() {
-          return $scope.user && $scope.promiseUserVote && $scope.promiseUserVote.promise_id === $scope.promise.id;
-        };
-        $scope.voteOnPromise = function() {
-          if($scope.user) {
-            promiseService.voteOnPromise($scope.promise).then(function(response) {
-              if(response.data.result === "SUCCESS") {
-                var promiseUserVote = response.data.data.promiseUserVote;
-                $scope.promiseUserVote = promiseUserVote;
-                if(promiseUserVote) {
-                  $scope.totalPromiseUsersVotes++;
-                } else {                
-                  $scope.totalPromiseUsersVotes--;
-                }
-              } else {
-
-              }
-            });
-          }
-        };
-        $scope.totalPoliticianUpUsersVotes = function() {
-          return "UP" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["UP"] : 0;
-        };   
-        $scope.totalPoliticianDownUsersVotes = function() {
-          return "DOWN" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["DOWN"] : 0;
-        };  
-        $scope.incrementTotalPoliticianUsersVotes = function(vote_type) {
-          $scope.totalPoliticianUsersVotes[vote_type] = vote_type in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes[vote_type] + 1 : 1;
-        };
-        $scope.decrementTotalPoliticianUsersVotes = function(vote_type) {
-          $scope.totalPoliticianUsersVotes[vote_type] = vote_type in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes[vote_type] + -1 : 0;
-        };
-        $scope.votedInPolitician = function(vote_type) {
-          return $scope.politicianUserVote && $scope.politicianUserVote.vote_type === vote_type;
-        };
-        $scope.voteInPolitician = function(vote_type) { 
-          if($scope.user) { 
-            var oldPoliticianUserVote = $scope.politicianUserVote;
-            politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {
-              if(response.data.result === "SUCCESS") {
-                $scope.politicianUserVote = response.data.data.politicianUserVote;
-                if($scope.politicianUserVote) {
-                  if($scope.politicianUserVote.vote_type === "UP") {                    
-                    $scope.incrementTotalPoliticianUsersVotes("UP");
-                  } else {
-                    $scope.incrementTotalPoliticianUsersVotes("DOWN");
-                  }
-                  if(oldPoliticianUserVote) {
-                    $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
-                  }
-                } else {
-                  $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);
-                }
-              }
-            });
-          }
-        };
-        $scope.isTextEvidence = function(evidence) {
-          return evidence.type === "TEXT";
-        };
-        $scope.isVideoEvidence = function(evidence) {
-          return evidence.type === "VIDEO";
-        };
-        $scope.edit = function() {
-          $scope.promise.evidence_date = new Date($scope.promise.evidence_date);
-          $scope.editedPromise = angular.copy($scope.promise);
-          if($scope.editedPromise.evidences.length === 0) {
-            $scope.editedPromise.evidences.push({});
-          }
-          $scope.editing = true;
-          if(!$scope.categories) {
-            promiseCategoryService.getAllCategories().then(function(response) {
-              if(response.data.result === "SUCCESS") {
-                $scope.mergeData(response.data.data);
-              }
-            });
-          }
-        };
-        $scope.isEditing = function() {
-          return $scope.editing === true;
-        };
-        $scope.cancelEdition = function() {          
-          $scope.editing = false;
-        };
-        $scope.saveEdition = function() {
-          var promiseData = {};
-          var editedPromise = $scope.editedPromise;
-
-          promiseData.id = editedPromise.id;
-          promiseData.title = editedPromise.title;
-          promiseData.description = editedPromise.description;
-          promiseData.category_id = editedPromise.category_id;
-          promiseData.evidence_date = editedPromise.evidence_date;
-          promiseData.state = editedPromise.state;
-          promiseData.evidences = [];
-          for(var index in editedPromise.evidences) {
-            var evidence = editedPromise.evidences[index];
-            if(evidence.url) {
-              promiseData.evidences.push(evidence);
-            }
-          }
-          promiseService.editPromise(promiseData).then(function(response) {
-            if(response.data.result === "SUCCESS") {
-              $scope.mergeAttrs(response.data.data.promise, $scope.promise);
-              $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
-              $scope.cancelEdition();
-            }
-          });
-        };
-        $scope.isPromiseStateChoosed = function(state) {
-          return $scope.editedPromise.state === state;
-        };
-        $scope.choosePromiseState = function(state) {
-          $scope.editedPromise.state = state;
-        };
-        $scope.isLastEvidence = function(index) {
-          return $scope.editedPromise.evidences.length === index + 1;
-        }
-        $scope.addEvidence = function(index) {          
-          $scope.editedPromise.evidences.push({});
-        };
-        $scope.removeEvidence = function(index) {          
-          $scope.editedPromise.evidences.slice(index, 1);
-        };
-        $scope.selectCategory = function(category) {
-          $scope.editedPromise.category = category;
-          $scope.editedPromise.category_id = category.id;
-        };
-      }]);
-</script>
+{% block backend_data %}
+  {{ data|jsonString }}
 {% endblock %}

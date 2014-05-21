@@ -1,12 +1,12 @@
 var User           = require('../models/models').User,
     bookshelfUtils = require('../utils/bookshelfUtils'),
-    slugify        = require('../utils/slugify'),
+    helper        = require('../utils/helper'),
     _              = require('underscore');
 
 function forgeUser(attributes) {
   var user = User.forge(attributes);
   if(!user.get('username')) {
-    user.set('username', slugify.slug(user.get('name')));
+    user.set('username', helper.slug(user.get('name')));
   }
   return user;
 }

@@ -1,6 +1,6 @@
 angular
-  .module("politiciansPromiseApp", ["ui-route", "commonComponents", "angularMoment"])
+  .module("politiciansPromiseApp", ["angularMoment", "infinite-scroll", "ui.bootstrap"])
   .config(function($interpolateProvider) {
     $interpolateProvider.startSymbol("<%");
     $interpolateProvider.endSymbol("%>");
-  });   
+  });

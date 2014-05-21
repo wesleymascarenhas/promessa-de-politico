@@ -34,9 +34,8 @@ module.exports = function(app, passport) {
         } else {
           return promiseService.countGroupingByState(results.politician)
           .then(function(totalPromisesByState) {
-            results.totalPromisesByState = totalPromisesByState;
-            results.promisesFulfilledPercentage = totalPromisesByState['FULFILLED'] * results.totalPromises / 100;              
-            return viewService.getLatestPromises(results.user, results.politician).then(function(vars) {
+            results.totalPromisesByState = totalPromisesByState;            
+            return viewService.getLatestPromises(results.user, results.politician, 1, 20).then(function(vars) {
               helper.merge(vars, results);
               return results;
             });               

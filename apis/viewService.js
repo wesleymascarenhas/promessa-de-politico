@@ -12,23 +12,33 @@ exports.fillPolitician = function(user, vars) {
   });
 }
 
-exports.fillPromise = function(user, vars) {  
-  return BluebirdPromise.all([promiseService.countUsersVotes(vars.promise), promiseService.countUsersComments(vars.promise), promiseService.countEvidences(vars.promise), user ? promiseService.findUserVote(user, vars.promise) : null])
-  .spread(function(totalPromiseUsersVotes, totalPromiseUsersComments, totalPromiseEvidences, promiseUserVote) {
-    vars.totalPromiseUsersVotes = totalPromiseUsersVotes;
-    vars.totalPromiseUsersComments = totalPromiseUsersComments;           
-    vars.totalPromiseEvidences = totalPromiseEvidences;
-    vars.promiseUserVote = promiseUserVote;                  
+exports.fillPromise = function(user, vars) { 
+  return new BluebirdPromise(function(resolve, reject) {  
+    BluebirdPromise.all([promiseService.countUsersVotes(vars.promise), promiseService.countUsersComments(vars.promise), promiseService.countEvidences(vars.promise), user ? promiseService.findUserVote(user, vars.promise) : null])
+    .spread(function(totalPromiseUsersVotes, totalPromiseUsersComments, totalPromiseEvidences, promiseUserVote) {
+      vars.totalPromiseUsersVotes = totalPromiseUsersVotes;
+      vars.totalPromiseUsersComments = totalPromiseUsersComments;           
+      vars.totalPromiseEvidences = totalPromiseEvidences;
+      vars.promiseUserVote = promiseUserVote;    
+      resolve(vars);              
+    }).catch(function(err) {
+      reject(err);
+    });
   });
 }
 
-exports.fillPromises = function(user, vars) {  
-  return BluebirdPromise.all([promiseService.countUsersVotesByPromise(vars.promises), promiseService.countEvidencesByPromise(vars.promises), promiseService.countUsersCommentsByPromise(vars.promises), user ? promiseService.findUserVotesByPromise(user, vars.promises) : null])
-  .spread(function(totalUsersVotesByPromise, totalUsersCommentsByPromise, totalEvidencesByPromise, userVotesByPromise) {
-    vars.totalUsersVotesByPromise = totalUsersVotesByPromise;
-    vars.totalUsersCommentsByPromise = totalUsersCommentsByPromise;           
-    vars.totalEvidencesByPromise = totalEvidencesByPromise;
-    vars.userVotesByPromise = userVotesByPromise;                  
+exports.fillPromises = function(user, vars) { 
+  return new BluebirdPromise(function(resolve, reject) { 
+    BluebirdPromise.all([promiseService.countUsersVotesByPromise(vars.promises), promiseService.countUsersCommentsByPromise(vars.promises), promiseService.countEvidencesByPromise(vars.promises), user ? promiseService.findUserVotesByPromise(user, vars.promises) : null])
+    .spread(function(totalUsersVotesByPromise, totalUsersCommentsByPromise, totalEvidencesByPromise, userVotesByPromise) {
+      vars.totalUsersVotesByPromise = totalUsersVotesByPromise;
+      vars.totalUsersCommentsByPromise = totalUsersCommentsByPromise;           
+      vars.totalEvidencesByPromise = totalEvidencesByPromise;
+      vars.userVotesByPromise = userVotesByPromise;      
+      resolve(vars);            
+    }).catch(function(err) {
+      reject(err);
+    });
   });
 }
 
@@ -72,14 +82,10 @@ exports.getAllPromises = function(user, politician) {
   });
 }
 
-exports.getMajorPromises = function(user, politician) {
-  return this.getAllPromises(user, politician);
-}
-
-exports.getOlderPromises = function(user, politician) {
+exports.getMajorPromises = function(user, politician, page, pageSize) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.olderPromises(politician, ['registered_by_user', 'category']).then(function(promises) {
+    promiseService.majorPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
@@ -90,10 +96,24 @@ exports.getOlderPromises = function(user, politician) {
   });
 }
 
-exports.getLatestPromises = function(user, politician) {
+exports.getOlderPromises = function(user, politician, page, pageSize) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.latestPromises(politician, ['registered_by_user', 'category']).then(function(promises) {
+    promiseService.olderPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
+      var vars = {promises: promises};
+      that.fillPromises(user, vars).then(function() {
+        resolve(vars);
+      }).catch(function(err) {
+        reject(err);
+      });
+    });
+  });
+}
+
+exports.getLatestPromises = function(user, politician, page, pageSize) {
+  var that = this;
+  return new BluebirdPromise(function(resolve, reject) {
+    promiseService.latestPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
@@ -136,15 +156,22 @@ exports.voteInPolitician = function(user, promise, vote_type) {
   });
 }
 
-exports.editPromise = function(promise, evidences) {
+exports.editPromise = function(user, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.update(promise).then(function(promise) {
-      evidences.invokeThen('save').then(function(evidences) {
-        BluebirdPromise.all([promiseService.findById(promise.id, ['category', 'evidences']), promiseService.countEvidences(promise)])
-        .spread(function(promise, totalPromiseEvidences) {
-          resolve({promise: promise, totalPromiseEvidences: totalPromiseEvidences});        
-        });
+    promiseService.update(user, promise, evidences).then(function(updated) {      
+      promiseService.countEvidences(promise).then(function(totalPromiseEvidences) {
+        resolve({promise: promise, totalPromiseEvidences: totalPromiseEvidences});        
       });
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.registerPromise = function(user, promise, evidences) {
+  return new BluebirdPromise(function(resolve, reject) {
+    promiseService.register(user, promise, evidences).then(function(registered) {
+      resolve({promise: promise});
     }).catch(function(err) {
       reject(err);
     });

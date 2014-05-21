@@ -74,11 +74,14 @@ var PromiseCategory = Bookshelf.Model.extend({
 });
 
 var PromiseEvidence = Bookshelf.Model.extend({
-  tableName: 'promise_evidence'  
+  tableName: 'promise_evidence',
+  registered_by_user: function() {
+    return this.belongsTo(User, 'registered_by_user_id');
+  }
 });
 
 var PromiseEvidences = Bookshelf.Collection.extend({
-  model: PromiseEvidence
+  model: PromiseEvidence,
 });
 
 var PromiseUserVote = Bookshelf.Model.extend({

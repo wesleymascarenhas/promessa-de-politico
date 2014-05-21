@@ -1,3 +1,10 @@
+var slug = require('slug');
+slug.charmap['.'] = ' ';
+
+exports.slugify = function(str) {
+  return slug(str).toLowerCase();
+}
+
 exports.randomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }

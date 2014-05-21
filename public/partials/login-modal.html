@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <button ng-click="modalOptions.close()" type="button" class="close" aria-hidden="true">&times;</button>
+  <h3 class="align-center">Para continuar acesse sua conta</h3>
+</div>
+<div class="modal-body">
+  <div class="row sparse">
+    <div class="col-md-12">
+      <button ng-click="modalOptions.auth('facebook');" class="btn btn-lg btn-block btn-facebook">
+        Facebook
+      </button>
+    </div>
+  </div>
+  <div class="row sparse">
+    <div class="col-md-12">
+      <button onclick="modalOptions.auth('twitter');" class="btn btn-lg btn-block btn-twitter">
+        Twitter
+      </button>
+    </div>
+  </div>
+  <div class="row sparse">
+    <div class="col-md-12">
+      <button onclick="modalOptions.auth('googleplus');" class="btn btn-lg btn-block btn-googleplus">
+        Google
+      </button>
+    </div>
+  </div>  
+</div>

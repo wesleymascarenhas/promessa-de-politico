@@ -30,20 +30,32 @@ exports.findAllByPoliticianAndCategory = function(politician, category, relateds
   return Promise.collection().query({where: {politician_id: politician.id, category_id: category.id}}).fetch({withRelated: relateds});
 }
 
-exports.olderPromises = function(politician, relateds) {
+exports.olderPromises = function(politician, relateds, page, pageSize) {
   return Promise.collection().query(function(qb) {
-    qb.orderBy('evidence_date', 'asc').orderBy('registration_date', 'asc');
+    qb.orderBy(Bookshelf.knex.raw('isnull(evidence_date)'), 'asc').orderBy('registration_date', 'asc').limit(pageSize).offset((page - 1) * pageSize);
   }).fetch({withRelated: relateds});
 }
 
-exports.latestPromises = function(politician, relateds) {
+exports.latestPromises = function(politician, relateds, page, pageSize) {
   return Promise.collection().query(function(qb) {
-    qb.orderBy('evidence_date', 'desc').orderBy('registration_date', 'desc');
+    qb.orderBy('evidence_date', 'desc').orderBy('registration_date', 'desc').limit(pageSize).offset((page - 1) * pageSize);
   }).fetch({withRelated: relateds});
 }
 
-exports.majorPromises = function(politician, relateds) {
-  // select p.id, count(*) as total_votes from promise p join promise_priority_vote ppv on p.id = ppv.promise_id group by promise_id order by total_votes desc;
+exports.majorPromises = function(politician, relateds, page, pageSize) {
+  return Promise.collection().query(function(qb) {  
+    var subQuery = Bookshelf.knex('promise_user_vote').select('promise_id', Bookshelf.knex.raw('count(*) as votes')).groupBy('promise_id').toString();
+    qb
+    .join(
+      Bookshelf.knex.raw('(' + subQuery + ') as promise_user_vote'),
+      'promise.id', '=',
+      'promise_user_vote.promise_id',
+      'left'
+    )
+    .orderBy('promise_user_vote.votes', 'desc')
+    .limit(pageSize)
+    .offset((page - 1) * pageSize);
+  }).fetch({withRelated: relateds});
 }
 
 exports.findUserVote = function(user, promise) {
@@ -266,6 +278,42 @@ exports.vote = function(user, promise) {
   });
 }
 
-exports.update = function(promise) {
-  return promise.save();
+exports.update = function(user, promise, evidences) {
+  return new BluebirdPromise(function(resolve, reject) {
+    promise.save().then(function(promise) {
+      evidences.forEach(function(evidence) {
+        if(evidence.isNew()) {          
+          evidence.set('promise_id', promise.id);
+          evidence.set('registered_by_user_id', user.id);
+        }
+      });
+      evidences.invokeThen('save').then(function(evidences) {
+        promise.load(['category', 'evidences']).then(function(promise) {
+          resolve(promise);
+        });
+      });
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.register = function(user, promise, evidences) {
+  return new BluebirdPromise(function(resolve, reject) {
+    promise.set('registered_by_user_id', user.id);
+    promise.set('slug', helper.slugify(promise.get('title')));
+    promise.save().then(function(promise) {
+      evidences.forEach(function(evidence) {
+        evidence.set('promise_id', promise.id);
+        evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
+      });
+      evidences.invokeThen('save').then(function(evidences) {
+        promise.load(['category', 'evidences']).then(function(promise) {
+          resolve(promise);
+        });
+      });
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
 }
