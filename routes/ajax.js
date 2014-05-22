@@ -135,6 +135,13 @@ module.exports = function(app, passport) {
         var url = params[0];
         return oembedService.getOEmbed(url);
       }
+    },
+    removeEvidence: {
+      auth: true,
+      action: function(user, params) {
+        var evidence = promiseService.forgeEvidence(params[0]);
+        return promiseService.removeEvidence(user, evidence);
+      }
     }
   }
 
@@ -150,8 +157,9 @@ module.exports = function(app, passport) {
         res.status(401).send("Authentication required");
       } else {
         mappedPromise.action(user, params).then(function(data) {
-          res.json({result: 'SUCCESS', data: data});        
+          res.json({data: data});        
         }).catch(function(err) {
+          console.log(err.stack)
           res.status(500).send("Internal error");
         });
       }

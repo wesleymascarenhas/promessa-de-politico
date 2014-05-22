@@ -31,21 +31,21 @@ angular
     $scope.voteInPolitician = function(vote_type) { 
       if(authenticationService.ensureAuth()) {
         var oldPoliticianUserVote = $scope.politicianUserVote;
-        politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {
-          if(response.data.result === "SUCCESS") {
-            $scope.politicianUserVote = response.data.data.politicianUserVote;
-            if($scope.politicianUserVote) {
-              if($scope.politicianUserVote.vote_type === "UP") {                    
-                $scope.incrementTotalPoliticianUsersVotes("UP");
-              } else {
-                $scope.incrementTotalPoliticianUsersVotes("DOWN");
-              }
-              if(oldPoliticianUserVote) {
-                $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
-              }
+        NProgress.start();
+        politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {        
+          NProgress.done();
+          $scope.politicianUserVote = response.data.data.politicianUserVote;
+          if($scope.politicianUserVote) {
+            if($scope.politicianUserVote.vote_type === "UP") {                    
+              $scope.incrementTotalPoliticianUsersVotes("UP");
             } else {
-              $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);
+              $scope.incrementTotalPoliticianUsersVotes("DOWN");
             }
+            if(oldPoliticianUserVote) {
+              $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
+            }
+          } else {
+            $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);
           }
         });
       }
@@ -98,19 +98,17 @@ angular
       return voted;
     };
     $scope.voteOnPromise = function(promise) {
-      if(authenticationService.ensureAuth()) {      
-        promiseService.voteOnPromise(promise).then(function(response) {
-          if(response.data.result === "SUCCESS") {
-            var promiseUserVote = response.data.data.promiseUserVote;
-            if(promiseUserVote) {
-              $scope.userVotesByPromise[promise.id] = promiseUserVote;
-              $scope.incrementTotalPromiseUsersVotes(promise);
-            } else {
-              delete $scope.userVotesByPromise[promise.id];
-              $scope.decrementTotalPromiseUsersVotes(promise);                  
-            }
+      if(authenticationService.ensureAuth()) {
+        NProgress.start();      
+        promiseService.voteOnPromise(promise).then(function(response) {        
+          NProgress.done();
+          var promiseUserVote = response.data.data.promiseUserVote;
+          if(promiseUserVote) {
+            $scope.userVotesByPromise[promise.id] = promiseUserVote;
+            $scope.incrementTotalPromiseUsersVotes(promise);
           } else {
-
+            delete $scope.userVotesByPromise[promise.id];
+            $scope.decrementTotalPromiseUsersVotes(promise);                  
           }          
         });
       }
@@ -119,7 +117,9 @@ angular
       return $scope.category.id === category.id;
     };
     $scope.selectCategory = function(category) {
+      NProgress.start();
       promiseService.getPromises($scope.politician, category).then(function(response) {
+        NProgress.done();
         $scope.mergeData(response.data.data);            
         $scope.category = category;
       });
@@ -144,11 +144,9 @@ angular
     $scope.appendNextPromisePage = function() {
       var promise = $scope.nextPromisePage($scope.tabId);   
       NProgress.start();
-      promise.then(function(response) {
-        if(response.data.result === "SUCCESS") {
-          $scope.promises = $scope.promises.concat(response.data.data.promises)
-          NProgress.done();
-        }
+      promise.then(function(response) {      
+        NProgress.done();        
+        $scope.promises = $scope.promises.concat(response.data.data.promises)
       }); 
     };
     $scope.isCurrentTab = function(tabId) {
@@ -158,12 +156,10 @@ angular
       $scope.promisePage = 0;
       var promise = $scope.nextPromisePage(tabId);   
       NProgress.start();
-      promise.then(function(response) {
-        if(response.data.result === "SUCCESS") {
-          $scope.tabId = tabId;    
-          $scope.mergeData(response.data.data);
-          NProgress.done();
-        }
+      promise.then(function(response) {      
+        NProgress.done();
+        $scope.tabId = tabId;    
+        $scope.mergeData(response.data.data);
       }); 
     };
     $scope.isFirstIndex = function(index) {
@@ -175,7 +171,7 @@ angular
       }
     }
   }])
-  .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService) {
+  .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService) {
     $scope.editing = false;
     $scope.editedPromise = {category: backendData.category, evidences: [{}]};
     $scope.registering = false;    
@@ -197,18 +193,16 @@ angular
     };
     $scope.voteOnPromise = function() {      
       if(authenticationService.ensureAuth()) {
-        promiseService.voteOnPromise($scope.promise).then(function(response) {
-          if(response.data.result === "SUCCESS") {
-            var promiseUserVote = response.data.data.promiseUserVote;
-            $scope.promiseUserVote = promiseUserVote;
-            if(promiseUserVote) {
-              $scope.totalPromiseUsersVotes++;
-            } else {                
-              $scope.totalPromiseUsersVotes--;
-            }
-          } else {
-
-          }
+        NProgress.start();
+        promiseService.voteOnPromise($scope.promise).then(function(response) {        
+          NProgress.done();
+          var promiseUserVote = response.data.data.promiseUserVote;
+          $scope.promiseUserVote = promiseUserVote;
+          if(promiseUserVote) {
+            $scope.totalPromiseUsersVotes++;
+          } else {                
+            $scope.totalPromiseUsersVotes--;
+          }        
         });
       }
     };
@@ -230,22 +224,20 @@ angular
     $scope.voteInPolitician = function(vote_type) { 
       if(authenticationService.ensureAuth()) { 
         var oldPoliticianUserVote = $scope.politicianUserVote;
-        politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {
-          if(response.data.result === "SUCCESS") {
-            $scope.politicianUserVote = response.data.data.politicianUserVote;
-            if($scope.politicianUserVote) {
-              if($scope.politicianUserVote.vote_type === "UP") {                    
-                $scope.incrementTotalPoliticianUsersVotes("UP");
-              } else {
-                $scope.incrementTotalPoliticianUsersVotes("DOWN");
-              }
-              if(oldPoliticianUserVote) {
-                $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
-              }
+        NProgress.start();
+        politicianService.voteInPolitician($scope.politician, vote_type).then(function(response) {        
+          NProgress.done();
+          $scope.politicianUserVote = response.data.data.politicianUserVote;
+          if($scope.politicianUserVote) {
+            if($scope.politicianUserVote.vote_type === "UP") {                    
+              $scope.incrementTotalPoliticianUsersVotes("UP");
             } else {
-              $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);
+              $scope.incrementTotalPoliticianUsersVotes("DOWN");
             }
-          }
+            if(oldPoliticianUserVote) {
+              $scope.decrementTotalPoliticianUsersVotes(oldPoliticianUserVote.vote_type);            
+            }
+          }            
         });
       }
     };
@@ -266,10 +258,10 @@ angular
         }
         $scope.editing = true;
         if(!$scope.categories) {
+          NProgress.start();
           promiseCategoryService.getAllCategories().then(function(response) {
-            if(response.data.result === "SUCCESS") {
-              $scope.mergeData(response.data.data);
-            }
+            NProgress.done();
+            $scope.mergeData(response.data.data);            
           });
         }   
       }
@@ -294,11 +286,11 @@ angular
           promiseData.evidences.push(evidence);
         }
       }
-      promiseService.registerPromise(promiseData).then(function(response) {
-        if(response.data.result === "SUCCESS") {
-          var promise = response.data.data.promise;
-          $window.location.href = "/politico/" + $scope.politician.slug + "/" + promise.id + "/" + promise.slug;
-        }
+      NProgress.start();
+      promiseService.registerPromise(promiseData).then(function(response) {      
+        NProgress.done();
+        var promise = response.data.data.promise;
+        $window.location.href = "/politico/" + $scope.politician.slug + "/" + promise.id + "/" + promise.slug;
       });
     }
     $scope.isEditing = function() {
@@ -324,12 +316,12 @@ angular
           promiseData.evidences.push(evidence);
         }
       }        
+      NProgress.start();
       promiseService.editPromise(promiseData).then(function(response) {
-        if(response.data.result === "SUCCESS") {
-          $scope.mergeAttrs(response.data.data.promise, $scope.promise);
-          $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
-          $scope.cancelEdition();
-        }
+        NProgress.done();
+        $scope.mergeAttrs(response.data.data.promise, $scope.promise);
+        $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
+        $scope.cancelEdition();       
       });
     };
     $scope.isPromiseStateChoosed = function(state) {
@@ -347,11 +339,21 @@ angular
     $scope.showAllEvidences = function() {
       $scope.showHiddenEvidences = true;
     }
-    $scope.addEvidence = function(index) {          
+    $scope.addEvidence = function() {          
       $scope.editedPromise.evidences.push({});
     };
-    $scope.removeEvidence = function(index) {          
-      $scope.editedPromise.evidences.slice(index, 1);
+    $scope.removeEvidence = function(evidence, index) { 
+      var modalScope = {
+        headerText: "Deseja remover essa evidência ?",
+        bodyText: "As evidências são importantes, pois comprovam essa promessa."
+      };   
+      modalService.show({size: "sm"}, modalScope).then(function(result) {
+        NProgress.start();
+        promiseService.removeEvidence(evidence).then(function(response) {
+          NProgress.done();
+          $scope.editedPromise.evidences.splice(index, 1);
+        });
+      });    
     };
     $scope.selectCategory = function(category) {
       $scope.editedPromise.category = category;
@@ -362,33 +364,31 @@ angular
       NProgress.start();
       oembedService.getOEmbed(encodeURIComponent(url)).then(function(response) {
         NProgress.done();        
-        if(response.data.result === "SUCCESS") {
-          var data = response.data.data;
-          var meta = data.meta;
-          if(meta.title) {
-            evidence.title = meta.title;
-          }
-          if(meta.canonical) {
-            evidence.url = meta.canonical;
-          }
-          if(meta.description) {
-            evidence.description = meta.description;
-          }          
-          if(data.host) {
-            evidence.host = data.host;
-          }
-          for(index in data.links) {
-            var link = data.links[index];
-            if(link.rel) {
-              for(relIndex in link.rel) {
-                var rel = link.rel[relIndex];
-                if(rel === "thumbnail") {
-                  evidence.thumbnail = link.href;
-                }
+        var data = response.data.data;
+        var meta = data.meta;
+        if(meta.title) {
+          evidence.title = meta.title;
+        }
+        if(meta.canonical) {
+          evidence.url = meta.canonical;
+        }
+        if(meta.description) {
+          evidence.description = meta.description;
+        }          
+        if(data.host) {
+          evidence.host = data.host;
+        }
+        for(index in data.links) {
+          var link = data.links[index];
+          if(link.rel) {
+            for(relIndex in link.rel) {
+              var rel = link.rel[relIndex];
+              if(rel === "thumbnail") {
+                evidence.thumbnail = link.href;
               }
             }
           }
-        }
+        }        
       });
     }
   }]);

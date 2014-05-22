@@ -1,6 +1,7 @@
 var Bookshelf           = require('../models/models').Bookshelf,
     Promise             = require('../models/models').Promise,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
+    PromiseEvidence     = require('../models/models').PromiseEvidence,
     PromiseEvidences     = require('../models/models').PromiseEvidences,
     bookshelfUtils      = require('../utils/bookshelfUtils'),
     BluebirdPromise     = require('bluebird'),
@@ -12,6 +13,10 @@ exports.forge = function(data) {
 
 exports.forgeCollection = function(data) {
   return Promise.collection().forge(data);
+}
+
+exports.forgeEvidence = function(data) {
+  return PromiseEvidence.forge(data);
 }
 
 exports.forgeEvidenceCollection = function(data) {
@@ -316,4 +321,8 @@ exports.register = function(user, promise, evidences) {
       reject(err);
     });
   });
+}
+
+exports.removeEvidence = function(user, evidence) {
+  return evidence.destroy();
 }
