@@ -134,7 +134,7 @@ create table promise_evidence (
   description           varchar(255) not null,
   url                   varchar(255) not null,
   host                  varchar(255) not null,
-  thumbnail             varchar(255) not null,
+  image                 varchar(255) not null,
   promise_id            int(11) not null,
   registered_by_user_id int(11) not null,
   registration_date     timestamp default current_timestamp,

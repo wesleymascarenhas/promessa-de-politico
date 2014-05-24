@@ -13,75 +13,186 @@
       </div>
       <!-- Politician Infos -->
       <div class="politician-infos">
-        <div>
+        <div ng-show="!isEditingPolitician()">
+          <div>
+            <div class="row">
+              <div class="politician-introduction col-md-4 col-md-offset-4">
+                <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">        
+                <h1>
+                  <p class="bolder-text">
+                    <% politician.name %>                
+                  </p>
+                </h1>
+              </div>
+              <div class="promises-stats col-md-4">
+                <div>
+                  <h2><b><% totalPromises %> promessas!</b></h2>
+                </div>
+                <div>
+                  <input knob knob-value="<% totalPromisesByState['FULFILLED'] %>" knob-max="<% totalPromises %>" data-readonly="true" data-width="130" data-height="130" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
+                  <h4>Promessas cumpridas</h4>
+                </div>
+                <div>
+                  <a href="#" title="Compartilhe as promessas de <% politician.name %> no Facebook" class="icon icon-facebook"></a>
+                  <a href="#" title="Compartilhe as promessas de <% politician.name %> no Twitter" class="icon icon-twitter"></a>
+                  <a href="#" title="Compartilhe as promessas de <% politician.name %> no Google+" class="icon icon-googleplus"></a>
+                </div>
+                <div class="edit">
+                  <button ng-click="editPolitician()" type="button" class="btn btn-default btn-lg">Editar</button>
+                </div> 
+              </div>
+            </div>
+          </div>
           <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-              <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">        
-              <h1>
-                <p class="bolder-text">
-                  <% politician.name %>                
-                </p>
-              </h1>
-            </div>
-            <div class="promises-stats col-md-4">
-              <div>
-                <h2><b><% totalPromises %> promessas!</b></h2>
-              </div>
-              <div>
-                <input knob knob-value="<% totalPromisesByState['FULFILLED'] %>" knob-max="<% totalPromises %>" data-readonly="true" data-width="130" data-height="130" data-fgColor="#5cb85c" data-bgColor="#fff" data-thickness="0.4">
-                <h4>Promessas cumpridas</h4>
-              </div>
-              <div>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Facebook" class="icon icon-facebook"></a>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Twitter" class="icon icon-twitter"></a>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Google+" class="icon icon-googleplus"></a>
-              </div>
+            <div class="col-md-12">
+              <h4 class="bolder-text">
+                <span>
+                  Partido: 
+                  <a ng-href="/partido/<% politician.party.acronym %>">
+                    <% politician.party.name %> (<% politician.party.acronym %>)
+                  </a>
+                </span>
+                  -
+                <span>
+                  Cargo: <% politician.office.title %>
+                  <span ng-if="politician.organ">
+                    / <% politician.organ.name %>
+                  </span>
+                </span>
+              </h4>  
             </div>
           </div>
+          <div class="row">
+            <h4 class="bolder-text align-justify">
+              <% politician.biography %>
+            </h4>
+          </div>             
+          <div class="votes">
+            <div class="vote">
+              <div class="vote-up">
+                <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('UP'), 'btn-success': votedInPolitician('UP')}" ng-click="voteInPolitician('UP')">
+                  <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
+                </button>
+              </div>
+              <div class="vote-count">
+                <span><% totalPoliticianUpUsersVotes() %></span>
+              </div>
+            </div>
+            <div class="vote">
+              <div class="vote-down">
+                <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('DOWN'), 'btn-danger': votedInPolitician('DOWN')}" ng-click="voteInPolitician('DOWN')">
+                  <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
+                </button>
+              </div>
+              <div class="vote-count">
+                <span><% totalPoliticianDownUsersVotes() %></span>
+              </div>
+            </div>
+          </div>                  
         </div>
-        <div>
-          <h4 class="bolder-text">
-            <span>
-              Partido: 
-              <a ng-href="/partido/<% politician.party.acronym %>">
-                <% politician.party.name %> (<% politician.party.acronym %>)
-              </a>
-            </span>
-              -
-            <span>
-              Cargo: <% politician.office.title %>
-              <span ng-if="politician.organ">
-                / <% politician.organ.name %>
-              </span>
-            </span>
-          </h4>  
-          <h4 class="bolder-text">
-            <% politician.biography %>
-          </h4>
-          </h4>
-        </div>             
-        <div class="votes">
-          <div class="vote">
-            <div class="vote-up">
-              <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('UP'), 'btn-success': votedInPolitician('UP')}" ng-click="voteInPolitician('UP')">
-                <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
-              </button>
+        <div ng-show="isEditingPolitician()">
+          <form name="politicianForm" novalidate>
+            <div class="row align-left">
+              <div class="col-md-8 col-md-offset-2">
+                <div class="form-group">
+                  <button ng-click="savePoliticianEdition()" type="button" class="btn btn-primary">
+                    Salvar
+                  </button>
+                  <button ng-click="cancelPoliticianEdition()" type="button" class="btn btn-default">
+                    Cancelar
+                  </button>
+                </div>
+                <div class="form-group" ng-class="{'has-error': politicianForm.name.$invalid && !politicianForm.name.$pristine}">
+                  <label class="control-label" for="name">Nome do político</label>
+                  <label class="control-label" for="name" ng-show="politicianForm.name.$invalid && !politicianForm.name.$pristine">
+                    (É obrigatório informar o nome do político)
+                  </label>
+                  <div class="required-field-block">
+                    <input ng-model="editedPolitician.name" type="text" id="name" name="name" class="form-control" placeholder="O nome do político" required>
+                    <div class="required-icon">
+                        <div class="text">*</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">    
+                  <label class="control-label" for="nickname">Apelido do político</label>
+                  <input ng-model="editedPolitician.nickname" type="text" id="nickname" name="nickname" class="form-control" placeholder="O apelido do político" required>
+                </div>
+                <div class="form-group">
+                  <label class="control-label" for="biography">
+                    Biografia resumida do político
+                  </label>
+                  <textarea id="biography" ng-model="editedPolitician.biography" class="form-control" placeholder="Biografia resumida do político" rows="3"></textarea>
+                </div>
+                <div class="form-group overflow-hidden row">
+                  <div class="col-md-4">
+                    <label class="control-label" for="party">
+                      Partido político
+                    </label>       
+                    <div id="party" class="btn-group" style="width: 100%;">
+                      <button type="button" class="btn btn-default">
+                        <% editedPolitician.party.name %>
+                      </button>
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-scroll" role="menu">
+                        <li ng-repeat="politicalParty in politicalParties">
+                          <a ng-click="selectPoliticalParty(politicalParty)">
+                            <% politicalParty.name %>
+                          </a>
+                        </li>                
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-4">       
+                    <label class="control-label" for="office">
+                      Cargo
+                    </label>  
+                    <div id="office" class="btn-group" style="width: 100%;">
+                      <button type="button" class="btn btn-default">
+                        <% editedPolitician.office.title %>
+                      </button>
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-scroll" role="menu">
+                        <li ng-repeat="politicalOffice in politicalOffices">
+                          <a ng-click="selectPoliticalOffice(politicalOffice)">
+                            <% politicalOffice.title %>
+                          </a>
+                        </li>                
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-4">       
+                    <label class="control-label" for="organ">
+                      Orgão
+                    </label>  
+                    <div id="organ" class="btn-group" style="width: 100%;">
+                      <button type="button" class="btn btn-default">
+                        <% editedPolitician.organ.name %>
+                      </button>
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-scroll" role="menu">
+                        <li ng-repeat="politicalOrgan in politicalOrgans">
+                          <a ng-click="selectPoliticalOrgan(politicalOrgan)">
+                            <% politicalOrgan.name %>
+                          </a>
+                        </li>                
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="vote-count">
-              <span><% totalPoliticianUpUsersVotes() %></span>
-            </div>
-          </div>
-          <div class="vote">
-            <div class="vote-down">
-              <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician('DOWN'), 'btn-danger': votedInPolitician('DOWN')}" ng-click="voteInPolitician('DOWN')">
-                <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
-              </button>
-            </div>
-            <div class="vote-count">
-              <span><% totalPoliticianDownUsersVotes() %></span>
-            </div>
-          </div>
-        </div>             
+          </form>
+        </div>
       </div>
     </div>
   </section>
@@ -213,8 +324,8 @@
                             •
                           </span> 
                           Registrada por
-                          <a href="/usuario/<% promise.registered_by_user.username %>">
-                            <% promise.registered_by_user.name %>
+                          <a href="/usuario/<% promise.registeredByUser.username %>">
+                            <% promise.registeredByUser.name %>
                           </a>
                           <span am-time-ago="promise.registration_date"></span>
                         </div>

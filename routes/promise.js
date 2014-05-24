@@ -17,7 +17,7 @@ module.exports = function(app, passport) {
       } 
       results.user = user;
       results.politician = politician;
-      results.registering = true;
+      results.registeringPromise = true;
       return BluebirdPromise.all([viewService.fillPolitician(user, results), viewService.getAllCategories()])
       .spread(function(politicianFilled, allCategories) {
         results.categories = allCategories.categories;
@@ -39,7 +39,7 @@ module.exports = function(app, passport) {
   app.get('/politico/:politicianSlug/:promiseId/:promiseSlug', function(req, res, next) {
     var user = req.user;
     var results = {};
-    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.organ', 'politician.office', 'category', 'evidences', 'evidences.registered_by_user', 'registered_by_user'])
+    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.organ', 'politician.office', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
     .then(function(promise) {
       if(!promise) {
         results.next = true;

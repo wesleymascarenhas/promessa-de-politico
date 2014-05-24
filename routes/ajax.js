@@ -85,22 +85,9 @@ module.exports = function(app, passport) {
       auth: true,
       action: function(user, params) {
         var promiseData = params[0];
-        var promiseDataFormatted = {
-          id: promiseData.id,
-          title: promiseData.title,
-          description: promiseData.description,
-          evidence_date: promiseData.evidence_date,
-          state: promiseData.state,
-          category_id: promiseData.category_id,
-        };
-        var evidencesData = [];
-        for(index in promiseData.evidences) {
-          var evidence = promiseData.evidences[index];
-          if(!evidence.id && evidence.url) {           
-            evidencesData.push(evidence);
-          }
-        }      
-        var promise = promiseService.forge(promiseDataFormatted);    
+        var evidencesData = params[1];      
+
+        var promise = promiseService.forge(promiseData);    
         var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
         return viewService.editPromise(user, promise, evidences);
       }
@@ -109,22 +96,9 @@ module.exports = function(app, passport) {
       auth: true,
       action: function(user, params) {
         var promiseData = params[0];
-        var promiseDataFormatted = {
-          title: promiseData.title,
-          description: promiseData.description,
-          evidence_date: promiseData.evidence_date,
-          state: promiseData.state,
-          category_id: promiseData.category_id,
-          politician_id: promiseData.politician_id,
-        };
-        var evidencesData = [];
-        for(index in promiseData.evidences) {
-          var evidence = promiseData.evidences[index];
-          if(!evidence.id && evidence.url) {            
-            evidencesData.push(evidence);
-          }
-        }      
-        var promise = promiseService.forge(promiseDataFormatted);    
+        var evidencesData = params[1];
+              
+        var promise = promiseService.forge(promiseData);    
         var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
         return viewService.registerPromise(user, promise, evidences);        
       }
@@ -141,6 +115,19 @@ module.exports = function(app, passport) {
       action: function(user, params) {
         var evidence = promiseService.forgeEvidence(params[0]);
         return promiseService.removeEvidence(user, evidence);
+      }
+    },
+    updatePolitician: {
+      auth: true,
+      action: function(user, params) {
+        var politician = politicianService.forge(params[0]);
+        return politicianService.update(politician);
+      }
+    },
+    getPoliticalAssociations: {
+      auth: false,
+      action: function(user, params) {
+        return viewService.getPoliticalAssociations();
       }
     }
   }

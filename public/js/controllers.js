@@ -9,10 +9,13 @@ angular
         $scope[attr] = data[attr]; 
       }        
     };
+    
     $scope.mergeData(backendData);
     $scope.tabId = "LatestPromises";
     $scope.newPromise = {state: "", evidence_date: moment().toDate(), evidences: [""]};
     $scope.promisePage = 1;
+    $scope.editingPolitician = false;
+
     $scope.totalPoliticianUpUsersVotes = function() {
       return "UP" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["UP"] : 0;
     };   
@@ -169,13 +172,36 @@ angular
       if(authenticationService.ensureAuth()) {
         $window.location.href = "/politico/" + $scope.politician.slug + "/nova-promessa";
       }
+    };
+    $scope.isEditingPolitician = function() {
+      return $scope.editingPolitician === true;
     }
+    $scope.editPolitician = function() {
+      if(authenticationService.ensureAuth()) {
+        if(!$scope.politicalParties || !$scope.politicalOffices || !$scope.politicalOrgans) {
+          politicianService.getPoliticalAssociations().then(function(response) {
+            $scope.mergeData(response.data.data);
+          });
+        }
+        $scope.editedPolitician = angular.copy($scope.politician);
+        $scope.editingPolitician = true;
+      }
+    };
+    $scope.cancelPoliticianEdition = function() {
+      $scope.editingPolitician = false;
+    };
+    $scope.savePoliticianEdition = function() {
+      politicianService.updatePolitician($scope.editedPolitician).then(function(response) {
+        $scope.politician = angular.copy($scope.editedPolitician);
+        $scope.cancelPoliticianEdition();
+      });
+    };
   }])
   .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService) {
-    $scope.editing = false;
+    $scope.editingPromise = false;
     $scope.editedPromise = {category: backendData.category, evidences: [{}]};
-    $scope.registering = false;    
-
+    $scope.registeringPromise = false;    
+    
     $scope.mergeData = function(data) {
       for (var attr in data) { 
         $scope[attr] = data[attr]; 
@@ -187,7 +213,7 @@ angular
       }  
     };
     $scope.mergeData(backendData);
-              
+
     $scope.votedOnPromise = function() {
       return authenticationService.isUserAuthenticated() && $scope.promiseUserVote && $scope.promiseUserVote.promise_id === $scope.promise.id;
     };
@@ -247,16 +273,15 @@ angular
     $scope.isVideoEvidence = function(evidence) {
       return evidence.type === "VIDEO";
     };
-    $scope.edit = function() {
+    $scope.editPromise = function() {
       if(authenticationService.ensureAuth()) {
-        if($scope.promise.evidence_date) {
-          $scope.promise.evidence_date = new Date($scope.promise.evidence_date);
-        }
         $scope.editedPromise = angular.copy($scope.promise);
+        if($scope.editedPromise.evidence_date) {
+          $scope.editedPromise.evidence_date = new Date($scope.editedPromise.evidence_date);
+        }
         if($scope.editedPromise.evidences.length === 0) {
           $scope.editedPromise.evidences.push({});
         }
-        $scope.editing = true;
         if(!$scope.categories) {
           NProgress.start();
           promiseCategoryService.getAllCategories().then(function(response) {
@@ -264,64 +289,54 @@ angular
             $scope.mergeData(response.data.data);            
           });
         }   
+        $scope.editingPromise = true;
       }
     };
-    $scope.isRegistering = function() {
-      return $scope.registering === true;
-    }
+    $scope.isRegisteringPromise = function() {
+      return $scope.registeringPromise === true;
+    };
     $scope.registerPromise = function() {
-      var promiseData = {};
+      var evidencesData = [];
       var editedPromise = $scope.editedPromise;
-
-      promiseData.title = editedPromise.title;
-      promiseData.description = editedPromise.description;
-      promiseData.category_id = editedPromise.category.id;
-      promiseData.politician_id = $scope.politician.id;
-      promiseData.evidence_date = editedPromise.evidence_date;
-      promiseData.state = editedPromise.state;
-      promiseData.evidences = [];
       for(var index in editedPromise.evidences) {
         var evidence = editedPromise.evidences[index];
         if(evidence.url) {
-          promiseData.evidences.push(evidence);
+          evidencesData.push(evidence);
         }
       }
       NProgress.start();
-      promiseService.registerPromise(promiseData).then(function(response) {      
+      promiseService.registerPromise(editedPromise, evidencesData).then(function(response) {      
         NProgress.done();
         var promise = response.data.data.promise;
         $window.location.href = "/politico/" + $scope.politician.slug + "/" + promise.id + "/" + promise.slug;
       });
-    }
-    $scope.isEditing = function() {
-      return $scope.editing === true;
     };
-    $scope.cancelEdition = function() {          
-      $scope.editing = false;
+    $scope.isEditingPromise = function() {
+      return $scope.editingPromise === true;
     };
-    $scope.saveEdition = function() {
-      var promiseData = {};
+    $scope.cancelPromiseEdition = function() {          
+      $scope.editingPromise = false;
+    };
+    $scope.savePromiseEdition = function() {
+      var evidencesData = [];
       var editedPromise = $scope.editedPromise;
-
-      promiseData.id = editedPromise.id;
-      promiseData.title = editedPromise.title;
-      promiseData.description = editedPromise.description;
-      promiseData.category_id = editedPromise.category_id;
-      promiseData.evidence_date = editedPromise.evidence_date;
-      promiseData.state = editedPromise.state;
-      promiseData.evidences = [];
+            
       for(var index in editedPromise.evidences) {
         var evidence = editedPromise.evidences[index];
         if(evidence.url) {
-          promiseData.evidences.push(evidence);
+          evidencesData.push(evidence);
+        } else {
+          editedPromise.evidences.splice(index, 1);
         }
-      }        
+      }  
+
       NProgress.start();
-      promiseService.editPromise(promiseData).then(function(response) {
+      promiseService.editPromise(editedPromise, evidencesData).then(function(response) {
         NProgress.done();
+        $scope.promise = angular.copy(editedPromise);
         $scope.mergeAttrs(response.data.data.promise, $scope.promise);
         $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
-        $scope.cancelEdition();       
+        $scope.cancelPromiseEdition();       
       });
     };
     $scope.isPromiseStateChoosed = function(state) {
@@ -378,17 +393,29 @@ angular
         if(data.host) {
           evidence.host = data.host;
         }
+        
+        var foundThumbnail = false;
+        var thumbnailLink = null;
+        var iconLink = null;
         for(index in data.links) {
           var link = data.links[index];
           if(link.rel) {
             for(relIndex in link.rel) {
               var rel = link.rel[relIndex];
-              if(rel === "thumbnail") {
-                evidence.thumbnail = link.href;
+              if(!thumbnailLink && rel === "thumbnail") {
+                thumbnailLink = link.href;                
               }
-            }
-          }
-        }        
+              if(!iconLink && rel === "icon") {
+                iconLink = link.href;                
+              }
+            }          
+          }          
+        } 
+        if(thumbnailLink) {
+          evidence.image = thumbnailLink;
+        } else if(iconLink) {
+          evidence.image = iconLink;
+        }
       });
     }
   }]);

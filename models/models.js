@@ -61,7 +61,7 @@ var Promise = Bookshelf.Model.extend({
   politician: function() {
     return this.belongsTo(Politician, 'politician_id');
   },
-  registered_by_user: function() {
+  registeredByUser: function() {
     return this.belongsTo(User, 'registered_by_user_id');
   },
   evidences: function() {
@@ -75,7 +75,7 @@ var PromiseCategory = Bookshelf.Model.extend({
 
 var PromiseEvidence = Bookshelf.Model.extend({
   tableName: 'promise_evidence',
-  registered_by_user: function() {
+  registeredByUser: function() {
     return this.belongsTo(User, 'registered_by_user_id');
   }
 });

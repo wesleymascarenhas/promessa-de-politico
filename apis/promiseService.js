@@ -2,25 +2,25 @@ var Bookshelf           = require('../models/models').Bookshelf,
     Promise             = require('../models/models').Promise,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
     PromiseEvidence     = require('../models/models').PromiseEvidence,
-    PromiseEvidences     = require('../models/models').PromiseEvidences,
-    bookshelfUtils      = require('../utils/bookshelfUtils'),
+    PromiseEvidences    = require('../models/models').PromiseEvidences,
+    modelUtils          = require('../utils/modelUtils'),
     BluebirdPromise     = require('bluebird'),
     _                   = require('underscore');
 
-exports.forge = function(data) {
-  return Promise.forge(data);
+exports.forge = function(data) { 
+  return Promise.forge(modelUtils.filterAttributes('Promise', data));
 }
 
 exports.forgeCollection = function(data) {
-  return Promise.collection().forge(data);
+  return Promise.collection().forge(modelUtils.filterAttributes('Promise', data));
 }
 
 exports.forgeEvidence = function(data) {
-  return PromiseEvidence.forge(data);
+  return PromiseEvidence.forge(modelUtils.filterAttributes('PromiseEvidence', data));
 }
 
 exports.forgeEvidenceCollection = function(data) {
-  return PromiseEvidences.forge(data);
+  return PromiseEvidences.forge(modelUtils.filterAttributes('PromiseEvidence', data));
 }
 
 exports.findById = function(promise_id, relateds) {
@@ -81,7 +81,7 @@ exports.findUserVote = function(user, promise) {
 exports.findUserVotesByPromise = function(user, promises) {  
   return new BluebirdPromise(function(resolve, reject) {
     PromiseUserVote.collection().query(function(qb) {
-      qb.where('user_id', user.id).whereIn('promise_id', bookshelfUtils.getIds(promises));
+      qb.where('user_id', user.id).whereIn('promise_id', modelUtils.getIds(promises));
     }).fetch().then(function(userVotesByPromise) {
       var userVotesByPromiseMap = {};
       userVotesByPromise.forEach(function(promiseUserVote) {        
@@ -113,7 +113,7 @@ exports.countUsersVotesByPromise = function(promises) {
   return new BluebirdPromise(function(resolve, reject) {
     Bookshelf.knex('promise_user_vote')
     .select(Bookshelf.knex.raw('promise_id, count(*) as votes'))
-    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
     .then(function(usersVotesCounts) {      
       var usersVotesCountsMap = {};
@@ -146,7 +146,7 @@ exports.countUsersCommentsByPromise = function(promises) {
   return new BluebirdPromise(function(resolve, reject) {
     Bookshelf.knex('promise_user_comment')
     .select(Bookshelf.knex.raw('promise_id, count(*) as comments'))
-    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
     .then(function(usersCommentsCounts) {      
       var usersCommentsCountsMap = {};
@@ -179,7 +179,7 @@ exports.countEvidencesByPromise = function(promises) {
   return new BluebirdPromise(function(resolve, reject) {
     Bookshelf.knex('promise_evidence')
     .select(Bookshelf.knex.raw('promise_id, count(*) as evidences'))
-    .whereIn('promise_id', bookshelfUtils.getIds(promises))
+    .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
     .then(function(evidencesCounts) {      
       var evidencesCountsMap = {};
@@ -293,7 +293,7 @@ exports.update = function(user, promise, evidences) {
         }
       });
       evidences.invokeThen('save').then(function(evidences) {
-        promise.load(['category', 'evidences']).then(function(promise) {
+        promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
           resolve(promise);
         });
       });
@@ -313,7 +313,7 @@ exports.register = function(user, promise, evidences) {
         evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
       });
       evidences.invokeThen('save').then(function(evidences) {
-        promise.load(['category', 'evidences']).then(function(promise) {
+        promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
           resolve(promise);
         });
       });

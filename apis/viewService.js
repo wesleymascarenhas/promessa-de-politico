@@ -46,7 +46,7 @@ exports.getPromises = function(user, politician, category) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
     var vars = {};
-    promiseService.findAllByPoliticianAndCategory(politician, category, ['registered_by_user'])
+    promiseService.findAllByPoliticianAndCategory(politician, category, ['registeredByUser'])
     .then(function(promises) {         
       vars.promises = promises;
       that.fillPromises(user, vars).then(function() {
@@ -67,7 +67,7 @@ exports.getAllPromises = function(user, politician) {
       vars.categories = categories;
       vars.category = categories.at(helper.randomIndex(categories));    
       vars.totalPromisesByCategory = totalPromisesByCategory;                
-      promiseService.findAllByPoliticianAndCategory(politician, vars.category, ['registered_by_user'])
+      promiseService.findAllByPoliticianAndCategory(politician, vars.category, ['registeredByUser'])
       .then(function(promises) {         
         vars.promises = promises;
         that.fillPromises(user, vars).then(function() {
@@ -85,7 +85,7 @@ exports.getAllPromises = function(user, politician) {
 exports.getMajorPromises = function(user, politician, page, pageSize) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.majorPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
+    promiseService.majorPromises(politician, ['registeredByUser', 'category'], page, pageSize).then(function(promises) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
@@ -99,7 +99,7 @@ exports.getMajorPromises = function(user, politician, page, pageSize) {
 exports.getOlderPromises = function(user, politician, page, pageSize) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.olderPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
+    promiseService.olderPromises(politician, ['registeredByUser', 'category'], page, pageSize).then(function(promises) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
@@ -113,7 +113,7 @@ exports.getOlderPromises = function(user, politician, page, pageSize) {
 exports.getLatestPromises = function(user, politician, page, pageSize) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.latestPromises(politician, ['registered_by_user', 'category'], page, pageSize).then(function(promises) {
+    promiseService.latestPromises(politician, ['registeredByUser', 'category'], page, pageSize).then(function(promises) {
       var vars = {promises: promises};
       that.fillPromises(user, vars).then(function() {
         resolve(vars);
@@ -172,6 +172,17 @@ exports.registerPromise = function(user, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
     promiseService.register(user, promise, evidences).then(function(registered) {
       resolve({promise: promise});
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.getPoliticalAssociations = function() {
+  return new BluebirdPromise(function(resolve, reject) {
+    BluebirdPromise.all([politicianService.findAllPoliticalParties(), politicianService.findAllPoliticalOffices(), politicianService.findAllPoliticalOrgans()]).spread(function(politicalParties, politicalOffices, politicalOrgans) {
+      var vars = {politicalParties: politicalParties, politicalOffices: politicalOffices, politicalOrgans: politicalOrgans};      
+      resolve(vars);
     }).catch(function(err) {
       reject(err);
     });

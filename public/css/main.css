@@ -80,24 +80,6 @@ a:hover {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-facebook {
-  width: 32px;
-  height: 32px;
-  background: url('/icons/facebook_32.png') no-repeat;
-}
-
-.icon-twitter {
-  width: 32px;
-  height: 32px;
-  background: url('/icons/twitter_32.png') no-repeat;
-}
-
-.icon-googleplus {
-  width: 32px;
-  height: 32px;
-  background: url('/icons/google-plus_32.png') no-repeat;
-}
-
 .user-logged {
   line-height: 50px;
   overflow: hidden;
@@ -153,8 +135,12 @@ a:hover {
 }
 
 .politician-infos {
-  padding: 80px 40px 40px 40px;
+  padding: 40px;
   position: relative;
+}
+
+.politician-introduction {
+  padding-top: 40px;
 }
 
 .politician-photo {
@@ -167,12 +153,8 @@ a:hover {
   height: 50px;
 }
 
-.politician-infos .popover {
-  position: relative;
-  display: block;
-  float: right;
-  width: 260px;
-  margin: 20px;
+.politician-infos .edit {
+  margin-top: 10px;
 }
 
 .promises-menu {
@@ -245,7 +227,7 @@ a:hover {
 }
 
 .promise .evidences .media {
-  position: relative;
+  min-height: 148px;
   margin-bottom: 0px;
   border: solid 1px #e7e7e7;
   padding: 10px;
@@ -260,10 +242,8 @@ a:hover {
   line-height: 1.5;
 }
 
-.promise .evidences .media-host {
-  position: absolute;
-  bottom: 0;
-  padding-bottom: 10px;
+.promise .evidences .media-host {  
+  padding-top: 10px;
 }
 
 .dropdown-scroll {
@@ -447,3 +427,31 @@ a:hover {
 .btn-twitter:active,.btn-twitter.active,.open .dropdown-toggle.btn-twitter{background-image:none}
 .btn-twitter.disabled,.btn-twitter[disabled],fieldset[disabled] .btn-twitter,.btn-twitter.disabled:hover,.btn-twitter[disabled]:hover,fieldset[disabled] .btn-twitter:hover,.btn-twitter.disabled:focus,.btn-twitter[disabled]:focus,fieldset[disabled] .btn-twitter:focus,.btn-twitter.disabled:active,.btn-twitter[disabled]:active,fieldset[disabled] .btn-twitter:active,.btn-twitter.disabled.active,.btn-twitter[disabled].active,fieldset[disabled] .btn-twitter.active{background-color:#2ba9e1;border-color:rgba(0,0,0,0.2)}
 /* Social buttons END */
+
+/* Social icons START */
+.icon {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-facebook {
+  width: 32px;
+  height: 32px;
+  background: url('/icons/facebook_32.png') no-repeat;
+}
+
+.icon-twitter {
+  width: 32px;
+  height: 32px;
+  background: url('/icons/twitter_32.png') no-repeat;
+}
+
+.icon-googleplus {
+  width: 32px;
+  height: 32px;
+  background: url('/icons/google-plus_32.png') no-repeat;
+}
+/* Social icons END */

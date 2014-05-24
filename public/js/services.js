@@ -8,7 +8,13 @@ angular
   .service("politicianService", ["$http", function($http) {
     this.voteInPolitician = function(politician, vote_type) {
       return $http.post("/ajax", {key: "voteInPolitician", params: [politician.id, vote_type]});
-    }  
+    }
+    this.updatePolitician = function(politician) {
+      return $http.post("/ajax", {key: "updatePolitician", params: [politician]});
+    }
+    this.getPoliticalAssociations = function() {
+      return $http.get("/ajax?key=getPoliticalAssociations");
+    }
   }])
   .service("oembedService", ["$http", function($http) {
     this.getOEmbed = function(url) {
@@ -34,11 +40,11 @@ angular
     this.voteOnPromise = function(promise) {
       return $http.post("/ajax", {key: "voteOnPromise", params: [promise.id]});
     }
-    this.editPromise = function(data) {
-      return $http.post("/ajax", {key: "editPromise", params: [data]});
+    this.editPromise = function(promiseData, evidencesData) {
+      return $http.post("/ajax", {key: "editPromise", params: [promiseData, evidencesData]});
     }
-    this.registerPromise = function(data) {
-      return $http.post("/ajax", {key: "registerPromise", params: [data]});
+    this.registerPromise = function(promiseData, evidencesData) {
+      return $http.post("/ajax", {key: "registerPromise", params: [promiseData, evidencesData]});
     }
     this.removeEvidence = function(evidence) {
       return $http.post("/ajax", {key: "removeEvidence", params: [evidence]});

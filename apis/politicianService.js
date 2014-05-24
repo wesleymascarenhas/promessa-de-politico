@@ -1,11 +1,15 @@
 var Politician          = require('../models/models').Politician,
     PoliticianUserVote  = require('../models/models').PoliticianUserVote,
+    PoliticalParty      = require('../models/models').PoliticalParty,
+    PoliticalOffice     = require('../models/models').PoliticalOffice,
+    PoliticalOrgan      = require('../models/models').PoliticalOrgan,
     Bookshelf           = require('../models/models').Bookshelf,
     BluebirdPromise     = require('bluebird'),
+    modelUtils          = require('../utils/modelUtils'),
     _                   = require('underscore');
 
 exports.forge = function(data) {
-  return Politician.forge(data);
+  return Politician.forge(modelUtils.filterAttributes('Politician', data));
 }
 
 exports.findById = function(politician_id, relateds) {
@@ -69,4 +73,20 @@ exports.countUsersVotes = function(politician) {
       reject(err);
     });
   });
+}
+
+exports.update = function(politician) {
+  return politician.save();
+}
+
+exports.findAllPoliticalParties = function() {
+  return PoliticalParty.collection().fetch();
+}
+
+exports.findAllPoliticalOffices = function() {
+  return PoliticalOffice.collection().fetch();
+}
+
+exports.findAllPoliticalOrgans = function() {
+  return PoliticalOrgan.collection().fetch();
 }

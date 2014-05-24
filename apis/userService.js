@@ -1,6 +1,6 @@
 var User           = require('../models/models').User,
-    bookshelfUtils = require('../utils/bookshelfUtils'),
-    helper        = require('../utils/helper'),
+    modelUtils     = require('../utils/modelUtils'),
+    helper         = require('../utils/helper'),
     _              = require('underscore');
 
 function forgeUser(attributes) {
@@ -27,7 +27,7 @@ exports.createByGoogleAccount = function(name, gender, username, email, google_a
 }
 
 exports.update = function(user, attributes) {
-  return user.save(bookshelfUtils.getAttributesMap(user, attributes), {patch: true});
+  return user.save(modelUtils.getAttributesMap(user, attributes), {patch: true});
 }
 
 exports.findAll = function() {

@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container" ng-controller="promiseController">  
   <div class="page-section align-right">
-    <div ng-if="!isRegistering()">
+    <div ng-if="!isRegisteringPromise()">
       <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
       <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
       <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
@@ -44,8 +44,8 @@
       </div>
     </div>
     <div class="promise col-md-9">
-      <div ng-if="!isRegistering()">
-        <div ng-show="!isEditing()" class="header">
+      <div ng-if="!isRegisteringPromise()">
+        <div ng-show="!isEditingPromise()" class="header">
           <p class="title"><% promise.title %></p>
           <p class="description"><% promise.description %></p>
           <h4>
@@ -79,21 +79,23 @@
                     •
                   </span> 
                   Registrada por
-                  <a href="/usuario/<% promise.registered_by_user.username %>">
-                    <% promise.registered_by_user.name %>
+                  <a href="/usuario/<% promise.registeredByUser.username %>">
+                    <% promise.registeredByUser.name %>
                   </a>
                   <span am-time-ago="promise.registration_date"></span>
               </h4>
             </div>
             <div class="pull-right">
-              <button ng-click="edit()" type="button" class="btn btn-default btn-small">Editar</button>
+              <button ng-click="editPromise()" type="button" class="btn btn-default btn-small">
+                Editar
+              </button>
             </div>
           </div>
           <div class="evidences page-section">
             <div ng-repeat="evidence in promise.evidences" class="media" ng-class="{'hide': isHiddenEvidence($index)}">
               <a class="pull-left" ng-href="<% evidence.url %>" target="_blank">
-                <img ng-show="!evidence.thumbnail" class="media-object" src="/img/news_64_64.png">
-                <img ng-show="evidence.thumbnail" class="media-object" ng-src="<% evidence.thumbnail %>" width="165">
+                <img ng-show="!evidence.image" class="media-object" src="/img/news_64_64.png">
+                <img ng-show="evidence.image" class="media-object" ng-src="<% evidence.image %>" width="123">
               </a>
               <div class="media-body">
                 <h4 class="media-heading">
@@ -105,7 +107,7 @@
                 <a ng-href="<% evidence.url %>" target="_blank"><% evidence.host %></a>
                 <div class="media-host">
                   Adicionado por 
-                  <a ng-href="/usuario/<% evidence.registered_by_user.username %>"><% evidence.registered_by_user.name %></a>
+                  <a ng-href="/usuario/<% evidence.registeredByUser.username %>"><% evidence.registeredByUser.name %></a>
                   <span am-time-ago="evidence.registration_date"></span>
                 </div>
               </div>
@@ -114,14 +116,20 @@
           </div>
         </div>      
       </div>   
-      <div ng-show="isRegistering() || isEditing()" class="header">
+      <div ng-show="isRegisteringPromise() || isEditingPromise()" class="header">
         <form name="promiseForm" novalidate>
-          <div class="form-group" ng-if="isEditing()">
-            <button ng-click="saveEdition()" type="button" class="btn btn-primary" ng-disabled="promiseForm.$invalid">Salvar</button>
-            <button ng-click="cancelEdition()" type="button" class="btn btn-default">Cancelar</button>
+          <div class="form-group" ng-if="isEditingPromise()">
+            <button ng-click="savePromiseEdition()" type="button" class="btn btn-primary" ng-disabled="promiseForm.$invalid">
+              Salvar
+            </button>
+            <button ng-click="cancelPromiseEdition()" type="button" class="btn btn-default">
+              Cancelar
+            </button>
           </div>
-          <div class="form-group" ng-if="isRegistering()">
-            <button ng-click="registerPromise()" type="button" class="btn btn-primary">Registar</button>
+          <div class="form-group" ng-if="isRegisteringPromise()">
+            <button ng-click="registerPromise()" type="button" class="btn btn-primary">
+              Registar
+            </button>
           </div>
           <div class="form-group" ng-class="{'has-error': promiseForm.title.$invalid && !promiseForm.title.$pristine}">
             <label class="control-label" for="title" ng-show="promiseForm.title.$invalid && !promiseForm.title.$pristine">É obrigatório informar o título da promessa</label>
@@ -182,64 +190,58 @@
                 }
               ">Descartada</button>
             </div>
-          </div>
-          
+          </div>          
+          <div class="form-group">
             <label>Data em que a promessa foi feita</label>            
             <div class="row">
-              <div class="col-md-6">
-                <p class="input-group">
-                  <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="editedPromise.evidence_date" is-open="true" min-date="'1980-01-01'" max-date="'2015-06-22'" ng-required="true" close-text="Close"/>
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
-                </p>
+              <div class="col-md-4">
+                <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="editedPromise.evidence_date" min-date="'1980-01-01'" max-date="'2015-06-22'" show-button-bar="false"/>
               </div>
             </div>
+          </div>
           <div class="evidences form-group">
             <label>Links de vídeos ou notícias que comprovam essa promessa</label>
             <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
               <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
-            </div>
-            <form class="form-horizontal">
-              <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
-                <div>
-                  <div class="well">
-                    <div class="media-url input-group">
-                      <input ng-model="evidence.url" ng-paste="getEvidenceInfos(evidence, $event)" type="url" class="form-control" placeholder="Cole aqui a url da notícia ou vídeo" />
-                      <span class="input-group-btn" ng-show="!isLastEvidence($index)">
-                        <button ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
-                          <span class="glyphicon glyphicon-minus"></span>
-                        </button>
-                      </span>
-                      <span class="input-group-btn" ng-show="isLastEvidence($index)">
-                        <button ng-click="addEvidence()" class="btn btn-success" type="button">
-                          <span class="glyphicon glyphicon-plus"></span>
-                        </button>
-                      </span>
-                    </div>
-                    <div ng-show="evidence.title" class="media grey-text">
-                      <a nf-show="evidence.thumbnail" class="pull-left" ng-href="<% evidence.url %>" target="_blank">
-                        <img class="media-object" ng-src="<% evidence.thumbnail %>" width="165">
-                      </a>
-                      <div class="media-body">
-                        <div class="form-group">
-                          <input ng-model="evidence.title" class="form-control" placeholder="Título da notícia/vídeo">
-                        </div>                      
-                        <div class="form-group">
-                          <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da notícia/vídeo" rows="3"></textarea>
-                        </div>
-                        <a ng-href="<% evidence.url %>"><% evidence.host %></a>
+            </div>            
+            <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
+              <div>
+                <div class="well">
+                  <div class="media-url input-group">
+                    <input ng-model="evidence.url" ng-paste="getEvidenceInfos(evidence, $event)" type="url" class="form-control" placeholder="Cole aqui a url da notícia ou vídeo" />
+                    <span class="input-group-btn" ng-show="!isLastEvidence($index)">
+                      <button ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
+                        <span class="glyphicon glyphicon-minus"></span>
+                      </button>
+                    </span>
+                    <span class="input-group-btn" ng-show="isLastEvidence($index)">
+                      <button ng-click="addEvidence()" class="btn btn-success" type="button">
+                        <span class="glyphicon glyphicon-plus"></span>
+                      </button>
+                    </span>
+                  </div>
+                  <div ng-show="evidence.title" class="media grey-text">
+                    <a nf-show="evidence.image" class="pull-left" ng-href="<% evidence.url %>" target="_blank">
+                      <img class="media-object" ng-src="<% evidence.image %>" width="123">
+                    </a>
+                    <div class="media-body">
+                      <div class="form-group">
+                        <input ng-model="evidence.title" class="form-control" placeholder="Título da notícia/vídeo">
+                      </div>                      
+                      <div class="form-group">
+                        <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da notícia/vídeo" rows="3"></textarea>
                       </div>
+                      <a ng-href="<% evidence.url %>"><% evidence.host %></a>
                     </div>
                   </div>
-                </div>   
-              </div>          
-            </form>          
+                </div>
+              </div>   
+            </div>                      
           </div>           
         </form>
       </div>
-      <div ng-if="!isRegistering()">
-        <div ng-show="!isEditing()" class="comments page-section">     
+      <div ng-if="!isRegisteringPromise()">
+        <div ng-show="!isEditingPromise()" class="comments page-section">     
              
         </div>    
       </div>

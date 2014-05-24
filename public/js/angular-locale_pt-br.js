@@ -1,5 +1,5 @@
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var PLURAL_CATEGORY = {ZERO: "zero", ONE: "um", TWO: "dois", FEW: "poucos", MANY: "muitos", OTHER: "outros"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
@@ -7,36 +7,36 @@ $provide.value("$locale", {
       "PM"
     ],
     "DAY": [
-      "domingo",
-      "segunda-feira",
-      "ter\u00e7a-feira",
-      "quarta-feira",
-      "quinta-feira",
-      "sexta-feira",
-      "s\u00e1bado"
+      "Domingo",
+      "Segunda-feira",
+      "Ter\u00e7a-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "S\u00e1bado"
     ],
     "MONTH": [
-      "janeiro",
-      "fevereiro",
-      "mar\u00e7o",
-      "abril",
-      "maio",
-      "junho",
-      "julho",
-      "agosto",
-      "setembro",
-      "outubro",
-      "novembro",
-      "dezembro"
+      "Janeiro",
+      "Fevereiro",
+      "Mar\u00e7o",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro"
     ],
     "SHORTDAY": [
-      "dom",
-      "seg",
-      "ter",
-      "qua",
-      "qui",
-      "sex",
-      "s\u00e1b"
+      "Dom",
+      "Seg",
+      "Ter",
+      "Qua",
+      "Qui",
+      "Sex",
+      "S\u00e1b"
     ],
     "SHORTMONTH": [
       "jan",
