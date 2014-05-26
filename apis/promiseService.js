@@ -3,6 +3,7 @@ var Bookshelf           = require('../models/models').Bookshelf,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
     PromiseEvidence     = require('../models/models').PromiseEvidence,
     PromiseEvidences    = require('../models/models').PromiseEvidences,
+    PromiseUserComment  = require('../models/models').PromiseUserComment,
     modelUtils          = require('../utils/modelUtils'),
     BluebirdPromise     = require('bluebird'),
     _                   = require('underscore');
@@ -23,31 +24,31 @@ exports.forgeEvidenceCollection = function(data) {
   return PromiseEvidences.forge(modelUtils.filterAttributes('PromiseEvidence', data));
 }
 
-exports.findById = function(promise_id, relateds) {
-  return this.forge({id: promise_id}).fetch({withRelated: relateds});
+exports.findById = function(promise_id, related) {
+  return this.forge({id: promise_id}).fetch({withRelated: related});
 }
 
-exports.findAllByPolitician = function(politician, relateds) {
-  return Promise.collection().query({where: {politician_id: politician.id}}).fetch({withRelated: relateds});
+exports.findAllByPolitician = function(politician, related) {
+  return Promise.collection().query({where: {politician_id: politician.id}}).fetch({withRelated: related});
 }
 
-exports.findAllByPoliticianAndCategory = function(politician, category, relateds) {
-  return Promise.collection().query({where: {politician_id: politician.id, category_id: category.id}}).fetch({withRelated: relateds});
+exports.findAllByPoliticianAndCategory = function(politician, category, related) {
+  return Promise.collection().query({where: {politician_id: politician.id, category_id: category.id}}).fetch({withRelated: related});
 }
 
-exports.olderPromises = function(politician, relateds, page, pageSize) {
+exports.olderPromises = function(politician, related, page, pageSize) {
   return Promise.collection().query(function(qb) {
     qb.orderBy(Bookshelf.knex.raw('isnull(evidence_date)'), 'asc').orderBy('registration_date', 'asc').limit(pageSize).offset((page - 1) * pageSize);
-  }).fetch({withRelated: relateds});
+  }).fetch({withRelated: related});
 }
 
-exports.latestPromises = function(politician, relateds, page, pageSize) {
+exports.latestPromises = function(politician, related, page, pageSize) {
   return Promise.collection().query(function(qb) {
     qb.orderBy('evidence_date', 'desc').orderBy('registration_date', 'desc').limit(pageSize).offset((page - 1) * pageSize);
-  }).fetch({withRelated: relateds});
+  }).fetch({withRelated: related});
 }
 
-exports.majorPromises = function(politician, relateds, page, pageSize) {
+exports.majorPromises = function(politician, related, page, pageSize) {
   return Promise.collection().query(function(qb) {  
     var subQuery = Bookshelf.knex('promise_user_vote').select('promise_id', Bookshelf.knex.raw('count(*) as votes')).groupBy('promise_id').toString();
     qb
@@ -60,7 +61,23 @@ exports.majorPromises = function(politician, relateds, page, pageSize) {
     .orderBy('promise_user_vote.votes', 'desc')
     .limit(pageSize)
     .offset((page - 1) * pageSize);
-  }).fetch({withRelated: relateds});
+  }).fetch({withRelated: related});
+}
+
+exports.loadUsersComments = function(promise) {
+  return promise.load(['comments', 'comments.user']);
+}
+
+exports.comment = function(user, promise, comment) {
+  return PromiseUserComment.forge({user_id: user.id, promise_id: promise.id, content: comment}).save();
+}
+
+exports.removeComment = function(comment_id) {
+  return PromiseUserComment.forge({id: comment_id}).destroy();
+}
+
+exports.findUserComment = function(comment_id, related) {
+  return PromiseUserComment.forge({id: comment_id}).fetch({withRelated: related});
 }
 
 exports.findUserVote = function(user, promise) {

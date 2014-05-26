@@ -1,5 +1,5 @@
 angular
-  .module("politiciansPromiseApp", ["angularMoment", "infinite-scroll", "ui.bootstrap"])
+  .module("politiciansPromiseApp", ["ui.bootstrap", "ui.knob", "angularMoment", "infinite-scroll", "nya.bootstrap.select", "textAngular", "jackrabbitsgroup.angular-image-upload"])
   .config(function($interpolateProvider) {
     $interpolateProvider.startSymbol("<%");
     $interpolateProvider.endSymbol("%>");

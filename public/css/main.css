@@ -4,8 +4,20 @@ body {
   font-family: "Ubuntu", "sans-serif";
 }
 
+a:hover {
+  cursor: pointer;
+}
+
+.paragraph_1_5 {
+  line-height: 1.5;
+}
+
 .padding10 {
   padding: 10px;
+}
+
+.margin10 {
+  margin: 10px;
 }
 
 .grey-text {
@@ -14,10 +26,6 @@ body {
 
 .grey-text a {
   color: #555;
-}
-
-a:hover {
-  cursor: pointer;
 }
 
 .overflow-hidden {
@@ -68,10 +76,6 @@ a:hover {
   margin-top: 10px;
 }
 
-.sparse {
-  margin: 10px;
-}
-
 .icon {
   position: relative;
   display: inline-block;
@@ -93,54 +97,8 @@ a:hover {
   float: left;
 }
 
-.nav-pills > li > a, .nav-pills > li > a:hover, .nav-pills > li > a:focus {
-  color: #777;
-  background-color: #f8f8f8;
-  border-bottom: 5px #e7e7e7 solid;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-}
-
-.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
-  color: #777;
-  background-color: #f8f8f8;
-  border-bottom: 5px #428bca solid;
-}
-
-.politician-cover {
-  text-align: center;
-  background-color: #f8f8f8;
-  color: #FFF;
-  min-height: 550px;
-}
-
-#politician-carousel {
-  min-height: 550px;
-  background: #000;
-}
-
-#politician-carousel .carousel-inner {
-  position: absolute;
-}
-
-#politician-carousel .carousel-inner .item.active {
-  min-height: 550px;
-  background-size: cover; 
-  background-position: 50% 50%; 
-  background-repeat: initial initial;
-  display: block;
-  opacity: 0.2;
-}
-
 .politician-infos {
   padding: 40px;
-  position: relative;
-}
-
-.politician-introduction {
-  padding-top: 40px;
 }
 
 .politician-photo {
@@ -148,28 +106,34 @@ a:hover {
   height: 200px;
 }
 
-.politician-party-photo {
-  width: 50px;
-  height: 50px;
-}
-
-.politician-infos .edit {
-  margin-top: 10px;
-}
-
 .promises-menu {
   background-color: #f8f8f8;
-  border-top: 5px solid #666;
+  border-top: 5px #e7e7e7 solid;
+  border-bottom: 5px #e7e7e7 solid;
   margin-bottom: 20px;
 }
 
 .promises-menu ul {
   margin: 0 auto;
+  margin-bottom: -5px;
   width: 80%;
 }
 
+.promises-menu .nav-pills > li > a, .promises-menu .nav-pills > li > a:hover, .promises-menu .nav-pills > li > a:focus {
+  color: #777;
+  background-color: #f8f8f8;  
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.promises-menu .nav-pills > li.active > a, .promises-menu .nav-pills > li.active > a:hover, .promises-menu .nav-pills > li.active > a:focus {
+  border-bottom: 5px #428bca solid;
+}
+
 .promises-list li {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px #ddd solid;
   padding: 10px;
 }
 
@@ -206,12 +170,14 @@ a:hover {
 }
 
 .votes .vote .vote-count {
-  margin-top: 5px;
-  background-color: #fff;
-  border-radius: 4px;
-  font-weight: bolder;
   color: #333;
   text-align: center;
+  font-weight: bolder;
+  font-size: 18px;
+  padding: 5px;
+  margin-top: 5px;
+  border: 1px #ccc solid;
+  border-radius: 4px;
 }
 
 .promise .header {
@@ -229,7 +195,7 @@ a:hover {
 .promise .evidences .media {
   min-height: 148px;
   margin-bottom: 0px;
-  border: solid 1px #e7e7e7;
+  border: 1px #e7e7e7 solid;
   padding: 10px;
   border-radius: 4px;
 }
@@ -262,13 +228,16 @@ a:hover {
 }
 
 /* Comments START */
+#taTextElement {
+  height: auto;
+}
+
 .comments {
-  border-top: solid 1px #e7e7e7;
-  padding-top: 20px;  
+  border-radius: 4px;  
 }
 
 .comments-title {
-  background-color: #F8F8F8;
+  background-color: #f5f5f5;;
   padding: 10px;
 }
 
@@ -278,19 +247,23 @@ a:hover {
   display: inline-block;
 }
 
-.comments-box .form-group * {
-  width: 100%;
+.comments-content {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-.comments-box {
-  border-top: dotted 1px #bbb;
-  padding: 10px;
+.comments-comment {
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.comments-box .form-group * {
+  width: 100%;
 }
 
 .comments-list {
   padding: 0;
   list-style: none;
-  max-height: 200px;
   overflow: auto;
 }
 
@@ -300,12 +273,12 @@ a:hover {
 }
 
 .comments-list li > div {
-  display: table-cell;
+  display: inline-block;
 }
 
 .commenter-image {
   width: 30px;
-  margin-right: 5px;
+  margin-right: 20px;
   height: 100%;
   float: left;
 }
@@ -320,9 +293,7 @@ a:hover {
 }
 
 .comment-date {
-  color: #aaa;
-  font-family: verdana;
-  font-size: 11px;
+  color: #888;
 }
 
 .comments-box .form-group:first-child {

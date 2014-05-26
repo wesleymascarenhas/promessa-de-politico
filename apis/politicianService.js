@@ -12,12 +12,12 @@ exports.forge = function(data) {
   return Politician.forge(modelUtils.filterAttributes('Politician', data));
 }
 
-exports.findById = function(politician_id, relateds) {
-  return this.forge({politician_id: politician_id}).fetch({withRelated: relateds});
+exports.findById = function(politician_id, related) {
+  return this.forge({politician_id: politician_id}).fetch({withRelated: related});
 }
 
-exports.findBySlug = function(slug, relateds) {
-  return this.forge({slug: slug}).fetch({withRelated: relateds});
+exports.findBySlug = function(slug, related) {
+  return this.forge({slug: slug}).fetch({withRelated: related});
 }
 
 exports.getUserVote = function(user, politician) {

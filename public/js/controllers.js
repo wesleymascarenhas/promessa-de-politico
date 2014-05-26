@@ -15,7 +15,30 @@ angular
     $scope.newPromise = {state: "", evidence_date: moment().toDate(), evidences: [""]};
     $scope.promisePage = 1;
     $scope.editingPolitician = false;
+    
 
+    $scope.image ='';
+    //NOTE: the $scope.$on evt is optional since using ngModel will automatically update this $scope value accordingly
+    var evtImageUpload ='TestCtrlImageUpload';
+    $scope.uploadOpts =
+    {
+      //'type':'byUrl',
+      'uploadPath':'/imageUpload',
+      'uploadDirectory':'/uploads',
+      'serverParamNames': {
+        'file': 'myFile'
+      },
+      'uploadCropPath':'/imageCrop',
+      // 'callbackInfo':{'evtName':evtImageUpload, 'args':[{'var1':'yes'}]},
+      'imageServerKeys':{'imgFileName':'result.fileNameSave', 'picHeight':'picHeight', 'picWidth':'picWidth', 'imgFileNameCrop':'result.newFileName'},    //hardcoded must match: server return data keys
+      //'htmlDisplay':"<div class='ig-form-pic-upload'><div class='ig-form-pic-upload-button'>Select Photo</div></div>",
+      'cropOptions': {'crop':true}
+    };
+    //OPTIONAL
+    $scope.$on(evtImageUpload, function(evt, args) {
+      //do extra post upload handling here..
+      //$scope.formVals.image =args[1].imgFileName;
+    });
     $scope.totalPoliticianUpUsersVotes = function() {
       return "UP" in $scope.totalPoliticianUsersVotes ? $scope.totalPoliticianUsersVotes["UP"] : 0;
     };   
@@ -196,11 +219,20 @@ angular
         $scope.cancelPoliticianEdition();
       });
     };
+    $scope.politicalPartySelected = function() {
+      $scope.editedPolitician.political_party_id = $scope.editedPolitician.party.id;
+    };
+    $scope.politicalOfficeSelected = function() {
+      $scope.editedPolitician.political_office_id = $scope.editedPolitician.office.id;
+    };
+    $scope.politicalOrganSelected = function() {
+      $scope.editedPolitician.political_organ_id = $scope.editedPolitician.organ.id;
+    };
   }])
   .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService) {
     $scope.editingPromise = false;
     $scope.editedPromise = {category: backendData.category, evidences: [{}]};
-    $scope.registeringPromise = false;    
+    $scope.registeringPromise = false;  
     
     $scope.mergeData = function(data) {
       for (var attr in data) { 
@@ -214,6 +246,35 @@ angular
     };
     $scope.mergeData(backendData);
 
+    $scope.comment = function(content) {
+      if(authenticationService.ensureAuth()) {        
+        promiseService.comment($scope.promise, content).then(function(response) {
+          var comment = response.data.data;
+          comment.registration_date = new Date();
+          $scope.promise.comments.unshift(comment);
+          $scope.totalPromiseUsersComments++;
+        });
+      }
+    };
+    $scope.removeComment = function(comment, index) {
+      if(authenticationService.ensureAuth()) {
+        var modalScope = {
+          headerText: "Remover comentário",
+          bodyText: "Deseja realmente remover este comentário?"
+        };   
+        modalService.show({size: "sm"}, modalScope).then(function(result) {
+          NProgress.start();
+          promiseService.removeComment(comment).then(function(response) {
+            NProgress.done();
+            $scope.promise.comments.splice(index, 1);
+            $scope.totalPromiseUsersComments--
+          });                   
+        }); 
+      }
+    };
+    $scope.isCommentOwner = function(comment) {
+      return authenticationService.getUser() && comment.user_id === authenticationService.getUser().id;
+    }
     $scope.votedOnPromise = function() {
       return authenticationService.isUserAuthenticated() && $scope.promiseUserVote && $scope.promiseUserVote.promise_id === $scope.promise.id;
     };
@@ -357,22 +418,23 @@ angular
     $scope.addEvidence = function() {          
       $scope.editedPromise.evidences.push({});
     };
-    $scope.removeEvidence = function(evidence, index) { 
-      var modalScope = {
-        headerText: "Deseja remover essa evidência ?",
-        bodyText: "As evidências são importantes, pois comprovam essa promessa."
-      };   
-      modalService.show({size: "sm"}, modalScope).then(function(result) {
-        NProgress.start();
-        promiseService.removeEvidence(evidence).then(function(response) {
-          NProgress.done();
-          $scope.editedPromise.evidences.splice(index, 1);
-        });
-      });    
+    $scope.removeEvidence = function(evidence, index) {
+      if(authenticationService.ensureAuth()) { 
+        var modalScope = {
+          headerText: "Deseja remover essa evidência ?",
+          bodyText: "As evidências são importantes, pois comprovam essa promessa."
+        };   
+        modalService.show({size: "sm"}, modalScope).then(function(result) {
+          NProgress.start();
+          promiseService.removeEvidence(evidence).then(function(response) {
+            NProgress.done();
+            $scope.editedPromise.evidences.splice(index, 1);
+          });
+        });    
+      }
     };
-    $scope.selectCategory = function(category) {
-      $scope.editedPromise.category = category;
-      $scope.editedPromise.category_id = category.id;
+    $scope.categorySelected = function() {    
+      $scope.editedPromise.category_id = $scope.editedPromise.category.id;
     };
     $scope.getEvidenceInfos = function(evidence, event) {
       var url = event.originalEvent.clipboardData.getData('text/plain');
@@ -417,5 +479,5 @@ angular
           evidence.image = iconLink;
         }
       });
-    }
+    };    
   }]);

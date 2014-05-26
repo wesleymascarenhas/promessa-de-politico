@@ -53,7 +53,7 @@ module.exports = function(app, passport) {
         return results;
       }
       return viewService.fillPolitician(user, results).then(function() {
-        return viewService.fillPromise(user, results).then(function() {
+        return viewService.fillPromiseWithUsersComments(user, results).then(function() {
           return results;
         });
       });

@@ -27,6 +27,18 @@ exports.fillPromise = function(user, vars) {
   });
 }
 
+exports.fillPromiseWithUsersComments = function(user, vars) {
+  var that = this;
+  return new BluebirdPromise(function(resolve, reject) {
+    BluebirdPromise.all([that.fillPromise(user, vars), promiseService.loadUsersComments(vars.promise)])
+    .spread(function(fillPromiseResult, promiseWithComments) {
+      resolve(vars);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
 exports.fillPromises = function(user, vars) { 
   return new BluebirdPromise(function(resolve, reject) { 
     BluebirdPromise.all([promiseService.countUsersVotesByPromise(vars.promises), promiseService.countUsersCommentsByPromise(vars.promises), promiseService.countEvidencesByPromise(vars.promises), user ? promiseService.findUserVotesByPromise(user, vars.promises) : null])
@@ -183,6 +195,16 @@ exports.getPoliticalAssociations = function() {
     BluebirdPromise.all([politicianService.findAllPoliticalParties(), politicianService.findAllPoliticalOffices(), politicianService.findAllPoliticalOrgans()]).spread(function(politicalParties, politicalOffices, politicalOrgans) {
       var vars = {politicalParties: politicalParties, politicalOffices: politicalOffices, politicalOrgans: politicalOrgans};      
       resolve(vars);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.comment = function(user, promise, comment) {
+  return new BluebirdPromise(function(resolve, reject) {
+    promiseService.comment(user, promise, comment).then(function(promiseUserComment) {
+      resolve(promiseService.findUserComment(promiseUserComment.id, ['user']));
     }).catch(function(err) {
       reject(err);
     });

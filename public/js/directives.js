@@ -8,6 +8,8 @@ angular
         if(attrs.knobMax) {
           knob.data("max", attrs.knobMax);
         }
+        console.log(attrs.knobValue);
+        console.log(attrs.knobMax);
         if(attrs.knobValue) {
           knob.val(attrs.knobValue); 
         }

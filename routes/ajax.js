@@ -129,6 +129,21 @@ module.exports = function(app, passport) {
       action: function(user, params) {
         return viewService.getPoliticalAssociations();
       }
+    },
+    comment: {
+      auth: true,
+      action: function(user, params) {
+        var promise = promiseService.forge({id: params[0]});
+        var comment = params[1];
+        return viewService.comment(user, promise, comment);
+      }
+    },
+    removeComment: {
+      auth: true,
+      action: function(user, params) {
+        var comment_id = params[0];
+        return promiseService.removeComment(comment_id);
+      }
     }
   }
 
@@ -144,6 +159,7 @@ module.exports = function(app, passport) {
         res.status(401).send("Authentication required");
       } else {
         mappedPromise.action(user, params).then(function(data) {
+          console.log(data);
           res.json({data: data});        
         }).catch(function(err) {
           console.log(err.stack)

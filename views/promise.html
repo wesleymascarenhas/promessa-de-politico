@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="politician well col-md-3 align-center">
+    <div class="politician col-md-3 align-center">
       <a ng-href="/politico/<% politician.slug %>">
         <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">
       </a>
@@ -144,20 +144,10 @@
             <textarea ng-model="editedPromise.description" name="description" class="form-control" placeholder="Uma breve descrição da promessa"></textarea>
           </div> 
           <div class="form-group" style="height: 33px;">
-            <div class="pull-left" style="width: 270px; margin-right: 10px;">                    
-              <div class="btn-group" style="width: 100%;">
-                <button type="button" class="btn btn-info" style="width: 90%;"><% editedPromise.category.name %></button>
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-                  <span class="caret"></span>
-                  <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-scroll" role="menu">
-                  <li ng-repeat="category in categories">
-                    <a ng-click="selectCategory(category)"><% category.name %></a>
-                  </li>                
-                </ul>
-              </div>
-            </div>          
+            <div class="pull-left">
+              <select class="form-control" nya-selectpicker ng-model="editedPromise.category" ng-options="category.name for category in categories" ng-change="categorySelected()" data-container="body">
+              </select>
+            </div>                  
             <div class="pull-right">
               <button type="button" class="btn" ng-click="choosePromiseState('NON_STARTED')" ng-class="
                 {
@@ -241,9 +231,51 @@
         </form>
       </div>
       <div ng-if="!isRegisteringPromise()">
-        <div ng-show="!isEditingPromise()" class="comments page-section">     
-             
-        </div>    
+        <div ng-show="!isEditingPromise()" class="page-section">     
+          <div class="comments thumbnail">     
+            <div class="comments-title">
+              <label><% totalPromiseUsersComments %> Comentários</label>            
+            </div>
+            <div class="comments-content">
+              <form class="form-horizontal">
+                <div class="comments-comment">    
+                    <div class="form-group">
+                      <div class="col-md-10">
+                        <text-angular ng-model="userComment" ta-toolbar="[]">
+                        </text-angular>
+                      </div>
+                      <div class="col-md-2">
+                        <button ng-click="comment(userComment);userComment = '';" type="button" class="btn btn-default btn-block">
+                          Comentar
+                        </button>
+                      </div>
+                    </div>                      
+                </div>
+              </form>
+              <div class="comments-box">
+                <ul class="comments-list">
+                  <li ng-repeat="comment in promise.comments">
+                    <div ng-if="isCommentOwner(comment)" class="pull-right">
+                      <a ng-click="removeComment(comment, $index)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                      </a>
+                    </div>
+                    <div class="commenter-image">
+                      <img src="http://lorempixel.com/50/50/people/6" />
+                    </div>
+                    <div class="comment-text paragraph_1_5">
+                      <div>
+                        <a ng-href="/usuario/<% comment.user.username %>"><% comment.user.name %></a>
+                      </div>
+                      <div ta-bind ng-model="comment.content"></div>
+                      <span class="comment-date" am-time-ago="comment.registration_date"></span>
+                    </div>                
+                  </li>            
+                </ul>
+              </div>                        
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

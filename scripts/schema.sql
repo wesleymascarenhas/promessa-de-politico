@@ -157,11 +157,12 @@ create table promise_user_vote (
 ) engine = innodb default charset = utf8;
 
 create table promise_user_comment (
+  id                int(11) not null auto_increment,
   promise_id        int(11) not null,
   user_id           int(11) not null,
   content           text not null,
   registration_date timestamp default current_timestamp null,
-  primary key (promise_id, user_id),
+  primary key (id),
   key `fk_promise_user_comment_promise` (`promise_id`),
   key `fk_promise_user_comment_user` (`user_id`),
   constraint `fk_promise_user_comment_promise` foreign key (`promise_id`) references `promise` (`id`),

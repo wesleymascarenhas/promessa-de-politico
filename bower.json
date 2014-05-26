@@ -1,0 +1,21 @@
+{
+  "name": "promessa-de-politico",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": "2.1.1",
+    "bootstrap": "3.1.1",
+    "font-awesome": "4.1.0",
+    "angular": "1.2.16",
+    "angular-bootstrap": "0.11.0",
+    "angular-knob": "*",
+    "angular-moment": "0.7.1",
+    "angular-image-upload": "1.0.12",
+    "nya-bootstrap-select": "1.2.3",
+    "ngInfiniteScroll": "1.1.2",
+    "ngprogress": "1.0.4",
+    "textAngular": "1.2.1"
+  },
+  "resolutions": {
+    "jquery": "2.1.1"
+  }
+}

@@ -3,57 +3,63 @@ angular
   .service("userService", ["$http", function($http) {
     this.getAuthenticatedUser = function() {
       return $http.get("/ajax?key=getAuthenticatedUser");
-    }
+    };
   }])
   .service("politicianService", ["$http", function($http) {
     this.voteInPolitician = function(politician, vote_type) {
       return $http.post("/ajax", {key: "voteInPolitician", params: [politician.id, vote_type]});
-    }
+    };
     this.updatePolitician = function(politician) {
       return $http.post("/ajax", {key: "updatePolitician", params: [politician]});
-    }
+    };
     this.getPoliticalAssociations = function() {
       return $http.get("/ajax?key=getPoliticalAssociations");
-    }
+    };
   }])
   .service("oembedService", ["$http", function($http) {
     this.getOEmbed = function(url) {
       return $http.get("/ajax?key=getOEmbed&params[0]=" + url);
-    }
+    };
   }])
   .service("promiseService", ["$http", function($http) {
     this.getPromises = function(politician, category) {
       return $http.get("/ajax?key=getPromises&params[0]=" + politician.id + "&params[1]=" + category.id);
-    }
+    };
     this.getAllPromises = function(politician) {
       return $http.get("/ajax?key=getAllPromises&params[0]=" + politician.id);
-    }
+    };
     this.getMajorPromises = function(politician, page) {
       return $http.get("/ajax?key=getMajorPromises&params[0]=" + politician.id + "&params[1]=" + page);
-    }
+    };
     this.getOlderPromises = function(politician, page) {
       return $http.get("/ajax?key=getOlderPromises&params[0]=" + politician.id + "&params[1]=" + page);
-    }
+    };
     this.getLatestPromises = function(politician, page) {
       return $http.get("/ajax?key=getLatestPromises&params[0]=" + politician.id + "&params[1]=" + page);
-    }
+    };
     this.voteOnPromise = function(promise) {
       return $http.post("/ajax", {key: "voteOnPromise", params: [promise.id]});
-    }
+    };
     this.editPromise = function(promiseData, evidencesData) {
       return $http.post("/ajax", {key: "editPromise", params: [promiseData, evidencesData]});
-    }
+    };
     this.registerPromise = function(promiseData, evidencesData) {
       return $http.post("/ajax", {key: "registerPromise", params: [promiseData, evidencesData]});
-    }
+    };
     this.removeEvidence = function(evidence) {
       return $http.post("/ajax", {key: "removeEvidence", params: [evidence]});
-    }
+    };
+    this.comment = function(promise, comment) {
+      return $http.post("/ajax", {key: "comment", params: [promise.id, comment]});
+    };
+    this.removeComment = function(comment) {
+      return $http.post("/ajax", {key: "removeComment", params: [comment.id]});
+    };
   }])
   .service("promiseCategoryService", ["$http", function($http) {
     this.getAllCategories = function() {
       return $http.get("/ajax?key=getAllCategories");
-    }
+    };
   }])
   .service("authenticationService", ["$modal", "$window", "backendData", function($modal, $window, backendData) {
     var thisService = this;
@@ -129,7 +135,7 @@ angular
         $scope.modalScope.close = function() {
           $modalInstance.dismiss("cancel");
         };        
-      }
+      };
       return $modal.open(extendedOptions).result;
     };
   }])
