@@ -1,11 +1,11 @@
-{% extends "template.html" %}
+<% extends "template.html" %>
 
-{% block stylesheets %}
-{% endblock %}
+<% block stylesheets %>
+<% endblock %>
 
-{% block content %}
+<% block content %>
 <div class="container" ng-controller="promiseController">  
-  <div class="page-section align-right">
+  <div class="align-right">
     <div ng-if="!isRegisteringPromise()">
       <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
       <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
@@ -14,11 +14,12 @@
   </div>
   <div class="row">
     <div class="politician col-md-3 align-center">
-      <a ng-href="/politico/<% politician.slug %>">
-        <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">
+      <a ng-href="/politico/{{ politician.slug }}">
+        <img ng-if="!politician.photo_filename" src="/img/no-image.gif" class="politician-photo">
+        <img ng-if="politician.photo_filename" ng-src="/img/politicians/{{ politician.photo_filename }}" class="politician-photo">
       </a>
       <h3>
-        <b><a href="/politico/<% politician.slug %>"><% politician.name %></a></b>
+        <b><a class="line-height-1-5" href="/politico/{{ politician.slug }}">{{ politician.name }}</a></b>
       </h3>
       <div class="votes">
         <div class="vote">
@@ -28,7 +29,7 @@
             </button>
           </div>
           <div class="vote-count">
-            <span><% totalPoliticianUpUsersVotes() %></span>
+            <span>{{ totalPoliticianUpUsersVotes() }}</span>
           </div>
         </div>
         <div class="vote">
@@ -38,7 +39,7 @@
             </button>
           </div>
           <div class="vote-count">
-            <span><% totalPoliticianDownUsersVotes() %></span>
+            <span>{{ totalPoliticianDownUsersVotes() }}</span>
           </div>
         </div>
       </div>
@@ -46,12 +47,12 @@
     <div class="promise col-md-9">
       <div ng-if="!isRegisteringPromise()">
         <div ng-show="!isEditingPromise()" class="header">
-          <p class="title"><% promise.title %></p>
-          <p class="description"><% promise.description %></p>
+          <p class="title">{{ promise.title }}</p>
+          <p class="description">{{ promise.description }}</p>
           <h4>
-            <span class="label label-info"><% promise.category.name %></span>
+            <span class="label label-info">{{ promise.category.name }}</span>
             <span>
-              <promise-state for="<% promise.state %>"/></promise-state>
+              <promise-state for="{{ promise.state }}"/></promise-state>
             </span>
             <span>
               •
@@ -62,13 +63,13 @@
             <span>
               •
               <span class="glyphicon glyphicon-star"></span>
-              <% totalPromiseUsersVotes %>
+              {{ totalPromiseUsersVotes }}
               •
               <span class="glyphicon glyphicon-comment"></span>
-              <% totalPromiseUsersComments %>          
+              {{ totalPromiseUsersComments }}          
               •
               <span class="glyphicon glyphicon-paperclip"></span>
-              <% totalPromiseEvidences %>
+              {{ totalPromiseEvidences }}
             </span>
           </h4>
           <div class="overflow-hidden">
@@ -79,8 +80,8 @@
                     •
                   </span> 
                   Registrada por
-                  <a href="/usuario/<% promise.registeredByUser.username %>">
-                    <% promise.registeredByUser.name %>
+                  <a href="/usuario/{{ promise.registeredByUser.username }}">
+                    {{ promise.registeredByUser.name }}
                   </a>
                   <span am-time-ago="promise.registration_date"></span>
               </h4>
@@ -93,21 +94,21 @@
           </div>
           <div class="evidences page-section">
             <div ng-repeat="evidence in promise.evidences" class="media" ng-class="{'hide': isHiddenEvidence($index)}">
-              <a class="pull-left" ng-href="<% evidence.url %>" target="_blank">
+              <a class="pull-left" ng-href="{{ evidence.url }}" target="_blank">
                 <img ng-show="!evidence.image" class="media-object" src="/img/news_64_64.png">
-                <img ng-show="evidence.image" class="media-object" ng-src="<% evidence.image %>" width="123">
+                <img ng-show="evidence.image" class="media-object" ng-src="{{ evidence.image }}" width="123">
               </a>
               <div class="media-body">
                 <h4 class="media-heading">
-                  <a ng-href="<% evidence.url %>" target="_blank"><% evidence.title %></a>
+                  <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.title }}</a>
                 </h4>
                 <p>
-                  <% evidence.description %>
+                  {{ evidence.description }}
                 </p>
-                <a ng-href="<% evidence.url %>" target="_blank"><% evidence.host %></a>
+                <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
                 <div class="media-host">
                   Adicionado por 
-                  <a ng-href="/usuario/<% evidence.registeredByUser.username %>"><% evidence.registeredByUser.name %></a>
+                  <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
                   <span am-time-ago="evidence.registration_date"></span>
                 </div>
               </div>
@@ -127,7 +128,7 @@
             </button>
           </div>
           <div class="form-group" ng-if="isRegisteringPromise()">
-            <button ng-click="registerPromise()" type="button" class="btn btn-primary">
+            <button ng-disabled="promiseForm.$invalid" ng-click="registerPromise()" type="button" class="btn btn-primary">
               Registar
             </button>
           </div>
@@ -211,8 +212,8 @@
                     </span>
                   </div>
                   <div ng-show="evidence.title" class="media grey-text">
-                    <a nf-show="evidence.image" class="pull-left" ng-href="<% evidence.url %>" target="_blank">
-                      <img class="media-object" ng-src="<% evidence.image %>" width="123">
+                    <a nf-show="evidence.image" class="pull-left" ng-href="{{ evidence.url }}" target="_blank">
+                      <img class="media-object" ng-src="{{ evidence.image }}" width="123">
                     </a>
                     <div class="media-body">
                       <div class="form-group">
@@ -221,7 +222,7 @@
                       <div class="form-group">
                         <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da notícia/vídeo" rows="3"></textarea>
                       </div>
-                      <a ng-href="<% evidence.url %>"><% evidence.host %></a>
+                      <a ng-href="{{ evidence.url }}">{{ evidence.host }}</a>
                     </div>
                   </div>
                 </div>
@@ -234,18 +235,18 @@
         <div ng-show="!isEditingPromise()" class="page-section">     
           <div class="comments thumbnail">     
             <div class="comments-title">
-              <label><% totalPromiseUsersComments %> Comentários</label>            
+              <label>{{ totalPromiseUsersComments }} Comentários</label>            
             </div>
             <div class="comments-content">
-              <form class="form-horizontal">
+              <form name="commentForm" class="form-horizontal">
                 <div class="comments-comment">    
                     <div class="form-group">
                       <div class="col-md-10">
-                        <text-angular ng-model="userComment" ta-toolbar="[]">
-                        </text-angular>
+                        <div text-angular name="userComment" ng-model="userComment" ta-toolbar="[]" required>
+                        </div>
                       </div>
                       <div class="col-md-2">
-                        <button ng-click="comment(userComment);userComment = '';" type="button" class="btn btn-default btn-block">
+                        <button ng-disabled="commentForm.userComment.$pristine || commentForm.userComment.$invalid" ng-click="comment(userComment);userComment = '';" type="button" class="btn btn-default btn-block">
                           Comentar
                         </button>
                       </div>
@@ -263,9 +264,9 @@
                     <div class="commenter-image">
                       <img src="http://lorempixel.com/50/50/people/6" />
                     </div>
-                    <div class="comment-text paragraph_1_5">
+                    <div class="comment-text line-height-1-5">
                       <div>
-                        <a ng-href="/usuario/<% comment.user.username %>"><% comment.user.name %></a>
+                        <a ng-href="/usuario/{{ comment.user.username }}">{{ comment.user.name }}</a>
                       </div>
                       <div ta-bind ng-model="comment.content"></div>
                       <span class="comment-date" am-time-ago="comment.registration_date"></span>
@@ -280,8 +281,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block backend_data %}
-  {{ data|jsonString }}
-{% endblock %}
+<% endblock %>

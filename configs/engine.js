@@ -6,6 +6,14 @@ exports.configure = function(app) {
 
   app.engine('html', nunjucks.render);
   var env = nunjucks.configure('views', {
+    tags: {
+      blockStart: '<%',
+      blockEnd: '%>',
+      variableStart: '<$',
+      variableEnd: '$>',
+      commentStart: '<#',
+      commentEnd: '#>'
+    }, 
     autoescape: true,
     express: app
   });

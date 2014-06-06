@@ -8,27 +8,27 @@ module.exports = function(app, passport) {
   app.get('/politico/:politicianSlug/nova-promessa', function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;
-    var results = {};
+    var data = {};
     politicianService.findBySlug(slug, ['party', 'organ', 'office', 'coverPhotos'])
     .then(function(politician) {
       if(!politician) {
-        results.next = true;
-        return results;
+        data.next = true;
+        return data;
       } 
-      results.user = user;
-      results.politician = politician;
-      results.registeringPromise = true;
-      return BluebirdPromise.all([viewService.fillPolitician(user, results), viewService.getAllCategories()])
+      data.user = user;
+      data.politician = politician;
+      data.registeringPromise = true;
+      return BluebirdPromise.all([viewService.fillPolitician(user, data), viewService.getAllCategories()])
       .spread(function(politicianFilled, allCategories) {
-        results.categories = allCategories.categories;
-        results.category = allCategories.categories.at(0);
-        return results;
+        data.categories = allCategories.categories;
+        data.category = allCategories.categories.at(0);
+        return data;
       });
     }).then(function() {
-      if(results.next && results.next === true) {
+      if(data.next && data.next === true) {
         next();
       } else {
-        res.render('promise.html', {data: results});
+        res.render('promise.html', {backendData: data});
       }
     }).catch(function(err) {
       console.log(err.stack)
@@ -38,32 +38,32 @@ module.exports = function(app, passport) {
 
   app.get('/politico/:politicianSlug/:promiseId/:promiseSlug', function(req, res, next) {
     var user = req.user;
-    var results = {};
+    var data = {};
     promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.organ', 'politician.office', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
     .then(function(promise) {
       if(!promise) {
-        results.next = true;
-        return results;
+        data.next = true;
+        return data;
       }
-      results.user = user;
-      results.promise = promise;
-      results.politician = promise.related('politician');
-      if(req.params.promiseSlug !== promise.get('slug') || req.params.politicianSlug !== results.politician.get('slug')) {
-        results.redirect = true;
-        return results;
+      data.user = user;
+      data.promise = promise;
+      data.politician = promise.related('politician');
+      if(req.params.promiseSlug !== promise.get('slug') || req.params.politicianSlug !== data.politician.get('slug')) {
+        data.redirect = true;
+        return data;
       }
-      return viewService.fillPolitician(user, results).then(function() {
-        return viewService.fillPromiseWithUsersComments(user, results).then(function() {
-          return results;
+      return viewService.fillPolitician(user, data).then(function() {
+        return viewService.fillPromiseWithUsersComments(user, data).then(function() {
+          return data;
         });
       });
     }).then(function() {
-      if(results.redirect && results.redirect === true) {
-        res.redirect('/politico/' + results.politician.get('slug') + '/' + results.promise.id + '/' + results.promise.get('slug'));
-      } else if(results.next && results.next === true) {
+      if(data.redirect && data.redirect === true) {
+        res.redirect('/politico/' + data.politician.get('slug') + '/' + data.promise.id + '/' + data.promise.get('slug'));
+      } else if(data.next && data.next === true) {
         next();
       } else {
-        res.render('promise.html', {data: results});
+        res.render('promise.html', {backendData: data});
       }
     }).catch(function(err) {
       console.log(err.stack)

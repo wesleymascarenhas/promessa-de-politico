@@ -25,7 +25,7 @@ module.exports = function(app, passport) {
   app.get('/auth/twitter', passport.authenticate('twitter', { scope: ['email'] }));
   app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedirect: '/auth-success', failureRedirect: '/auth-fail' }));
 
-  app.get('/auth/googleplus', passport.authenticate('googleplus', { scope: ['email'] }));
-  app.get('/auth/googleplus/callback', passport.authenticate('googleplus', { successRedirect: '/auth-success', failureRedirect: '/auth-fail' }));
+  app.get('/auth/google', passport.authenticate('google', { scope: ['email'] }));
+  app.get('/auth/google/callback', passport.authenticate('google', { successRedirect: '/auth-success', failureRedirect: '/auth-fail' }));
 
 }

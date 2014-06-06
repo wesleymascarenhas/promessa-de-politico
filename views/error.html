@@ -1,14 +1,14 @@
-{% extends "template.html" %}
+<% extends "template.html" %>
 
-{% block stylesheets %}
-{% endblock %}
+<% block stylesheets %>
+<% endblock %>
 
-{% block content %}
+<% block content %>
 <div class="container">  
-  <h1>{{ statusCode }}: {{ statusMessage }}</h1>
-  <h3>{{ errorMessage }}</h3>
+  <h1><$ statusCode $>: <$ statusMessage $></h1>
+  <h3><$ errorMessage $></h3>
 </div>
-{% endblock %}
+<% endblock %>
 
-{% block scripts %}
-{% endblock %}
+<% block scripts %>
+<% endblock %>

@@ -3,26 +3,26 @@ var User           = require('../models/models').User,
     helper         = require('../utils/helper'),
     _              = require('underscore');
 
-function forgeUser(attributes) {
-  var user = User.forge(attributes);
+function forge(attributes) {
+  var user = User.forge(modelUtils.filterAttributes('User', data));
   if(!user.get('username')) {
-    user.set('username', helper.slug(user.get('name')));
+    user.set('username', helper.slugify(user.get('name')));
   }
   return user;
 }
 
 exports.createByFacebookAccount = function(name, gender, username, email, facebook_account) {
-  return forgeUser({ name: name, gender: gender, username: username, email: email, facebook_account: facebook_account })
+  return forge({ name: name, gender: gender, username: username, email: email, facebook_account: facebook_account })
     .save();
 }
 
-exports.createByTwitterAccout = function(name, gender, username, email, twitter_account) {
-  return forgeUser({ name: name, gender: gender, username: username, email: email, twitter_account: twitter_account })
+exports.createByTwitterAccount = function(name, gender, username, email, twitter_account) {
+  return forge({ name: name, gender: gender, username: username, email: email, twitter_account: twitter_account })
     .save();
 }
 
 exports.createByGoogleAccount = function(name, gender, username, email, google_account) {
-  return forgeUser({ name: name, gender: gender, username: username, email: email, google_account: google_account })
+  return forge({ name: name, gender: gender, username: username, email: email, google_account: google_account })
     .save();
 }
 

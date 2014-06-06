@@ -1,118 +1,145 @@
-{% extends "template.html" %}
+<% extends "template.html" %>
 
-{% block stylesheets %}
-{% endblock %}
+<% block stylesheets %>
+<% endblock %>
 
-{% block content %}
+<% block content %>
 <div ng-controller="politicianController">
   <section class="politician-cover">
     <!-- Politician Infos -->
     <div class="politician-infos">
-      <div ng-show="!isEditingPolitician()">
-        <div class="row">
-          <div class="col-md-3 align-center">
-            <div style="padding-bottom: 30px;">
-              <img ng-src="/img/politicians/<% politician.photo_path %>" alt="Dilma Roussef" class="politician-photo img-circle">
-            </div>
-            <div class="votes">
-              <div class="vote">
-                <div class="vote-up">
-                  <button type="button" class="btn btn-lg" ng-class="{'btn-default': !votedInPolitician('UP'), 'btn-success': votedInPolitician('UP')}" ng-click="voteInPolitician('UP')">
-                    <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
-                  </button>
-                </div>
-                <div class="vote-count">
-                  <span><% totalPoliticianUpUsersVotes() %></span>
-                </div>
+      <div ng-if="!isRegisteringPolitician()">
+        <div ng-show="!isEditingPolitician()">
+          <div class="row">
+            <div class="col-md-3 align-center">
+              <div style="padding-bottom: 20px;">
+                <img ng-if="!politician.photo_filename" src="/img/no-image.gif" class="politician-photo">
+                <img ng-if="politician.photo_filename" ng-src="/img/politicians/{{ politician.photo_filename }}" class="politician-photo">
               </div>
-              <div class="vote">
-                <div class="vote-down">
-                  <button type="button" class="btn btn-lg" ng-class="{'btn-default': !votedInPolitician('DOWN'), 'btn-danger': votedInPolitician('DOWN')}" ng-click="voteInPolitician('DOWN')">
-                    <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
-                  </button>
+              <div class="votes">
+                <div class="vote">
+                  <div class="vote-up">
+                    <button type="button" class="btn btn-lg" ng-class="{'btn-default': !votedInPolitician('UP'), 'btn-success': votedInPolitician('UP')}" ng-click="voteInPolitician('UP')">
+                      <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-up"></span>
+                    </button>
+                  </div>
+                  <div class="vote-count">
+                    <span>{{ totalPoliticianUpUsersVotes() }}</span>
+                  </div>
                 </div>
-                <div class="vote-count">
-                  <span><% totalPoliticianDownUsersVotes() %></span>
+                <div class="vote">
+                  <div class="vote-down">
+                    <button type="button" class="btn btn-lg" ng-class="{'btn-default': !votedInPolitician('DOWN'), 'btn-danger': votedInPolitician('DOWN')}" ng-click="voteInPolitician('DOWN')">
+                      <span style="font-size: 30px;" class="glyphicon glyphicon-thumbs-down"></span>
+                    </button>
+                  </div>
+                  <div class="vote-count">
+                    <span>{{ totalPoliticianDownUsersVotes() }}</span>
+                  </div>
                 </div>
+              </div>      
+            </div>
+            <div class="col-md-6">
+              <div class="pull-right" style="padding-top: 25px;">
+                <button ng-click="editPolitician()" type="button" class="btn btn-default">
+                  Editar
+                </button>
               </div>
-            </div>      
-          </div>
-          <div class="col-md-6">
-            <div class="pull-right" style="padding-top: 25px;">
-              <button ng-click="editPolitician()" type="button" class="btn btn-default">
-                Editar
-              </button>
-            </div>
-            <div style="padding-bottom: 10px;">
-              <h1 class="bolder-text">                
-                <% politician.name %>  
-                <small ng-if="politician.nickname">
-                  (<% politician.nickname %>)
-                </small>              
-              </h1>
-            </div>
-            <div>
-              <p style="font-size: 16px;">              
-                Partido: 
-                <a ng-href="/partido/<% politician.party.acronym %>">
-                  <% politician.party.name %> (<% politician.party.acronym %>)
-                </a>
-              </p>
-              <p style="font-size: 16px;">
-                Cargo: <% politician.office.title %>
-                <span ng-if="politician.organ">
-                  / <% politician.organ.name %>
-                </span>              
-              </p>
-              <p style="font-size: 16px;" ng-if="politician.email">
-                E-mail: <% politician.email %>                    
-              </p>
-              <hr/>
-              <h4 class="align-justify paragraph_1_5">
-                <% politician.biography %>
-              </h4>
-            </div>
-          </div>
-          <div class="col-md-3 align-center">
-            <div class="promises-stats">
-              <div>
-                <h2><b><% totalPromises %> promessas!</b></h2>
-              </div>
-              <div>              
-                <knob knob-data="totalPromisesByState['FULFILLED']" knob-max="totalPromises" knob-options="{readOnly: true, width: 180, height: 180, fgColor: '#5cb85c', thickness: 0.4}"></knob>
-                <h4>Promessas cumpridas</h4>
+              <div style="padding-bottom: 10px;">
+                <h1 class="bolder-text">                
+                  {{ politician.name }}  
+                  <small ng-if="politician.nickname">
+                    ({{ politician.nickname }})
+                  </small>              
+                </h1>
               </div>
               <div>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Facebook" class="icon icon-facebook"></a>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Twitter" class="icon icon-twitter"></a>
-                <a href="#" title="Compartilhe as promessas de <% politician.name %> no Google+" class="icon icon-googleplus"></a>
-              </div>            
+                <p style="font-size: 16px;">              
+                  Partido: 
+                  {{ politician.party.name }} 
+                  ({{ politician.party.acronym }})                
+                </p>
+                <p style="font-size: 16px;">
+                  Cargo: {{ politician.office.title }}
+                  <span ng-if="politician.state">
+                    / {{ politician.state.name }}
+                  </span>              
+                </p>
+                <p style="font-size: 16px;" ng-if="politician.email">
+                  E-mail: {{ politician.email }}                    
+                </p>
+                <hr/>
+                <h4 class="align-justify line-height-1-5">
+                  {{ politician.biography }}
+                </h4>
+              </div>
             </div>
-          </div>
-        </div>                
+            <div class="col-md-3 align-center">
+              <div class="promises-stats">
+                <div>
+                  <h2>
+                    <b>
+                      {{ totalPromises }} 
+                      <span ng-if="hasOnePromise()">promessa!</span>
+                      <span ng-if="!hasOnePromise()">promessas!</span>
+                    </b>
+                  </h2>
+                </div>
+                <div>              
+                  <knob knob-data="totalPromisesByState['FULFILLED']" knob-max="totalPromises" knob-options="{readOnly: true, width: 180, height: 180, fgColor: '#5cb85c', thickness: 0.4}"></knob>
+                  <h4>Promessas cumpridas</h4>
+                </div>
+                <div>
+                  <a ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Facebook" class="icon icon-facebook" target="_blank"></a>
+                  <a ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Twitter" class="icon icon-twitter"target="_blank"></a>
+                  <a ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Google+" class="icon icon-googleplus"target="_blank"></a>
+                </div>            
+              </div>
+            </div>
+          </div>                
+        </div>
       </div>
-      <div ng-show="isEditingPolitician()">
+      <div ng-show="isEditingPolitician() || isRegisteringPolitician()" flow-init="flowConfig" flow-name="flowModel.flow" flow-file-added="!!{png: 1, gif: 1,jpg: 1, jpeg: 1}[$file.getExtension()]">
         <form name="politicianForm" novalidate>
           <div class="row">
-            <div class="col-md-3">
-              <div jrg-image-upload opts='uploadOpts' ng-model='image'></div>
+            <div class="col-md-3 align-center">
+              <div ng-show="!$flow.files.length">
+                <img ng-if="!politician.photo_filename" src="/img/no-image.gif" alt="Sem foto" class="politician-photo">
+                <img ng-if="politician.photo_filename" ng-src="/img/politicians/{{ politician.photo_filename }}" ng-alt="{{ politician.name }}" class="politician-photo">
+              </div>
+              <div ng-show="$flow.files.length">
+                <img flow-img="$flow.files[0]" class="politician-photo">
+              </div>
+              <div style="margin-top: 10px;">
+                <span class="btn btn-primary" ng-show="!$flow.files.length" flow-btn>
+                  Selecionar imagem                      
+                </span>
+                <span class="btn btn-primary ng-hide" ng-show="$flow.files.length" flow-btn>
+                  Alterar
+                </span>
+                <span class="btn btn-danger ng-hide" ng-show="$flow.files.length" ng-click="$flow.cancel()">
+                  Remover
+                </span>
+              </div>              
             </div>
             <div class="col-md-8">
               <div class="form-group">
-                <button ng-click="savePoliticianEdition()" type="button" class="btn btn-primary">
+                <button ng-disabled="politicianForm.$invalid" ng-show="isRegisteringPolitician() || isEditingPolitician()" ng-click="savePoliticianEdition()" type="button" class="btn btn-primary">
                   Salvar
                 </button>
-                <button ng-click="cancelPoliticianEdition()" type="button" class="btn btn-default">
+                <button ng-show="!isRegisteringPolitician()" ng-click="cancelPoliticianEdition()" type="button" class="btn btn-default">
                   Cancelar
                 </button>
+              </div>
+              <div class="alert alert-danger" ng-show="politicianForm.name.$invalid && !politicianForm.name.$pristine" style="padding: 6px 15px 4px 15px;">
+                <p>
+                  É obrigatório informar o nome do político
+                </p>
               </div>
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group" ng-class="{'has-error': politicianForm.name.$invalid && !politicianForm.name.$pristine}">
                     <label class="control-label" for="name">Nome</label>
-                    <label class="control-label" for="name" ng-show="politicianForm.name.$invalid && !politicianForm.name.$pristine">
-                      (É obrigatório informar o nome do político)
-                    </label>
                     <div class="required-field-block">
                       <input ng-model="editedPolitician.name" type="text" id="name" name="name" class="form-control" placeholder="O nome do político" required>
                       <div class="required-icon">
@@ -124,13 +151,13 @@
                 <div class="col-md-4">
                   <div class="form-group">    
                     <label class="control-label" for="nickname">Apelido</label>
-                    <input ng-model="editedPolitician.nickname" type="text" id="nickname" name="nickname" class="form-control" placeholder="O apelido do político" required>
+                    <input ng-model="editedPolitician.nickname" type="text" id="nickname" name="nickname" class="form-control" placeholder="O apelido do político">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">    
                     <label class="control-label" for="email">E-mail</label>
-                    <input ng-model="editedPolitician.email" type="text" id="email" name="email" class="form-control" placeholder="O e-mail do político" required>
+                    <input ng-model="editedPolitician.email" type="text" id="email" name="email" class="form-control" placeholder="O e-mail do político">
                   </div>
                 </div>
               </div>
@@ -140,7 +167,7 @@
                     <label class="control-label" for="party">
                       Partido político
                     </label>       
-                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.party" ng-options="politicalParty.name for politicalParty in politicalParties" ng-change="politicalPartySelected()" data-container="body"></select>
+                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.party" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="politicalPartySelected()" data-container="body"></select>
                   </div>
                 </div>
                 <div class="col-md-4">       
@@ -151,12 +178,12 @@
                     <select class="form-control" nya-selectpicker ng-model="editedPolitician.office" ng-options="politicalOffice.title for politicalOffice in politicalOffices" ng-change="politicalOfficeSelected()" data-container="body"></select>
                   </div> 
                 </div>
-                <div class="col-md-4">                      
+                <div ng-show="!isPresidentOfficeSelected()" class="col-md-3">
                   <div class="form-group">       
-                    <label class="control-label" for="organ">
-                      Orgão
+                    <label class="control-label" for="state">
+                      Estado
                     </label>  
-                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.organ" ng-options="politicalOrgan.title for politicalOrgan in politicalOrgans" ng-change="politicalOrganSelected()" data-container="body"></select>
+                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.state" ng-options="state.name for state in states" ng-change="stateSelected()" data-container="body" data-noneSelectedText="Nenhum selecionado"></select>
                   </div>
                 </div>
               </div>
@@ -172,160 +199,170 @@
       </div>
     </div>    
   </section>
-  <div class="promises-menu">    
-    <ul class="nav nav-pills nav-justified">
-      <li ng-class="{'active': isCurrentTab('LatestPromises')}">
-        <a ng-click="selectTab('LatestPromises')">
-          <span class="glyphicon glyphicon-time"></span> 
-          Promessas mais recentes
-        </a>   
-      </li>
-      <li ng-class="{'active': isCurrentTab('OlderPromises')}">
-        <a ng-click="selectTab('OlderPromises')">
-          <span class="glyphicon glyphicon-time"></span> 
-          Promessas mais antigas
-        </a>
-      </li>
-      <li ng-class="{'active': isCurrentTab('MajorPromises')}">
-        <a ng-click="selectTab('MajorPromises')">
-          <span class="glyphicon glyphicon-star"></span> 
-          Promessas mais importantes
-        </a>
-      </li>
-      <li ng-class="{'active': isCurrentTab('AllPromises')}">
-        <a ng-click="selectTab('AllPromises')">
-          <span class="glyphicon glyphicon-th-list"></span> 
-          Todas as promessas (<% totalPromises %>)
-        </a>
-      </li>   
-    </ul>
-  </div>
-  <section class="promises container">   
-    <div class="row">
-      <div class="col-md-8 font-big">
-        <span class="promise-count">      
-          <promise-state for="NON_STARTED" count="<% totalPromisesByState['NON_STARTED'] %>"/>
-        </span>
-        <span class="promise-count">        
-          <promise-state for="STARTED" count="<% totalPromisesByState['STARTED'] %>"/>
-        </span>
-        <span class="promise-count">        
-          <promise-state for="FULFILLED" count="<% totalPromisesByState['FULFILLED'] %>"/>
-        </span>
-        <span class="promise-count">        
-          <promise-state for="PARTIALLY_FULFILLED" count="<% totalPromisesByState['PARTIALLY_FULFILLED'] %>"/>
-        </span>
-        <span class="promise-count">        
-          <promise-state for="DISCARDED" count="<% totalPromisesByState['DISCARDED'] %>"/>
-        </span>
-      </div>
-      <div class="col-md-4 align-right">         
-        <a class="btn btn-primary btn-lg" ng-click="registerPromise()">
-          <span class="glyphicon glyphicon-plus"></span>
-          Registrar Promessa
-        </a>
-      </div>
+  <section ng-if="!isRegisteringPolitician()" class="promises-section">
+    <div class="promises-menu">    
+      <ul class="nav nav-pills nav-justified">
+        <li ng-class="{'active': isCurrentTab('LatestPromises')}">
+          <a ng-click="selectTab('LatestPromises')">
+            <span class="glyphicon glyphicon-time"></span> 
+            Promessas mais recentes
+          </a>   
+        </li>
+        <li ng-class="{'active': isCurrentTab('OlderPromises')}">
+          <a ng-click="selectTab('OlderPromises')">
+            <span class="glyphicon glyphicon-time"></span> 
+            Promessas mais antigas
+          </a>
+        </li>
+        <li ng-class="{'active': isCurrentTab('MajorPromises')}">
+          <a ng-click="selectTab('MajorPromises')">
+            <span class="glyphicon glyphicon-star"></span> 
+            Promessas mais importantes
+          </a>
+        </li>
+        <li ng-class="{'active': isCurrentTab('AllPromises')}">
+          <a ng-click="selectTab('AllPromises')">
+            <span class="glyphicon glyphicon-th-list"></span> 
+            Todas as promessas ({{ totalPromises }})
+          </a>
+        </li>   
+      </ul>
     </div>
-    <div class="promises-section">
+    <div class="promises container">   
       <div class="row">
-        <div class="col-md-12 align-center">
-          <div class="page-header">
-            <h1 ng-switch="tabId">
-              <span ng-switch-when="AllPromises">Todas as promessas</span>
-              <span ng-switch-when="LatestPromises">Promessas mais recentes</span>
-              <span ng-switch-when="MajorPromises">Promessas mais importantes</span>
-              <span ng-switch-when="OlderPromises">Promessas mais antigas</span>
-            </h1>          
-            <h3 ng-if="isCurrentTab('AllPromises')">
-              <span class="label label-info"><% category.name %> (<% promises.length %>)</span>
-            </h3>
-          </div>      
+        <div class="col-md-8 font-big">
+          <span class="promise-count">      
+            <promise-state for="NON_STARTED" count="{{ totalPromisesByState['NON_STARTED'] }}"/>
+          </span>
+          <span class="promise-count">        
+            <promise-state for="STARTED" count="{{ totalPromisesByState['STARTED'] }}"/>
+          </span>
+          <span class="promise-count">        
+            <promise-state for="FULFILLED" count="{{ totalPromisesByState['FULFILLED'] }}"/>
+          </span>
+          <span class="promise-count">        
+            <promise-state for="PARTIALLY_FULFILLED" count="{{ totalPromisesByState['PARTIALLY_FULFILLED'] }}"/>
+          </span>
+          <span class="promise-count">        
+            <promise-state for="DISCARDED" count="{{ totalPromisesByState['DISCARDED'] }}"/>
+          </span>
         </div>
+        <div class="col-md-4 align-right">         
+          <a class="btn btn-primary btn-lg" ng-click="registerPromise()">
+            <span class="glyphicon glyphicon-plus"></span>
+            Registrar Promessa
+          </a>
+        </div>
+      </div>
+      <div class="promises-section">
         <div class="row">
-          <div class="categories-list col-md-3" ng-if="isCurrentTab('AllPromises')">
-            <div class="panel panel-default">
-              <div class="panel-heading"><h4><% categories.length %> Categorias</h4></div>
-              <div class="list-group">
-                <a ng-repeat="category in categories" class="list-group-item" ng-class="{'active': isCurrentCategory(category)}" ng-click="selectCategory(category)">
-                  <% category.name %> (<% totalPromisesOfCategory(category) %>)
-                </a>
+          <div class="col-md-12 align-center">
+            <div class="page-header">
+              <h1 ng-switch="tabId">
+                <span ng-switch-when="AllPromises">Todas as promessas</span>
+                <span ng-switch-when="LatestPromises">Promessas mais recentes</span>
+                <span ng-switch-when="MajorPromises">Promessas mais importantes</span>
+                <span ng-switch-when="OlderPromises">Promessas mais antigas</span>
+              </h1>          
+              <h3 ng-if="isCurrentTab('AllPromises') && containsPromises()">
+                <span class="label label-info">{{ category.name }} ({{ promises.length }})</span>
+              </h3>
+            </div>      
+          </div>
+          <div class="row">
+            <div class="categories-list col-md-3" ng-if="isCurrentTab('AllPromises') && containsPromises()">
+              <div class="panel panel-default">
+                <div class="panel-heading"><h4>{{ categories.length }} Categorias</h4></div>
+                <div class="list-group">
+                  <a ng-repeat="category in categories" class="list-group-item" ng-class="{'active': isCurrentCategory(category)}" ng-click="selectCategory(category)">
+                    {{ category.name }} ({{ totalPromisesOfCategory(category) }})
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>      
-          <div ng-class="{'col-md-9': isCurrentTab('AllPromises'), 'col-md-12': !isCurrentTab('AllPromises')}">
-            <ul infinite-scroll="appendNextPromisePage()" class="promises-list list-unstyled">
-              <li ng-repeat="promise in promises">
-                <div class="promise-item">
-                  <div class="promise-title grey-text">         
-                    <h4>         
-                      <a href="/politico/<% politician.slug %>/<% promise.id %>/<% promise.slug %>">
-                        <% promise.title %>
-                      </a>
-                    </h4>
-                  </div>               
-                  <div class="promise-infos">
-                    <div class="row">
-                      <div class="col-md-10">
-                        <div class="promise-state">
-                          <span ng-if="!isCurrentTab('AllPromises')">
-                            <span class="label label-info promise-label-info">
-                              <% promise.category.name %>
+            </div>  
+            <div ng-if="!containsPromises()" class="col-md-12 align-center">
+              <div class="jumbotron">
+                <h1>
+                  {{ politician.displayName }} não fez nenhuma promessa ?
+                </h1>
+                <h2>
+                  <a ng-click="registerPromise()">
+                    Seja o primeiro a cadastrar uma promessa de {{ politician.displayName }}
+                  </a>
+                </h2>
+              </div>
+            </div>    
+            <div ng-if="containsPromises()" ng-class="{'col-md-9': isCurrentTab('AllPromises'), 'col-md-12': !isCurrentTab('AllPromises')}">
+              <ul infinite-scroll="appendNextPromisePage()" infinite-scroll-disabled="!containsPromises()" class="promises-list list-unstyled">
+                <li ng-repeat="promise in promises">
+                  <div class="promise-item">
+                    <div class="promise-title grey-text">         
+                      <h4>         
+                        <a href="/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}">
+                          {{ promise.title }}
+                        </a>
+                      </h4>
+                    </div>               
+                    <div class="promise-infos">
+                      <div class="row">
+                        <div class="col-md-10">
+                          <div class="promise-state">
+                            <span ng-if="!isCurrentTab('AllPromises')">
+                              <span class="label label-info promise-label-info">
+                                {{ promise.category.name }}
+                              </span> 
+                              &nbsp;•
+                            </span>
+                            <span>
+                              <promise-state for="{{ promise.state }}" class="promise-label-info"></promise-state>
+                            </span>
+                            •
+                            <span>
+                              <a class="promise-vote" ng-click="voteOnPromise(promise)">
+                                Prioridade! <span ng-show="votedOnPromise(promise)">(Desfazer)</span>
+                              </a>
+                            </span>
+                            <span>
+                              •
+                              <span class="glyphicon glyphicon-star"></span>
+                              {{ totalPromiseUsersVotes(promise) }}
+                              •
+                              <span class="glyphicon glyphicon-comment"></span>
+                              {{ totalPromiseUsersComments(promise) }}          
+                              •
+                              <span class="glyphicon glyphicon-paperclip"></span>
+                              {{ totalPromiseEvidences(promise) }}
+                            </span>
+                          </div>
+                          <div class="promise-author">
+                            <span ng-if="promise.evidence_date">           
+                              Promessa feita <span am-time-ago="promise.evidence_date"></span>
+                              •
                             </span> 
-                            &nbsp;•
-                          </span>
-                          <span>
-                            <promise-state for="<% promise.state %>" class="promise-label-info"></promise-state>
-                          </span>
-                          •
-                          <span>
-                            <a class="promise-vote" ng-click="voteOnPromise(promise)">
-                              Prioridade! <span ng-show="votedOnPromise(promise)">(Desfazer)</span>
+                            Registrada por
+                            <a href="/usuario/{{ promise.registeredByUser.username }}">
+                              {{ promise.registeredByUser.name }}
                             </a>
-                          </span>
-                          <span>
-                            •
-                            <span class="glyphicon glyphicon-star"></span>
-                            <% totalPromiseUsersVotes(promise) %>
-                            •
-                            <span class="glyphicon glyphicon-comment"></span>
-                            <% totalPromiseUsersComments(promise) %>          
-                            •
-                            <span class="glyphicon glyphicon-paperclip"></span>
-                            <% totalPromiseEvidences(promise) %>
+                            <span am-time-ago="promise.registration_date"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <span class="social pull-right">              
+                            <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+                            <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+                            <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
                           </span>
                         </div>
-                        <div class="promise-author">
-                          <span ng-if="promise.evidence_date">           
-                            Promessa feita <span am-time-ago="promise.evidence_date"></span>
-                            •
-                          </span> 
-                          Registrada por
-                          <a href="/usuario/<% promise.registeredByUser.username %>">
-                            <% promise.registeredByUser.name %>
-                          </a>
-                          <span am-time-ago="promise.registration_date"></span>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <span class="social pull-right">              
-                          <a class="icon icon-facebook" href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
-                          <a class="icon icon-twitter" href="http://twitter.com/share?url=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
-                          <a class="icon icon-googleplus" href="https://plus.google.com/share?url=www.promessadepolitico.com.br/promessa/<% politician.slug %>/<% promise.id %>/<% promise.slug %>" title="Compartilhe essa promessa no Google+" target="_blank"></a>
-                        </span>
                       </div>
                     </div>
-                  </div>
-                </div>       
-              </li>
-            </ul>                  
+                  </div>       
+                </li>
+              </ul>                  
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 </div>
-{% endblock %}
-
-{% block backend_data %}
-  {{ data|jsonString }}
-{% endblock %}
+<% endblock %>

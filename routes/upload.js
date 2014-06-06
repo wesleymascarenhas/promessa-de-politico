@@ -1,0 +1,38 @@
+var politicianService = require('../apis/politicianService'),
+    path              = require('path'),
+    fs                = require('fs'),
+    multipart         = require('connect-multiparty'),
+    flow              = require('../utils/flow-node.js')('tmp/'),
+    fileUtils         = require('../utils/fileUtils');
+
+module.exports = function(app) {
+
+  // Handle uploads through Flow.js
+  app.post('/upload/politico', multipart(), function(req, res) {
+    flow.post(req, function(status, filename, originalFilename, identifier) {
+      if(status === 'done') {        
+        var politician = politicianService.forge({id: req.body.politician_id});
+        var politicianPhoto = fileUtils.politicianPhotoFilename(politician);
+        var politicianPhotoPath = path.join(path.dirname(process.mainModule.filename), 'public/img/politicians/', politicianPhoto);
+        politician.set('photo_filename', politicianPhoto);        
+        fs.rename(flow.getFinalFilePath(filename), politicianPhotoPath, function() {
+          politicianService.update(politician).then(function(politician) {            
+            res.send(200, {});
+          }).catch(function(err) {
+            res.send(500, {});
+          });
+        });
+      } else {
+        res.send(200, {});
+      }
+    });
+  });
+
+  // Handle status checks on chunks through Flow.js
+  app.get('/upload/politico', function(req, res) {
+    flow.get(req, function(status, filename, originalFilename, identifier) {
+      res.send(200, (status === 'found' ? 200 : 404));
+    });
+  });
+
+}

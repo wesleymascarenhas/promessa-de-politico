@@ -1,14 +1,26 @@
 body {
-  min-height: 2000px;
   padding-top: 50px;
   font-family: "Ubuntu", "sans-serif";
+}
+
+h1, h2, h3, h4, h5, p {
+  line-height: 1.5;
+}
+
+.text-angular {
+  height: auto !important;
+  min-height: 34px !important;
 }
 
 a:hover {
   cursor: pointer;
 }
 
-.paragraph_1_5 {
+.content {
+  padding-top: 20px;
+}
+
+.line-height-1-5 {
   line-height: 1.5;
 }
 
@@ -52,12 +64,57 @@ a:hover {
   font-weight: bolder;
 }
 
+.font-small {
+  font-size: 12px;
+}
+
 .font-normal {
   font-size: 14px;
 }
 
 .font-big {
   font-size: 18px;
+}
+
+.font-biggest {
+  font-size: 22px;
+}
+
+.no-padding-right {
+  padding-right: 0px !important;
+}
+
+.col-auto {
+  float: left;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.alerts {
+  z-index: 999999;
+  position: fixed;
+  top: 64px;
+  right: 10px;
+}
+
+.alert {
+  position: relative;
+  width: 400px;
+  margin-bottom: 10px;
+}
+
+.fade-in.ng-enter {
+  -webkit-animation: fadeIn 1s;
+  -moz-animation: fadeIn 1s;
+  -o-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+.fade-out.ng-leave {
+  -webkit-animation: fadeOut 1s;
+  -moz-animation: fadeOut 1s;
+  -o-animation: fadeOut 1s;
+  animation: fadeOut 1s;
 }
 
 .btn-none {
@@ -97,13 +154,30 @@ a:hover {
   float: left;
 }
 
+.politician-thumbnail {
+  display: block;
+  padding: 4px;
+  margin-bottom: 20px;
+  line-height: 1.42857143;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  -webkit-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+
 .politician-infos {
-  padding: 40px;
+  padding: 0 40px 20px 40px;
 }
 
 .politician-photo {
+  border: 1px #e7e7e7 solid;
   width: 200px;
-  height: 200px;
+  height: auto;
+}
+
+.photo-small {
+  width: 120px !important;
 }
 
 .promises-menu {
@@ -174,7 +248,6 @@ a:hover {
   text-align: center;
   font-weight: bolder;
   font-size: 18px;
-  padding: 5px;
   margin-top: 5px;
   border: 1px #ccc solid;
   border-radius: 4px;

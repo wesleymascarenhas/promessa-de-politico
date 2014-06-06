@@ -11,46 +11,105 @@ module.exports = function(app, passport) {
     res.render('index.html');
   });
 
+  app.get('/politico/cadastro', function(req, res, next) {
+    var user = req.user;    
+    var data = {};
+    data.user = user;
+    data.registeringPolitician = true;
+    viewService.getPoliticalAssociations().then(function(politicalAssociationsData) {      
+      data.politicalParties = politicalAssociationsData.politicalParties;
+      data.politicalOffices = politicalAssociationsData.politicalOffices;
+      data.states = politicalAssociationsData.state;
+      res.render('politician.html', {backendData: data});    
+    }).catch(function(err) {
+      next(err);
+    });    
+  });
+
   app.get('/politico/:politicianSlug', function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;
-    var results = {};
-    politicianService.findBySlug(slug, ['party', 'organ', 'office', 'coverPhotos'])
+    var data = {};
+    politicianService.findBySlug(slug, ['party', 'office', 'state', 'coverPhotos'])
     .then(function(politician) {
       if(!politician) {
-        results.next = true;
-        return results;
+        data.next = true;
+        return data;
       } 
-      results.user = user;
-      results.politician = politician;
+      data.user = user;
+      data.politician = politician;
       return BluebirdPromise.all([promiseCategoryService.findAll(), promiseService.count(politician), politicianService.countUsersVotes(politician), user ? politicianService.getUserVote(user, politician) : null])
       .spread(function(categories, totalPromises, totalPoliticianUsersVotes, politicianUserVote) {   
-        results.categories = categories;
-        results.totalPromises = totalPromises;
-        results.totalPoliticianUsersVotes = totalPoliticianUsersVotes;
-        results.politicianUserVote = politicianUserVote;
+        data.categories = categories;
+        data.totalPromises = totalPromises;
+        data.totalPoliticianUsersVotes = totalPoliticianUsersVotes;
+        data.politicianUserVote = politicianUserVote;
         if(totalPromises === 0) {
-          return results;
+          return data;
         } else {
-          return promiseService.countGroupingByState(results.politician)
+          return promiseService.countGroupingByState(data.politician)
           .then(function(totalPromisesByState) {
-            results.totalPromisesByState = totalPromisesByState;            
-            return viewService.getLatestPromises(results.user, results.politician, 1, 20).then(function(vars) {
-              helper.merge(vars, results);
-              return results;
+            data.totalPromisesByState = totalPromisesByState;            
+            return viewService.getLatestPromises(data.user, data.politician, 1, 20).then(function(latestPromisesData) {
+              helper.merge(latestPromisesData, data);
+              return data;
             });               
           });
         }
       });     
     }).then(function() {      
-      if(results.next && results.next === true) {
+      if(data.next && data.next === true) {
         next();
       } else {
-        res.render("politician.html", {data: results});
+        res.render('politician.html', {backendData: data});
       }
     }).catch(function(err) {
       next(err);
     });    
+  });
+
+  app.get('/politicos/:rankType', function(req, res, next) {
+    var rankType = req.params.rankType;
+
+    if(rankType === 'melhores' || rankType === 'piores') {
+      var data = {};    
+      data.user = req.user;
+
+      var rankPoliticians = null;
+      if(rankType === 'melhores') {
+        data.rankType = 'best';
+        rankPoliticians = politicianService.bestPoliticians;
+      } else {
+        data.rankType = 'worst';
+        rankPoliticians = politicianService.worstPoliticians;        
+      }
+
+      BluebirdPromise.all([rankPoliticians(1, 9), viewService.getPoliticalAssociations()])
+      .spread(function(politicians, politicalAssociations) {
+        data.politicians = politicians;
+        helper.merge(politicalAssociations, data);
+        return politicianService.countUsersVotes(data.politicians);
+      }).then(function(usersVotesCounts) {
+        data.usersVotesCounts = usersVotesCounts;
+        if(!data.user) {
+          return data;
+        } else {
+          return politicianService.getUserVotes(data.user, data.politicians)
+          .then(function(userVotes) {
+            data.userVotes = userVotes;       
+            return data;
+          });
+        }
+      }).then(function() { 
+        console.log(data);
+        res.render('politicians_rank.html', {backendData: data});
+      }).catch(function(err) {
+        console.log(err.stack);
+        next(err);
+      });
+    } else {
+      next();
+    }
   });
 
 }

@@ -1,30 +1,241 @@
-{% extends "template.html" %}
+<% extends "template.html" %>
 
-{% block stylesheets %}
-{% endblock %}
+<% block stylesheets %>
+<% endblock %>
 
-{% block content %}
-<div class="container">  
-  <h3>Entrar ou Cadastrar</h3>
+<% block content %>
+<div class="container" ng-controller="indexController">
   <div class="row">
-    <div class="col-md-4">
-      <a href="/auth/facebook" class="btn btn-lg btn-block btn-social btn-facebook">
-        <i class="fa fa-facebook"></i> Facebook
-      </a>
+    <div class="col-md-12">
+      <div class="jumbotron">
+        <div class="pull-right">
+          <a ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Facebook" class="icon icon-facebook" target="_blank"></a>
+          <a ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Twitter" class="icon icon-twitter"target="_blank"></a>
+          <a ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Google+" class="icon icon-googleplus"target="_blank"></a>
+        </div>
+        Em 2013 os brasileiros finalmente sairam às ruas 
+      </div>
+    </div>  
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-4">
+          <select class="form-control" nya-selectpicker ng-model="selectedPoliticalParty" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="filterSelected()" data-container="body"></select>        
+        </div>        
+        <div class="col-md-4">                      
+          <select class="form-control" nya-selectpicker ng-model="selectedState" ng-options="state.name for state in states" ng-change="filterSelected()" data-container="body"></select>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a href="/auth/twitter" class="btn btn-lg btn-block btn-social btn-twitter">
-        <i class="fa fa-twitter"></i> Twitter
-      </a>
-    </div>
-    <div class="col-md-4">
-      <a href="/auth/twitter" class="btn btn-lg btn-block btn-social btn-google-plus">
-        <i class="fa fa-google-plus"></i> Google
+    <div class="col-md-4 align-right">         
+      <a class="btn btn-primary btn-lg" ng-click="registerPolitician()">
+        <span class="glyphicon glyphicon-plus"></span>
+        Adicionar Político
       </a>
     </div>
   </div>
+  <div>
+    <h3>Políticos que cumprem suas promessas</h3>
+    <div class="row">
+      <div ng-if="!existsBestPoliticians()" class="col-md-12 align-center">
+        <div class="jumbotron">
+          <h2>
+            Ajude-nos a encontrar políticos exemplares 
+            <span ng-show="hasPoliticalPartySelected()">
+              do {{ selectedPoliticalParty.acronym }}
+            </span>
+            <span ng-show="hasStateSelected()">
+              {{ selectedState.preposition }} {{ selectedState.name }}
+            </span>
+          </h2>
+          <h3>
+            <a ng-click="registerPolitician()">
+              Cadastre um político exemplar
+            </a>
+          </h3>
+        </div>
+      </div>
+      <div ng-if="existsBestPoliticians()" class="col-md-12">
+        <div class="row">
+          <div ng-repeat="bestPolitician in bestPoliticians" class="col-md-4">
+            <div class="politician-thumbnail">
+              <div class="row">
+                <div class="col-auto">
+                  <a ng-href="/politico/{{ bestPolitician.slug }}">
+                    <img ng-if="!bestPolitician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
+                    <img ng-if="bestPolitician.photo_filename" ng-src="/img/politicians/{{ bestPolitician.photo_filename }}" class="politician-photo photo-small">
+                  </a>
+                </div>
+                <div class="col-auto" style="width: 60%;">
+                  <p class="font-big">
+                    <a ng-href="/politico/{{ bestPolitician.slug }}">
+                      {{ bestPolitician.displayName }}
+                    </a>
+                    <small>
+                      ({{ bestPolitician.total_fulfilled_promises }}/{{ bestPolitician.total_promises }})
+                    </small>
+                  </p>
+                  <div class="overflow-hidden">
+                    <div class="pull-left" style="width: 50%;">
+                      <div class="votes">
+                        <div class="vote">
+                          <div class="vote-up">
+                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'UP'), 'btn-success': votedInPolitician(bestPolitician, 'UP')}" ng-click="voteInPolitician(bestPolitician, 'UP')">
+                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-up"></span>
+                            </button>
+                          </div>
+                          <div class="vote-count">
+                            <span class="font-normal">
+                              {{ totalPoliticianUpUsersVotes(bestPolitician) }}
+                            </span>
+                          </div>
+                        </div>
+                        <div class="vote">
+                          <div class="vote-down">
+                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'DOWN'), 'btn-danger': votedInPolitician(bestPolitician, 'DOWN')}" ng-click="voteInPolitician(bestPolitician, 'DOWN')">
+                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-down"></span>
+                            </button>
+                          </div>
+                          <div class="vote-count">
+                            <span class="font-normal">
+                              {{ totalPoliticianDownUsersVotes(bestPolitician) }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>     
+                    </div>
+                    <div class="pull-right align-center" style="width: 50%;">
+                      <knob knob-data="bestPolitician.total_fulfilled_promises" knob-max="bestPolitician.total_promises" knob-options="{readOnly: true, width: 70, height: 70, fgColor: '#5cb85c', thickness: 0.4}"></knob>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <a href="/politicos/melhores" class="btn btn-block btn-primary">
+              Ver lista completa
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Políticos que <b>não</b> cumprem suas promessas</h3>
+    <div class="row">
+      <div ng-if="!existsWorstPoliticians()" class="col-md-12 align-center">
+        <div class="jumbotron">
+          <h2>
+            Ajude-nos a encontrar políticos 
+            <span ng-show="hasPoliticalPartySelected()">
+              do {{ selectedPoliticalParty.acronym }}
+            </span>
+            <span ng-show="hasStateSelected()">
+              {{ selectedState.preposition }} {{ selectedState.name }}
+            </span>
+            que não cumprem suas promessas
+          </h2>
+          <h3>
+            <a ng-click="registerPolitician()">
+              Cadastre um político
+            </a>
+          </h3>
+        </div>
+      </div>
+      <div ng-if="existsWorstPoliticians()" class="col-md-12">
+        <div class="row">
+          <div ng-repeat="worstPolitician in worstPoliticians" class="col-md-4">
+          <div class="politician-thumbnail">
+            <div class="row">
+              <div class="col-auto">
+                <a ng-href="/politico/{{ worstPolitician.slug }}">
+                  <img ng-if="!worstPolitician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
+                  <img ng-if="worstPolitician.photo_filename" ng-src="/img/politicians/{{ worstPolitician.photo_filename }}" class="politician-photo photo-small">
+                </a>
+              </div>
+              <div class="col-auto" style="width: 60%;">
+                <p class="font-big">
+                  <a ng-href="/politico/{{ worstPolitician.slug }}">
+                    {{ worstPolitician.displayName }}
+                  </a>
+                  <small>
+                    ({{ worstPolitician.total_fulfilled_promises }}/{{ worstPolitician.total_promises }})
+                  </small>
+                </p>
+                <div class="overflow-hidden">
+                  <div class="pull-left" style="width: 50%;">
+                    <div class="votes">
+                      <div class="vote">
+                        <div class="vote-up">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(worstPolitician, 'UP'), 'btn-success': votedInPolitician(worstPolitician, 'UP')}" ng-click="voteInPolitician(worstPolitician, 'UP')">
+                            <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-up"></span>
+                          </button>
+                        </div>
+                        <div class="vote-count">
+                          <span class="font-normal">
+                            {{ totalPoliticianUpUsersVotes(worstPolitician) }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="vote">
+                        <div class="vote-down">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(worstPolitician, 'DOWN'), 'btn-danger': votedInPolitician(worstPolitician, 'DOWN')}" ng-click="voteInPolitician(worstPolitician, 'DOWN')">
+                            <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-down"></span>
+                          </button>
+                        </div>
+                        <div class="vote-count">
+                          <span class="font-normal">
+                            {{ totalPoliticianDownUsersVotes(worstPolitician) }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>     
+                  </div>
+                  <div class="pull-right align-center" style="width: 50%;">
+                    <knob knob-data="worstPolitician.total_fulfilled_promises" knob-max="worstPolitician.total_promises" knob-options="{readOnly: true, width: 70, height: 70, fgColor: '#5cb85c', thickness: 0.4}"></knob>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <a href="/politicos/piores" class="btn btn-block btn-primary">
+              Ver lista completa
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <h3>Acessar com</h3>
+    <div class="row">
+      <div class="col-md-4">
+        <a href="/auth/facebook" class="btn btn-lg btn-block btn-social btn-facebook">
+          <i class="fa fa-facebook"></i> Facebook
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/auth/twitter" class="btn btn-lg btn-block btn-social btn-twitter">
+          <i class="fa fa-twitter"></i> Twitter
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="/auth/twitter" class="btn btn-lg btn-block btn-social btn-google-plus">
+          <i class="fa fa-google-plus"></i> Google
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
-{% endblock %}
+<% endblock %>
 
-{% block scripts %} 
-{% endblock %}
+<% block scripts %> 
+<% endblock %>

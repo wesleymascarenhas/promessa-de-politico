@@ -1,23 +1,28 @@
 var settings  = require('../configs/settings'),
     Bookshelf = require('bookshelf').initialize({
-      client: settings.databaseDialect,
+      client: settings.database.dialect,
       debug: true,
       connection: {
-        host: settings.databaseHost,
-        user: settings.databaseUser,
-        password: settings.databasePassword,
-        database: settings.databaseSchema,
-        charset: settings.databaseCharset
+        host: settings.database.host,
+        user: settings.database.user,
+        password: settings.database.password,
+        database: settings.database.schema,
+        charset: settings.database.charset
       }
     });
+
+Bookshelf.plugin('virtuals')
+
+var State = Bookshelf.Model.extend({
+  tableName: 'state'
+});
 
 var User = Bookshelf.Model.extend({
   tableName: 'user'  
 });
 
 var PoliticalParty = Bookshelf.Model.extend({
-  tableName: 'political_party',
-  id: 'id'
+  tableName: 'political_party'
 });
 
 var PoliticalOrgan = Bookshelf.Model.extend({
@@ -30,6 +35,14 @@ var PoliticalOffice = Bookshelf.Model.extend({
 
 var Politician = Bookshelf.Model.extend({
   tableName: 'politician',
+  virtuals: {
+    displayName: function() {
+      return this.get('nickname') ? this.get('nickname') : this.get('name');
+    }
+  },
+  state: function() {
+    return this.belongsTo(State, 'state_id');
+  },
   party: function() {
     return this.belongsTo(PoliticalParty, 'political_party_id');
   },
@@ -102,6 +115,7 @@ var PromiseUserComment = Bookshelf.Model.extend({
 });
 
 module.exports = {
+  State: State,
   User: User,
   PoliticalParty: PoliticalParty,
   PoliticalOrgan: PoliticalOrgan,

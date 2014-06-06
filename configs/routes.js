@@ -13,4 +13,5 @@ exports.configure = function(app, passport) {
   require('../routes/index')(app);
   require('../routes/error')(app);
   require('../routes/ajax')(app);
+  require('../routes/upload')(app);
 }

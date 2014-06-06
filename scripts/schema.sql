@@ -1,9 +1,10 @@
 create table user (
   id                int(11) not null auto_increment,
   name              varchar(100) not null,  
-  gender            enum('MALE', 'FEMALE') not null,
+  gender            enum('MALE', 'FEMALE') default null,
   username          varchar(100) not null,
-  email             varchar(255) not null,
+  email             varchar(255) default null,
+  photo_filename    varchar(255) default null,
   facebook_account  varchar(255) default null,
   twitter_account   varchar(255) default null,
   google_account    varchar(255) default null,
@@ -17,9 +18,10 @@ create table user (
 ) engine = innodb default charset = utf8;
 
 create table state (
-  id      int(11) not null auto_increment,
-  name    varchar(100) not null,
-  acronym varchar(20) not null,
+  id int(11) not null,
+  name      varchar(100) not null,
+  acronym   varchar(20) not null,
+  preposition varchar(3) not null,
   primary key (id)
 ) engine = innodb default charset = utf8;
 
@@ -28,15 +30,15 @@ create table political_party (
   name    varchar(100) not null,
   acronym varchar(20) not null,
   primary key (id),
-  unique key `uq_politician_party_name` (`name`),
-  unique key `uq_politician_party_acronym` (`acronym`)
+  unique key `uq_political_party_name` (`name`),
+  unique key `uq_political_party_acronym` (`acronym`)
 ) engine = innodb default charset = utf8;
 
 create table political_organ (
   id   int(11) not null auto_increment,
   name varchar(100) not null,
   primary key (id),
-  unique key `uq_politician_organ_name` (`name`)
+  unique key `uq_political_organ_name` (`name`)
 ) engine = innodb default charset = utf8;
 
 create table political_office (
@@ -44,7 +46,7 @@ create table political_office (
   title       varchar(100) not null,
   description varchar(255) not null,
   primary key (id),
-  unique key `uq_politician_office_title` (`title`)
+  unique key `uq_political_office_title` (`title`)
 ) engine = innodb default charset = utf8;
 
 create table politician (
@@ -52,7 +54,7 @@ create table politician (
   name                  varchar(100) not null,
   nickname              varchar(100) default null,
   biography             varchar(255) default null,
-  photo_path            varchar(100) not null,
+  photo_filename        varchar(100) not null,
   email                 varchar(100) default null,
   slug                  varchar(100) not null,
   state_id              int(11) default null,
@@ -77,9 +79,9 @@ create table politician (
 ) engine = innodb default charset = utf8;
 
 create table politician_cover_photo (
-  id            int(11) not null auto_increment,
-  photo_path    varchar(100) not null,
-  politician_id int(11) not null,
+  id              int(11) not null auto_increment,
+  photo_filename  varchar(100) not null,
+  politician_id   int(11) not null,
   primary key (id),
   key `fk_politician_cover_photo_politician` (`politician_id`),
   constraint `fk_politician_cover_photo_politician` foreign key (`politician_id`) references `politician` (`id`)

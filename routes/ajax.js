@@ -43,8 +43,14 @@ module.exports = function(app, passport) {
     getAllPromises: {
       auth: false,
       action: function(user, params) {
+        console.log(JSON.stringify(params));
+        console.log(params.length)
+        console.log(params[0]);
+        console.log(params[1]);
+
         var politician = politicianService.forge({id: params[0]});
         var category = promiseCategoryService.forge({id: params[1]});
+        console.log(category.toJSON())
         return viewService.getAllPromises(user, politician, category);
       }
     },
@@ -95,12 +101,14 @@ module.exports = function(app, passport) {
     registerPromise: {
       auth: true,
       action: function(user, params) {
-        var promiseData = params[0];
-        var evidencesData = params[1];
+        var politician_id = params[0];
+        var promiseData = params[1];
+        var evidencesData = params[2];
               
+        var politician = politicianService.forge({id: politician_id});
         var promise = promiseService.forge(promiseData);    
         var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
-        return viewService.registerPromise(user, promise, evidences);        
+        return viewService.registerPromise(user, politician, promise, evidences);        
       }
     },
     getOEmbed: {
@@ -124,18 +132,33 @@ module.exports = function(app, passport) {
         return politicianService.update(politician);
       }
     },
+    registerPolitician: {
+      auth: true,
+      action: function(user, params) {        
+        var politician = politicianService.forge(params[0]);
+        return politicianService.register(user, politician);
+      }
+    },
+    findPolitician: {
+      auth: false,
+      action: function(user, params) {
+        var politician_id = params[0];
+        var related = params[1];
+        return politicianService.findById(politician_id, related);
+      }
+    },
     getPoliticalAssociations: {
       auth: false,
       action: function(user, params) {
         return viewService.getPoliticalAssociations();
       }
     },
-    comment: {
+    commentPromise: {
       auth: true,
       action: function(user, params) {
         var promise = promiseService.forge({id: params[0]});
         var comment = params[1];
-        return viewService.comment(user, promise, comment);
+        return viewService.commentPromise(user, promise, comment);
       }
     },
     removeComment: {
@@ -143,6 +166,60 @@ module.exports = function(app, passport) {
       action: function(user, params) {
         var comment_id = params[0];
         return promiseService.removeComment(comment_id);
+      }
+    },
+    bestPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        return viewService.bestPoliticians(page, pageSize);
+      }
+    },
+    worstPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        return viewService.worstPoliticians(page, pageSize);
+      }
+    },
+    searchPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var value = params[0];
+        var columns = params[1];
+        return politicianService.search(value, columns);
+      }
+    },
+    filterPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
+        var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
+        return viewService.filterPoliticians(page, pageSize, politicalParty, state);
+      }
+    },
+    bestPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
+        var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
+        return politicianService.bestPoliticians(page, pageSize, politicalParty, state); 
+      }
+    },
+    worstPoliticians: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
+        var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
+        return politicianService.worstPoliticians(page, pageSize, politicalParty, state); 
       }
     }
   }
@@ -153,20 +230,26 @@ module.exports = function(app, passport) {
     var key = req.body.key || req.query.key;
     var params = req.body.params || req.query.params;
 
+    try {
     var mappedPromise = promisesMapper[key];
-    if(mappedPromise) {
+    if(!mappedPromise) {
+      res.status(404).send('Not found')
+    } else {
       if(mappedPromise.auth === true && !req.isAuthenticated()) {
-        res.status(401).send("Authentication required");
+        res.status(401).send('Authentication required');
       } else {
         mappedPromise.action(user, params).then(function(data) {
           console.log(data);
           res.json({data: data});        
         }).catch(function(err) {
           console.log(err.stack)
-          res.status(500).send("Internal error");
+          res.status(500).send('Internal error');
         });
       }
     }
+    } catch(err) {
+      console.log(err.stack)
+    };
   });
 
 }

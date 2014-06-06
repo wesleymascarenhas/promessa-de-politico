@@ -2,7 +2,8 @@ var BluebirdPromise        = require('bluebird'),
     politicianService      = require('./politicianService')
     promiseService         = require('./promiseService'),
     promiseCategoryService = require('./promiseCategoryService'),
-    helper                 = require('../utils/helper');
+    helper                 = require('../utils/helper'),
+    _                      = require('underscore');
 
 exports.fillPolitician = function(user, vars) {
   return BluebirdPromise.all([politicianService.countUsersVotes(vars.politician), user ? politicianService.getUserVote(user, vars.politician) : null])
@@ -40,17 +41,21 @@ exports.fillPromiseWithUsersComments = function(user, vars) {
 }
 
 exports.fillPromises = function(user, vars) { 
-  return new BluebirdPromise(function(resolve, reject) { 
-    BluebirdPromise.all([promiseService.countUsersVotesByPromise(vars.promises), promiseService.countUsersCommentsByPromise(vars.promises), promiseService.countEvidencesByPromise(vars.promises), user ? promiseService.findUserVotesByPromise(user, vars.promises) : null])
-    .spread(function(totalUsersVotesByPromise, totalUsersCommentsByPromise, totalEvidencesByPromise, userVotesByPromise) {
-      vars.totalUsersVotesByPromise = totalUsersVotesByPromise;
-      vars.totalUsersCommentsByPromise = totalUsersCommentsByPromise;           
-      vars.totalEvidencesByPromise = totalEvidencesByPromise;
-      vars.userVotesByPromise = userVotesByPromise;      
-      resolve(vars);            
-    }).catch(function(err) {
-      reject(err);
-    });
+  return new BluebirdPromise(function(resolve, reject) {
+    if(vars.promises.length > 0) { 
+      BluebirdPromise.all([promiseService.countUsersVotesByPromise(vars.promises), promiseService.countUsersCommentsByPromise(vars.promises), promiseService.countEvidencesByPromise(vars.promises), user ? promiseService.findUserVotesByPromise(user, vars.promises) : null])
+      .spread(function(totalUsersVotesByPromise, totalUsersCommentsByPromise, totalEvidencesByPromise, userVotesByPromise) {
+        vars.totalUsersVotesByPromise = totalUsersVotesByPromise;
+        vars.totalUsersCommentsByPromise = totalUsersCommentsByPromise;           
+        vars.totalEvidencesByPromise = totalEvidencesByPromise;
+        vars.userVotesByPromise = userVotesByPromise;      
+        resolve(vars);            
+      }).catch(function(err) {
+        reject(err);
+      });
+    } else {
+      resolve(vars);
+    }
   });
 }
 
@@ -77,19 +82,23 @@ exports.getAllPromises = function(user, politician) {
     BluebirdPromise.all([promiseCategoryService.findByPolitician(politician), promiseService.countGroupingByCategory(politician)])
     .spread(function(categories, totalPromisesByCategory) {
       vars.categories = categories;
-      vars.category = categories.at(helper.randomIndex(categories));    
-      vars.totalPromisesByCategory = totalPromisesByCategory;                
-      promiseService.findAllByPoliticianAndCategory(politician, vars.category, ['registeredByUser'])
-      .then(function(promises) {         
-        vars.promises = promises;
-        that.fillPromises(user, vars).then(function() {
-          resolve(vars);
+      if(categories.length > 0) {
+        vars.category = categories.at(helper.randomIndex(categories));    
+        vars.totalPromisesByCategory = totalPromisesByCategory;                
+        promiseService.findAllByPoliticianAndCategory(politician, vars.category, ['registeredByUser'])
+        .then(function(promises) {         
+          vars.promises = promises;
+          that.fillPromises(user, vars).then(function() {
+            resolve(vars);
+          }).catch(function(err) {
+            reject(err);
+          });
         }).catch(function(err) {
           reject(err);
         });
-      }).catch(function(err) {
-        reject(err);
-      });
+      } else {
+        resolve(vars);
+      }
     });
   });
 }
@@ -180,9 +189,9 @@ exports.editPromise = function(user, promise, evidences) {
   });
 }
 
-exports.registerPromise = function(user, promise, evidences) {
+exports.registerPromise = function(user, politician, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
-    promiseService.register(user, promise, evidences).then(function(registered) {
+    promiseService.register(user, politician, promise, evidences).then(function(registered) {
       resolve({promise: promise});
     }).catch(function(err) {
       reject(err);
@@ -192,8 +201,8 @@ exports.registerPromise = function(user, promise, evidences) {
 
 exports.getPoliticalAssociations = function() {
   return new BluebirdPromise(function(resolve, reject) {
-    BluebirdPromise.all([politicianService.findAllPoliticalParties(), politicianService.findAllPoliticalOffices(), politicianService.findAllPoliticalOrgans()]).spread(function(politicalParties, politicalOffices, politicalOrgans) {
-      var vars = {politicalParties: politicalParties, politicalOffices: politicalOffices, politicalOrgans: politicalOrgans};      
+    BluebirdPromise.all([politicianService.allPoliticalParties(), politicianService.allPoliticalOffices(), politicianService.allStates()]).spread(function(politicalParties, politicalOffices, states) {
+      var vars = {politicalParties: politicalParties, politicalOffices: politicalOffices, states: states};      
       resolve(vars);
     }).catch(function(err) {
       reject(err);
@@ -201,10 +210,21 @@ exports.getPoliticalAssociations = function() {
   });
 }
 
-exports.comment = function(user, promise, comment) {
+exports.commentPromise = function(user, promise, comment) {
   return new BluebirdPromise(function(resolve, reject) {
     promiseService.comment(user, promise, comment).then(function(promiseUserComment) {
       resolve(promiseService.findUserComment(promiseUserComment.id, ['user']));
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+exports.filterPoliticians = function(page, pageSize, politicalParty, state) {
+  return new BluebirdPromise(function(resolve, reject) {
+    BluebirdPromise.all([politicianService.bestPoliticians(page, pageSize, politicalParty, state), politicianService.worstPoliticians(page, pageSize, politicalParty, state)])
+    .spread(function(bestPoliticians, worstPoliticians) {
+      resolve({bestPoliticians: bestPoliticians, worstPoliticians: worstPoliticians});
     }).catch(function(err) {
       reject(err);
     });

@@ -1,8 +1,22 @@
 angular
   .module("politiciansPromiseApp")
+  .service("alertService", ["$timeout", function($timeout) {
+    var alerts = [];
+    this.getAlerts = function() {
+      return alerts;
+    };
+    this.addAlert = function(type, message) {
+      var that = this;
+      var alert = {type: type, msg: message};
+      this.getAlerts().push(alert);      
+      $timeout(function() {
+        that.getAlerts().splice(that.getAlerts().indexOf(alert), 1);
+      }, 5000);
+    };
+  }])
   .service("userService", ["$http", function($http) {
     this.getAuthenticatedUser = function() {
-      return $http.get("/ajax?key=getAuthenticatedUser");
+      return $http.post("/ajax", {key: "getAuthenticatedUser"});
     };
   }])
   .service("politicianService", ["$http", function($http) {
@@ -12,30 +26,48 @@ angular
     this.updatePolitician = function(politician) {
       return $http.post("/ajax", {key: "updatePolitician", params: [politician]});
     };
+    this.registerPolitician = function(politician) {
+      return $http.post("/ajax", {key: "registerPolitician", params: [politician]});
+    };
+    this.findPolitician = function(politician_id, related) {
+      return $http.post("/ajax", {key: "findPolitician", params: [politician_id, related]});
+    };
     this.getPoliticalAssociations = function() {
-      return $http.get("/ajax?key=getPoliticalAssociations");
+      return $http.post("/ajax", {key: "getPoliticalAssociations"});
+    };
+    this.searchPoliticians = function(value, columns) {
+      return $http.post("/ajax", {key: "searchPoliticians", params: [value, columns]});
+    };
+    this.filterPoliticians = function(page, pageSize, politicalParty, state) {
+      return $http.post("/ajax", {key: "filterPoliticians", params: [page, pageSize, politicalParty ? politicalParty.id : null, state ? state.id : null]});
+    };
+    this.bestPoliticians = function(page, pageSize, politicalParty, state) {
+      return $http.post("/ajax", {key: "bestPoliticians", params: [page, pageSize, politicalParty ? politicalParty.id : null, state ? state.id : null]});
+    };
+    this.worstPoliticians = function(page, pageSize, politicalParty, state) {
+      return $http.post("/ajax", {key: "worstPoliticians", params: [page, pageSize, politicalParty ? politicalParty.id : null, state ? state.id : null]});
     };
   }])
   .service("oembedService", ["$http", function($http) {
     this.getOEmbed = function(url) {
-      return $http.get("/ajax?key=getOEmbed&params[0]=" + url);
+      return $http.post("/ajax", {key: "getOEmbed", params: url});
     };
   }])
   .service("promiseService", ["$http", function($http) {
     this.getPromises = function(politician, category) {
-      return $http.get("/ajax?key=getPromises&params[0]=" + politician.id + "&params[1]=" + category.id);
+      return $http.post("/ajax", {key: "getPromises", params: [politician.id, category.id]});
     };
     this.getAllPromises = function(politician) {
-      return $http.get("/ajax?key=getAllPromises&params[0]=" + politician.id);
+      return $http.post("/ajax", {key: "getAllPromises", params: [politician.id]});
     };
     this.getMajorPromises = function(politician, page) {
-      return $http.get("/ajax?key=getMajorPromises&params[0]=" + politician.id + "&params[1]=" + page);
+      return $http.post("/ajax", {key: "getMajorPromises", params: [politician.id, page]});
     };
     this.getOlderPromises = function(politician, page) {
-      return $http.get("/ajax?key=getOlderPromises&params[0]=" + politician.id + "&params[1]=" + page);
+      return $http.post("/ajax", {key: "getOlderPromises", params: [politician.id, page]});
     };
     this.getLatestPromises = function(politician, page) {
-      return $http.get("/ajax?key=getLatestPromises&params[0]=" + politician.id + "&params[1]=" + page);
+      return $http.post("/ajax", {key: "getLatestPromises", params: [politician.id, page]});
     };
     this.voteOnPromise = function(promise) {
       return $http.post("/ajax", {key: "voteOnPromise", params: [promise.id]});
@@ -43,14 +75,14 @@ angular
     this.editPromise = function(promiseData, evidencesData) {
       return $http.post("/ajax", {key: "editPromise", params: [promiseData, evidencesData]});
     };
-    this.registerPromise = function(promiseData, evidencesData) {
-      return $http.post("/ajax", {key: "registerPromise", params: [promiseData, evidencesData]});
+    this.registerPromise = function(politician, promiseData, evidencesData) {
+      return $http.post("/ajax", {key: "registerPromise", params: [politician.id, promiseData, evidencesData]});
     };
     this.removeEvidence = function(evidence) {
       return $http.post("/ajax", {key: "removeEvidence", params: [evidence]});
     };
-    this.comment = function(promise, comment) {
-      return $http.post("/ajax", {key: "comment", params: [promise.id, comment]});
+    this.commentPromise = function(promise, comment) {
+      return $http.post("/ajax", {key: "commentPromise", params: [promise.id, comment]});
     };
     this.removeComment = function(comment) {
       return $http.post("/ajax", {key: "removeComment", params: [comment.id]});
@@ -58,7 +90,7 @@ angular
   }])
   .service("promiseCategoryService", ["$http", function($http) {
     this.getAllCategories = function() {
-      return $http.get("/ajax?key=getAllCategories");
+      return $http.post("/ajax", {key: "getAllCategories"});
     };
   }])
   .service("authenticationService", ["$modal", "$window", "backendData", function($modal, $window, backendData) {
@@ -78,7 +110,6 @@ angular
           var authWindow = $window.open("/auth/" + provider + "", "", "width = 500, height = 500");
           authWindow.onunload = function () {
             var resultPath = authWindow.location.pathname;
-            console.log(resultPath)
             if("/auth-success" === resultPath) {
               userAuthenticated = true;
               $modalInstance.close(thisService.isUserAuthenticated());

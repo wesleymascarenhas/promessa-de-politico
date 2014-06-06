@@ -1,19 +1,12 @@
 angular
   .module("politiciansPromiseApp")
-  .directive("knob", function() {
+  .directive("nullIfEmpty", function() {
     return {
-      restrict: "A",
-      link: function(scope, element, attrs) {       
-        var knob = $(element);
-        if(attrs.knobMax) {
-          knob.data("max", attrs.knobMax);
-        }
-        console.log(attrs.knobValue);
-        console.log(attrs.knobMax);
-        if(attrs.knobValue) {
-          knob.val(attrs.knobValue); 
-        }
-        knob.knob();
+      require: "ngModel",
+      link: function(scope, element, attrs, ctrl) {
+        ctrl.$parsers.push(function(value) {
+          return angular.isUndefined(value) || value === "" ? null : value;
+        });
       }
     };
   })
@@ -25,7 +18,7 @@ angular
       },
       restrict: "E",
       replace: true,
-      template: "<span class='label label-<% getCssClass(for) %>'><% getLabelText(for, count) %></span>",
+      template: "<span class='label label-{{ getCssClass(for) }}'>{{ getLabelText(for, count) }}</span>",
       link: function($scope, element, attrs) {       
         $scope.getCssClass = function(forValue) {
           var cssClass = ""; 

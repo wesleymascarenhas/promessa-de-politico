@@ -208,7 +208,7 @@ app.post('/imageCrop', function(req, res) {
 
 'use strict';
 
-angular.module('jackrabbitsgroup.angular-image-upload', []).directive('jrgImageUpload', ['jrgImageUploadData', '$timeout', 'jrgArray',
+angular.module('jackrabbitsgroup.angular-image-upload', ['jackrabbitsgroup.angular-array']).directive('jrgImageUpload', ['jrgImageUploadData', '$timeout', 'jrgArray',
 function (jrgImageUploadData, $timeout, jrgArray) {
 	
 	return {
@@ -860,6 +860,7 @@ function (jrgImageUploadData, $timeout, jrgArray) {
 						*/
 					};
 					//img.src =imgInfo.imgSrcCrop+'?'+LString.random(8,{});		//ensure new image shows up
+					console.log(JSON.stringify(imgInfo))
 					img.src =imgInfo.imgSrc;
 					/*
 					//@todo
