@@ -1,27 +1,34 @@
-var request = require('request'),
+var settings = require('../configs/settings'),
+    request = require('request'),
     mime    = require('mime'),
     path    = require('path'),
     fs      = require('fs'),
-    _       = require('underscore');
+    _       = require('underscore'),
+    Promise = require('bluebird'),
+    $       = this;
+
+exports.extensions = {
+  image: ['jpg', 'jpeg', 'png', 'gif']
+}
 
 exports.userPhotoFilename = function(user) {
   return user.id + '_' + new Date().getTime();
 }
 
 exports.userPhotoFilePath = function(obj) {
-  return path.join(path.dirname(process.mainModule.filename), 'public/img/users/', _.isString(obj) ? obj : userPhotoFilename(obj));
+  return path.join(settings.publicPath, 'img/users/', obj ? obj : '');
 }
 
-exports.downloadUserPhoto = function(uri, user, callback) {  
-  var photoFilename = this.userPhotoFilename(user);
-  var photoPath = this.userPhotoFilePath(photoFilename);
-  this.download(uri, photoPath, function(err) {
-    if(!err) {
-      user.set('photo_filename', photoFilename);      
-      callback()
-    } else {
-      callback(err);
-    }
+exports.downloadUserPhoto = function(uri, user, extensionsAccepted) {  
+  return new Promise(function(resolve, reject) {
+    var photoFilename = $.userPhotoFilename(user);
+    var photoPath = $.userPhotoFilePath();
+    $.download(uri, photoPath, photoFilename, extensionsAccepted).then(function(filenameWithExtension) {
+      user.set('photo_filename', filenameWithExtension);      
+      resolve(user);
+    }).catch(function(err) {
+      reject(err);
+    });
   });
 }
 
@@ -30,30 +37,40 @@ exports.politicianPhotoFilename = function(politician) {
 }
 
 exports.politicianPhotoFilePath = function(obj) {
-  return path.join(path.dirname(process.mainModule.filename), 'public/img/politicians/', _.isString(obj) ? obj : politicianPhotoFilename(obj));
+  return path.join(settings.publicPath, 'img/politicians/', obj ? obj : '');
 }
 
-exports.downloadPoliticianPhoto = function(uri, politician, callback) {  
-  var photoFilename = this.politicianPhotoFilename(politician);
-  var photoPath = this.politicianPhotoFilePath(photoFilename);
-  this.download(uri, photoPath, function(err) {
-    if(!err) {
-      user.set('photo_filename', photoFilename);      
-      callback()
-    } else {
-      callback(err);
-    }
+exports.downloadPoliticianPhoto = function(uri, politician, extensionsAccepted) {
+  return new Promise(function(resolve, reject) {
+    var photoFilename = $.politicianPhotoFilename(politician);
+    var photoPath = $.politicianPhotoFilePath();
+    $.download(uri, photoPath, photoFilename, extensionsAccepted).then(function(filenameWithExtension) {
+      politician.set('photo_filename', filenameWithExtension);      
+      resolve(politician);
+    }).catch(function(err) {
+      reject(err);
+    });
   });
 }
 
-exports.download = function(uri, filename, callback) { 
-  request.head(uri, function(err, res, body) {
-    if(err) {
-      callback(err);
-    } else {
-      var extension = mime.extension(res.headers['content-type']);
-      var pipe = request(uri).pipe(fs.createWriteStream(filename + "." + extension));
-      pipe.on('close', callback);      
-    }
+exports.download = function(uri, filePath, filename, extensionsAccepted) {
+  return new Promise(function(resolve, reject) {
+    request.head(uri, function(err, res, body) {
+      if(err) {
+        reject(err);
+      } else {
+        var extension = mime.extension(res.headers['content-type']);
+        if(extensionsAccepted && !_.contains(extensionsAccepted, extension)) {
+          reject(new Error('Extension ' + extension + ' is not accepted'));
+        } else {
+          var filenameWithExtension = filename + "." + extension;
+          var pipe = request(uri).pipe(fs.createWriteStream(path.join(filePath, filenameWithExtension)));
+          pipe.on('close', function() {
+            resolve(filenameWithExtension);
+          });
+          pipe.on('error', reject);  
+        }
+      }
+    });
   });
 }

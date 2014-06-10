@@ -1,4 +1,5 @@
 var politicianService = require('../apis/politicianService'),
+    settings          = require('../configs/settings'),
     path              = require('path'),
     fs                = require('fs'),
     multipart         = require('connect-multiparty'),
@@ -13,7 +14,7 @@ module.exports = function(app) {
       if(status === 'done') {        
         var politician = politicianService.forge({id: req.body.politician_id});
         var politicianPhoto = fileUtils.politicianPhotoFilename(politician);
-        var politicianPhotoPath = path.join(path.dirname(process.mainModule.filename), 'public/img/politicians/', politicianPhoto);
+        var politicianPhotoPath = path.join(settings.publicPath, 'img/politicians/', politicianPhoto);
         politician.set('photo_filename', politicianPhoto);        
         fs.rename(flow.getFinalFilePath(filename), politicianPhotoPath, function() {
           politicianService.update(politician).then(function(politician) {            

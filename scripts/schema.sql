@@ -20,7 +20,7 @@ create table user (
 create table state (
   id int(11) not null,
   name      varchar(100) not null,
-  acronym   varchar(20) not null,
+  uf        varchar(20) not null,
   preposition varchar(3) not null,
   primary key (id)
 ) engine = innodb default charset = utf8;

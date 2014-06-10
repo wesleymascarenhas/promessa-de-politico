@@ -34,6 +34,10 @@ exports.findBySlug = function(slug, related) {
   return this.forge({slug: slug}).fetch({withRelated: related});
 }
 
+exports.findAll = function() {
+  return Politician.collection().fetch();
+}
+
 exports.getUserVote = function(user, politician) {
   return PoliticianUserVote.forge({user_id: user.id, politician_id: politician.id}).fetch();
 }
@@ -145,8 +149,8 @@ exports.countUsersVotes = function(politician) {
 }
 
 exports.update = function(politician) {
-  if(politician.get("political_office_id") === 1) {
-    politician.set("state_id", null);
+  if(politician.get('political_office_id') === 1) {
+    politician.set('state_id', null);
   }
   return politician.save();
 }

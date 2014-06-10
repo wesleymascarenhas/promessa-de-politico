@@ -282,14 +282,15 @@
             </div>  
             <div ng-if="!containsPromises()" class="col-md-12 align-center">
               <div class="jumbotron">
-                <h1>
-                  {{ politician.displayName }} não fez nenhuma promessa ?
-                </h1>
                 <h2>
-                  <a ng-click="registerPromise()">
-                    Seja o primeiro a cadastrar uma promessa de {{ politician.displayName }}
-                  </a>
+                  {{ politician.displayName }} não fez nenhuma promessa ?
                 </h2>
+                <h3>
+                  <a ng-click="registerPromise()">
+                    Contribua e seja o primeiro a cadastrar uma promessa de 
+                    {{ politician.displayName }}
+                  </a>
+                </h3>
               </div>
             </div>    
             <div ng-if="containsPromises()" ng-class="{'col-md-9': isCurrentTab('AllPromises'), 'col-md-12': !isCurrentTab('AllPromises')}">

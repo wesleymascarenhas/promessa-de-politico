@@ -235,7 +235,7 @@
         <div ng-show="!isEditingPromise()" class="page-section">     
           <div class="comments thumbnail">     
             <div class="comments-title">
-              <label>{{ totalPromiseUsersComments }} Comentários</label>            
+              <label>{{ totalPromiseUsersComments }} Comentário(s)</label>            
             </div>
             <div class="comments-content">
               <form name="commentForm" class="form-horizontal">
@@ -262,7 +262,7 @@
                       </a>
                     </div>
                     <div class="commenter-image">
-                      <img src="http://lorempixel.com/50/50/people/6" />
+                      <img ng-src="/img/users/{{ comment.user.photo_filename }}" />
                     </div>
                     <div class="comment-text line-height-1-5">
                       <div>

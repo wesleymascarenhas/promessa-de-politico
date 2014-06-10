@@ -94,7 +94,7 @@ angular
     };
   }])
   .service("authenticationService", ["$modal", "$window", "backendData", function($modal, $window, backendData) {
-    var thisService = this;
+    var $ = this;
     var user = angular.isDefined(backendData.user) ? backendData.user : null;
     var userAuthenticated = angular.isDefined(backendData.user) ? true : false;
     var modalOptions = {
@@ -107,16 +107,15 @@ angular
           $modalInstance.dismiss("cancel");
         };   
         $scope.modalScope.auth = function(provider) {
-          var authWindow = $window.open("/auth/" + provider + "", "", "width = 500, height = 500");
-          authWindow.onunload = function () {
-            var resultPath = authWindow.location.pathname;
-            if("/auth-success" === resultPath) {
+          var authWindow = $window.open("/auth/" + provider + "", "", "");
+          $window.authResult = function(result) {
+            if("success" === result) {
               userAuthenticated = true;
-              $modalInstance.close(thisService.isUserAuthenticated());
-            } else if("/auth-fail" === resultPath) {
+              $modalInstance.close($.isUserAuthenticated());
+            } else if("fail" === result) {
               userAuthenticated = false;
-              $modalInstance.close(thisService.isUserAuthenticated());
-            }            
+              $modalInstance.close($.isUserAuthenticated());
+            }
           }
         }; 
       }

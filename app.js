@@ -22,7 +22,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser('promessa-de-politico'));
 app.use(express.session('promessa-de-politico'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(settings.publicPath));
 
 // development only
 if ('dev' == app.get('env')) {
