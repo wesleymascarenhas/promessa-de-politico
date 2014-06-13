@@ -1,6 +1,7 @@
 var User           = require('../models/models').User,
     modelUtils     = require('../utils/modelUtils'),
     helper         = require('../utils/helper'),
+    Promise        = require('bluebird'),
     _              = require('underscore');
 
 function forge(attributes) {
@@ -53,4 +54,10 @@ exports.findByEmail = function(email) {
 
 exports.findByUsername = function(username) {
   return User.forge({ username: username }).fetch();
+}
+
+exports.sendEmail = function(name, email, message) {
+  return new Promise(function(resolve, reject) {
+    
+  });
 }

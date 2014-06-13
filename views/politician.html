@@ -244,7 +244,7 @@
             <promise-state for="PARTIALLY_FULFILLED" count="{{ totalPromisesByState['PARTIALLY_FULFILLED'] }}"/>
           </span>
           <span class="promise-count">        
-            <promise-state for="DISCARDED" count="{{ totalPromisesByState['DISCARDED'] }}"/>
+            <promise-state for="DISCARDED" count="{{ totalPromisesByState['NOT_FULFILLED'] }}"/>
           </span>
         </div>
         <div class="col-md-4 align-right">         
@@ -294,7 +294,7 @@
               </div>
             </div>    
             <div ng-if="containsPromises()" ng-class="{'col-md-9': isCurrentTab('AllPromises'), 'col-md-12': !isCurrentTab('AllPromises')}">
-              <ul infinite-scroll="appendNextPromisePage()" infinite-scroll-disabled="!containsPromises()" class="promises-list list-unstyled">
+              <ul infinite-scroll="appendNextPromisePage()" infinite-scroll-disabled="!containsPromises() || !hasMorePromises" class="promises-list list-unstyled">
                 <li ng-repeat="promise in promises">
                   <div class="promise-item">
                     <div class="promise-title grey-text">         

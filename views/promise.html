@@ -100,7 +100,10 @@
               </a>
               <div class="media-body">
                 <h4 class="media-heading">
-                  <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.title }}</a>
+                  <a ng-href="{{ evidence.url }}" target="_blank">
+                    <span ng-if="evidence.title">{{ evidence.title }}</span>
+                    <span ng-if="!evidence.title">{{ evidence.url }}</span>
+                  </a>
                 </h4>
                 <p>
                   {{ evidence.description }}
@@ -174,19 +177,25 @@
                   'btn-warning': isPromiseStateChoosed('PARTIALLY_FULFILLED')
                 }
               ">Cumprida Parcialmente</button>
-              <button type="button" class="btn" ng-click="choosePromiseState('DISCARDED')" ng-class="
+              <button type="button" class="btn" ng-click="choosePromiseState('NOT_FULFILLED')" ng-class="
                 {
-                  'btn-default': !isPromiseStateChoosed('DISCARDED'),
-                  'btn-danger': isPromiseStateChoosed('DISCARDED')
+                  'btn-default': !isPromiseStateChoosed('NOT_FULFILLED'),
+                  'btn-danger': isPromiseStateChoosed('NOT_FULFILLED')
                 }
-              ">Descartada</button>
+              ">Não Cumpriu</button>
             </div>
           </div>          
           <div class="form-group">
             <label>Data em que a promessa foi feita</label>            
             <div class="row">
-              <div class="col-md-4">
-                <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy" ng-model="editedPromise.evidence_date" min-date="'1980-01-01'" max-date="'2015-06-22'" show-button-bar="false"/>
+              <div class="col-md-4" ng-class="{'has-error': promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine}">
+                <label class="control-label" for="evidence_date" ng-show="promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine">Formato inválido (Exemplo: 05/05/2014)</label>
+                <div class="input-group">
+                  <input type="text" name="evidence_date" class="form-control" datepicker-popup="{{evidenceDatePickerFormat}}" ng-model="editedPromise.evidence_date" is-open="evidenceDatePickerOpened" min-date="evidenceDatePickerMinDate" max-date="evidenceDatePickerMaxDate" current-text="Hoje" clear-text="Limpar" close-text="Fechar"/>
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="openEvidenceDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                  </span>
+                </div>         
               </div>
             </div>
           </div>
@@ -194,35 +203,70 @@
             <label>Links de vídeos ou notícias que comprovam essa promessa</label>
             <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
               <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
-            </div>            
+            </div>
+            
+                   
             <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
               <div>
                 <div class="well">
-                  <div class="media-url input-group">
-                    <input ng-model="evidence.url" ng-paste="getEvidenceInfos(evidence, $event)" type="url" class="form-control" placeholder="Cole aqui a url da notícia ou vídeo" />
-                    <span class="input-group-btn" ng-show="!isLastEvidence($index)">
-                      <button ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
+                  <div ng-show="evidence.url">
+                    <div class="pull-right">                    
+                      <button ng-show="!isLastEvidence($index)" ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
                         <span class="glyphicon glyphicon-minus"></span>
                       </button>
-                    </span>
-                    <span class="input-group-btn" ng-show="isLastEvidence($index)">
-                      <button ng-click="addEvidence()" class="btn btn-success" type="button">
+                      <button ng-show="isLastEvidence($index)" ng-click="addEvidence()" class="btn btn-success" type="button">
                         <span class="glyphicon glyphicon-plus"></span>
                       </button>
-                    </span>
-                  </div>
-                  <div ng-show="evidence.title" class="media grey-text">
-                    <a nf-show="evidence.image" class="pull-left" ng-href="{{ evidence.url }}" target="_blank">
-                      <img class="media-object" ng-src="{{ evidence.image }}" width="123">
+                    </div>
+                    <a class="pull-left" ng-href="{{ evidence.url }}" target="_blank" style="margin-right: 10px;">
+                      <img ng-show="!evidence.image" class="media-object" src="/img/news_64_64.png">
+                      <img ng-show="evidence.image" class="media-object" ng-src="{{ evidence.image }}" width="123">
                     </a>
                     <div class="media-body">
-                      <div class="form-group">
-                        <input ng-model="evidence.title" class="form-control" placeholder="Título da notícia/vídeo">
-                      </div>                      
-                      <div class="form-group">
-                        <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da notícia/vídeo" rows="3"></textarea>
+                      <h4 class="media-heading">
+                        <a ng-href="{{ evidence.url }}" target="_blank">
+                          <span ng-if="evidence.title">{{ evidence.title }}</span>
+                          <span ng-if="!evidence.title">{{ evidence.url }}</span>
+                        </a>
+                      </h4>
+                      <p>
+                        {{ evidence.description }}
+                      </p>
+                      <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
+                      <div ng-if="evidence.registeredByUser" class="media-host">
+                        Adicionado por 
+                        <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
+                        <span am-time-ago="evidence.registration_date"></span>
                       </div>
-                      <a ng-href="{{ evidence.url }}">{{ evidence.host }}</a>
+                    </div>
+                  </div>
+                  <div ng-show="!evidence.url">
+                    <div class="media-url input-group">
+                      <input ng-model="evidence.url" ng-paste="getEvidenceInfos(evidence, $event)" type="url" class="form-control" placeholder="Cole aqui a url da evidência" />
+                      <span class="input-group-btn" ng-show="!isLastEvidence($index)">
+                        <button ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
+                          <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                      </span>
+                      <span class="input-group-btn" ng-show="isLastEvidence($index)">
+                        <button ng-click="addEvidence()" class="btn btn-success" type="button">
+                          <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                      </span>
+                    </div>
+                    <div ng-show="evidence.title" class="media grey-text">
+                      <a ng-show="evidence.image" class="pull-left" ng-href="{{ evidence.url }}" target="_blank">
+                        <img class="media-object" ng-src="{{ evidence.image }}" width="123">
+                      </a>
+                      <div class="media-body">
+                        <div class="form-group">
+                          <input ng-model="evidence.title" class="form-control" placeholder="Título da evidência">
+                        </div>                      
+                        <div class="form-group">
+                          <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da evidência" rows="3"></textarea>
+                        </div>
+                        <a ng-href="{{ evidence.url }}">{{ evidence.host }}</a>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -46,7 +46,7 @@ angular
           } else if (forValue === "PARTIALLY_FULFILLED") {
             labelText = "Cumprida Parcialmente";
           } else {
-            labelText = "Descartada";
+            labelText = "Não Cumpriu";
           }
           if(countValue) {
             labelText += " (" + countValue + ")";

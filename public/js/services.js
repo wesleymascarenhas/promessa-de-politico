@@ -18,6 +18,9 @@ angular
     this.getAuthenticatedUser = function() {
       return $http.post("/ajax", {key: "getAuthenticatedUser"});
     };
+    this.sendMessage = function(name, email, message) {
+      return $http.post("/ajax", {key: "sendMessage", params: [name, email, message]});
+    };
   }])
   .service("politicianService", ["$http", function($http) {
     this.voteInPolitician = function(politician, vote_type) {
@@ -60,14 +63,14 @@ angular
     this.getAllPromises = function(politician) {
       return $http.post("/ajax", {key: "getAllPromises", params: [politician.id]});
     };
-    this.getMajorPromises = function(politician, page) {
-      return $http.post("/ajax", {key: "getMajorPromises", params: [politician.id, page]});
+    this.getMajorPromises = function(politician, page, pageSize) {
+      return $http.post("/ajax", {key: "getMajorPromises", params: [politician.id, page, pageSize]});
     };
-    this.getOlderPromises = function(politician, page) {
-      return $http.post("/ajax", {key: "getOlderPromises", params: [politician.id, page]});
+    this.getOlderPromises = function(politician, page, pageSize) {
+      return $http.post("/ajax", {key: "getOlderPromises", params: [politician.id, page, pageSize]});
     };
-    this.getLatestPromises = function(politician, page) {
-      return $http.post("/ajax", {key: "getLatestPromises", params: [politician.id, page]});
+    this.getLatestPromises = function(politician, page, pageSize) {
+      return $http.post("/ajax", {key: "getLatestPromises", params: [politician.id, page, pageSize]});
     };
     this.voteOnPromise = function(promise) {
       return $http.post("/ajax", {key: "voteOnPromise", params: [promise.id]});

@@ -199,6 +199,7 @@ var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
     query.having('percentage_promises_fulfilled', condition, 50)
     .groupBy('politician_id')
     .orderBy('percentage_promises_fulfilled', order)
+    .limit(pageSize).offset((page - 1) * pageSize)
     .then(function(politiciansRows) {
       var politicians = [];
       politiciansRows.forEach(function(politicianRow) {        

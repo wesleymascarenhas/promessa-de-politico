@@ -20,7 +20,6 @@
     "underscore": "1.6.0",
     "underscore.string": "2.3.3",
     "bluebird": "1.2.4",
-    "restify": "2.8.1",
     "request": "2.36.0",
     "mime": "1.2.11"
   }

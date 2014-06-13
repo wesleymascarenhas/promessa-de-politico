@@ -1,15 +1,16 @@
 var politicianService = require('../apis/politicianService'),
     promiseService    = require('../apis/promiseService'),
     viewService       = require('../apis/viewService'),
+    authorization     = require('../utils/authorization'),
     BluebirdPromise   = require('bluebird');
 
 module.exports = function(app, passport) {
   
-  app.get('/politico/:politicianSlug/nova-promessa', function(req, res, next) {
+  app.get('/politico/:politicianSlug/nova-promessa', authorization.isAuthenticated, function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;
     var data = {};
-    politicianService.findBySlug(slug, ['party', 'organ', 'office', 'coverPhotos'])
+    politicianService.findBySlug(slug, ['party', 'organ', 'office'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;
@@ -39,7 +40,7 @@ module.exports = function(app, passport) {
   app.get('/politico/:politicianSlug/:promiseId/:promiseSlug', function(req, res, next) {
     var user = req.user;
     var data = {};
-    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.organ', 'politician.office', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
+    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.office', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
     .then(function(promise) {
       if(!promise) {
         data.next = true;

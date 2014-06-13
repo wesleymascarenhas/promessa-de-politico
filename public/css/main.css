@@ -9,7 +9,6 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 200px;
 }
-}
 
 h1, h2, h3, h4, h5, p {
   line-height: 1.5;
@@ -31,11 +30,6 @@ footer a, footer a:hover {
 footer .container {
   margin: 0 auto;
   padding-top: 20px;
-}
-
-.text-angular {
-  height: auto !important;
-  min-height: 34px !important;
 }
 
 a:hover {
@@ -91,19 +85,19 @@ a:hover {
 }
 
 .font-small {
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 .font-normal {
-  font-size: 14px;
+  font-size: 14px !important;
 }
 
 .font-big {
-  font-size: 18px;
+  font-size: 18px !important;
 }
 
 .font-biggest {
-  font-size: 22px;
+  font-size: 22px !important;
 }
 
 .no-padding-right {
@@ -181,6 +175,7 @@ a:hover {
 }
 
 .politician-thumbnail {
+  min-height: 130px;
   display: block;
   padding: 4px;
   margin-bottom: 20px;
@@ -203,7 +198,7 @@ a:hover {
 }
 
 .photo-small {
-  width: 120px !important;
+  width: 80px !important;
 }
 
 .promises-menu {
@@ -292,11 +287,15 @@ a:hover {
 }
 
 .promise .evidences .media {
-  min-height: 148px;
+  min-height: 105px;
   margin-bottom: 0px;
   border: 1px #e7e7e7 solid;
   padding: 10px;
   border-radius: 4px;
+}
+
+.promise .evidences .well {
+  min-height: 105px;  
 }
 
 .promise .evidences .media-url {

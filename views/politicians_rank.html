@@ -6,7 +6,12 @@
 <% block content %>
 <div class="container" ng-controller="politiciansRankController">
   <div>
-    <h1 class="page-header">Políticos que cumprem suas promessas</h1>
+    <h1 ng-if="isBestRank()" class="page-header">
+      Políticos que estão cumprindo suas promessas
+    </h1>
+    <h1 ng-if="isWorstRank()" class="page-header">
+      Políticos que <b>não</b> estão cumprindo suas promessas
+    </h1>
     <div class="row">
       <div class="col-md-8">
         <div class="row">
@@ -25,9 +30,9 @@
         </a>
       </div>
     </div>
-    <div class="row">
+    <div class="row page-section">
       <div ng-if="!existsPoliticians()" class="col-md-12 align-center">
-        <div class="jumbotron">
+        <div ng-if="isBestRank()" class="jumbotron">
           <h2>
             Ajude-nos a encontrar políticos exemplares 
             <span ng-show="hasPoliticalPartySelected()">
@@ -43,20 +48,37 @@
             </a>
           </h3>
         </div>
+        <div ng-if="isWorstRank()" class="jumbotron">
+          <h2>
+            Ajude-nos a encontrar políticos 
+            <span ng-show="hasPoliticalPartySelected()">
+              do {{ selectedPoliticalParty.acronym }}
+            </span>
+            <span ng-show="hasStateSelected()">
+              {{ selectedState.preposition }} {{ selectedState.name }}
+            </span>
+            que não estão cumprindo suas promessas
+          </h2>
+          <h3>
+            <a ng-click="registerPolitician()">
+              Cadastre um político
+            </a>
+          </h3>
+        </div>
       </div>
       <div ng-if="existsPoliticians()" class="col-md-12">
-        <div class="row">
-          <div ng-repeat="politician in politicians" class="col-md-4">
+        <div class="row" infinite-scroll="appendNextRankPage()" infinite-scroll-disabled="!hasMorePoliticians">
+          <div ng-repeat="politician in politicians" class="col-md-3">
             <div class="politician-thumbnail">
               <div class="row">
-                <div class="col-auto">
+                <div class="col-auto" style="width: 39%;">
                   <a ng-href="/politico/{{ politician.slug }}">
                     <img ng-if="!politician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
                     <img ng-if="politician.photo_filename" ng-src="/img/politicians/{{ politician.photo_filename }}" class="politician-photo photo-small">
                   </a>
                 </div>
-                <div class="col-auto" style="width: 60%;">
-                  <p class="font-big">
+                <div class="col-auto" style="padding-left: 0px; width: 61%;">
+                  <p>
                     <a ng-href="/politico/{{ politician.slug }}">
                       {{ politician.displayName }}
                     </a>
@@ -64,38 +86,33 @@
                       ({{ politician.total_fulfilled_promises }}/{{ politician.total_promises }})
                     </small>
                   </p>
-                  <div class="overflow-hidden">
-                    <div class="pull-left" style="width: 50%;">
-                      <div class="votes">
-                        <div class="vote">
-                          <div class="vote-up">
-                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(politician, 'UP'), 'btn-success': votedInPolitician(politician, 'UP')}" ng-click="voteInPolitician(politician, 'UP')">
-                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-up"></span>
-                            </button>
-                          </div>
-                          <div class="vote-count">
-                            <span class="font-normal">
-                              {{ totalPoliticianUpUsersVotes(politician) }}
-                            </span>
-                          </div>
+                  <div class="overflow-hidden">                   
+                    <div class="votes">
+                      <div class="vote">
+                        <div class="vote-up">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(politician, 'UP'), 'btn-success': votedInPolitician(politician, 'UP')}" ng-click="voteInPolitician(politician, 'UP')">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                          </button>
                         </div>
-                        <div class="vote">
-                          <div class="vote-down">
-                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(politician, 'DOWN'), 'btn-danger': votedInPolitician(politician, 'DOWN')}" ng-click="voteInPolitician(politician, 'DOWN')">
-                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-down"></span>
-                            </button>
-                          </div>
-                          <div class="vote-count">
-                            <span class="font-normal">
-                              {{ totalPoliticianDownUsersVotes(politician) }}
-                            </span>
-                          </div>
+                        <div class="vote-count font-small">
+                          <span>
+                            {{ totalPoliticianUpUsersVotes(politician) }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="vote">
+                        <div class="vote-down">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(politician, 'DOWN'), 'btn-danger': votedInPolitician(politician, 'DOWN')}" ng-click="voteInPolitician(politician, 'DOWN')">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                          </button>
+                        </div>
+                        <div class="vote-count font-small">
+                          <span>
+                            {{ totalPoliticianDownUsersVotes(politician) }}
+                          </span>
                         </div>
                       </div>     
-                    </div>
-                    <div class="pull-right align-center" style="width: 50%;">
-                      <knob knob-data="politician.total_fulfilled_promises" knob-max="politician.total_promises" knob-options="{readOnly: true, width: 70, height: 70, fgColor: '#5cb85c', thickness: 0.4}"></knob>
-                    </div>
+                    </div>                    
                   </div>
                 </div>
               </div>

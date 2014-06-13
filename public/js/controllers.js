@@ -4,6 +4,11 @@ angular
     $scope.alerts = alertService.getAlerts();
     $scope.closeAlert = alertService.closeAlert;
   }])
+  .controller("contactController", ["$scope", "alertService", "userService", function($scope, alertService, userService) {
+    $scope.sendEmail = function() {
+      userService.sendEmail($scope.name, $scope.email, $scope.message);
+    }
+  }])
   .controller("headerController", ["$scope", "$window", "politicianService", "authenticationService", function($scope, $window, politicianService, authenticationService) {
     $scope.user = authenticationService.getUser();
 
@@ -44,6 +49,7 @@ angular
     $scope.promisePage = 1;
     $scope.editingPolitician = false;
     $scope.registeringPolitician = false;
+    $scope.hasMorePromises = true;
     $scope.flowModel = {};
     $scope.flowConfig = {
       target: "/upload/politico",
@@ -183,7 +189,7 @@ angular
       if(tabId === "AllPromises" && $scope.promisePage === 1) {
         promise = promiseService.getAllPromises($scope.politician)
       } else {
-        promise = resources[tabId]($scope.politician, $scope.promisePage)
+        promise = resources[tabId]($scope.politician, $scope.promisePage, 20)
       }
 
       return promise;  
@@ -193,7 +199,10 @@ angular
       NProgress.start();
       promise.then(function(response) {      
         NProgress.done();        
-        $scope.promises = $scope.promises.concat(response.data.data.promises)
+        $scope.promises = $scope.promises.concat(response.data.data.promises);
+        if(response.data.data.promises.length < 20) {
+          $scope.hasMorePromises = false;
+        }
       }); 
     };
     $scope.isCurrentTab = function(tabId) {
@@ -277,10 +286,6 @@ angular
     };
   }])
   .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", "alertService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService, alertService) {
-    $scope.editingPromise = false;
-    $scope.editedPromise = {category: backendData.category, evidences: [{}]};
-    $scope.registeringPromise = false;  
-    
     $scope.mergeData = function(data) {
       for (var attr in data) { 
         $scope[attr] = data[attr]; 
@@ -291,7 +296,22 @@ angular
         target[attr] = data[attr]; 
       }  
     };
+    $scope.editingPromise = false;
+    $scope.registeringPromise = false;  
     $scope.mergeData(backendData);
+    if($scope.registeringPromise) {
+      $scope.editedPromise = {category: backendData.category, category_id: backendData.category.id, evidences: [{}]};
+    } else {
+      $scope.editedPromise = {};
+    }
+    $scope.evidenceDatePickerFormat = "dd/MM/yyyy";      
+    $scope.openEvidenceDatePicker = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.evidenceDatePickerOpened = true;
+    };
+    $scope.evidenceDatePickerMaxDate = new Date();
+    $scope.evidenceDatePickerMinDate = new Date("2005-01-01");
 
     $scope.comment = function(content) {
       if(authenticationService.ensureAuth()) {        
@@ -469,17 +489,21 @@ angular
     };
     $scope.removeEvidence = function(evidence, index) {
       if(authenticationService.ensureAuth()) { 
-        var modalScope = {
-          headerText: "Deseja remover essa evidência ?",
-          bodyText: "As evidências são importantes, pois comprovam essa promessa."
-        };   
-        modalService.show({}, modalScope).then(function(result) {
-          NProgress.start();
-          promiseService.removeEvidence(evidence).then(function(response) {
-            NProgress.done();
-            $scope.editedPromise.evidences.splice(index, 1);
-          });
-        });    
+        if(!evidence.id) {
+          $scope.editedPromise.evidences.splice(index, 1);
+        } else {
+          var modalScope = {
+            headerText: "Deseja remover essa evidência ?",
+            bodyText: "As evidências são importantes, pois comprovam essa promessa."
+          };   
+          modalService.show({}, modalScope).then(function(result) {
+            NProgress.start();
+            promiseService.removeEvidence(evidence).then(function(response) {
+              NProgress.done();
+              $scope.editedPromise.evidences.splice(index, 1);
+            });
+          });    
+        }
       }
     };
     $scope.categorySelected = function() {    
@@ -560,7 +584,7 @@ angular
       return $scope.selectedState.id;
     };
     $scope.filterSelected = function() {
-      politicianService.filterPoliticians(1, 9, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
+      politicianService.filterPoliticians(1, 12, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
         $scope.mergeData(response.data.data);
       });
     };
@@ -615,8 +639,8 @@ angular
       if(politician.id in $scope.usersVotesCounts && $scope.usersVotesCounts[politician.id] !== null) {
         $scope.usersVotesCounts[politician.id][vote_type] = vote_type in $scope.usersVotesCounts[politician.id] ? $scope.usersVotesCounts[politician.id][vote_type] + 1 : 1;        
       } else {
-        $scope.usersVotesCounts[politician.id] = {vote_type: 1};
-      }
+        vote_type === "UP" ? $scope.usersVotesCounts[politician.id] = {"UP": 1} : $scope.usersVotesCounts[politician.id] = {"DOWN": 1};
+      }  
     };
     $scope.decrementTotalPoliticianUsersVotes = function(politician, vote_type) {
       if(politician.id in $scope.usersVotesCounts && $scope.usersVotesCounts[politician.id] !== null) {
@@ -633,12 +657,20 @@ angular
       }        
     };
     $scope.mergeData(backendData);
+    $scope.hasMorePoliticians = true;
+    $scope.rankPage = 1;
     $scope.politicalParties.unshift({acronym: "Todos os partidos"});
     $scope.selectedPoliticalParty = $scope.politicalParties[0];
     $scope.states.unshift({name: "Todos os estados"});
     $scope.selectedState = $scope.states[0];
     $scope.actualPage = 1;
 
+    $scope.isBestRank = function() {
+      return $scope.rankType === "best";
+    };
+    $scope.isWorstRank = function() {
+      return $scope.rankType === "worst";
+    };
     $scope.registerPolitician = function() {
       if(authenticationService.ensureAuth()) {
         $window.location.href = "/politico/cadastro";
@@ -655,12 +687,12 @@ angular
     };
     $scope.filterSelected = function() {
       var filterPoliticiansPromise = null;
-      if($scope.rankType === "best") {
+      if($scope.isBestRank()) {
         filterPoliticiansPromise = politicianService.bestPoliticians
       } else {
         filterPoliticiansPromise = politicianService.worstPoliticians
       }
-      filterPoliticiansPromise($scope.actualPage, 18, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
+      filterPoliticiansPromise($scope.actualPage, 24, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
         $scope.politicians = response.data.data;
       });
     };
@@ -715,7 +747,7 @@ angular
       if(politician.id in $scope.usersVotesCounts && $scope.usersVotesCounts[politician.id] !== null) {
         $scope.usersVotesCounts[politician.id][vote_type] = vote_type in $scope.usersVotesCounts[politician.id] ? $scope.usersVotesCounts[politician.id][vote_type] + 1 : 1;        
       } else {
-        $scope.usersVotesCounts[politician.id] = {vote_type: 1};
+        vote_type === "UP" ? $scope.usersVotesCounts[politician.id] = {"UP": 1} : $scope.usersVotesCounts[politician.id] = {"DOWN": 1};
       }
     };
     $scope.decrementTotalPoliticianUsersVotes = function(politician, vote_type) {
@@ -724,5 +756,17 @@ angular
       } else {
         $scope.usersVotesCounts[politician.id] = {vote_type: 0};
       }
+    };
+    $scope.appendNextRankPage = function() {
+      $scope.rankPage++;
+      NProgress.start();
+      var promise = $scope.rankType === "best" ? politicianService.bestPoliticians : politicianService.worstPoliticians;
+      promise($scope.rankPage, 24, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {      
+        NProgress.done();        
+        $scope.politicians = $scope.politicians.concat(response.data.data);
+        if(response.data.data.length < 24) {
+          $scope.hasMorePoliticians = false;
+        }
+      }); 
     };
   }]);

@@ -3,7 +3,8 @@ var politicianService      = require('../apis/politicianService'),
     promiseCategoryService = require('../apis/promiseCategoryService'),
     viewService            = require('../apis/viewService'),
     BluebirdPromise        = require('bluebird'),
-    helper                 = require('../utils/helper');
+    helper                 = require('../utils/helper'),
+    authorization          = require('../utils/authorization');
 
 module.exports = function(app, passport) {
 
@@ -11,7 +12,7 @@ module.exports = function(app, passport) {
     res.render('index.html');
   });
 
-  app.get('/politico/cadastro', function(req, res, next) {
+  app.get('/politico/cadastro', authorization.isAuthenticated, function(req, res, next) {
     var user = req.user;    
     var data = {};
     data.user = user;
@@ -30,7 +31,7 @@ module.exports = function(app, passport) {
     var user = req.user;
     var slug = req.params.politicianSlug;
     var data = {};
-    politicianService.findBySlug(slug, ['party', 'office', 'state', 'coverPhotos'])
+    politicianService.findBySlug(slug, ['party', 'office', 'state'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;
@@ -84,7 +85,7 @@ module.exports = function(app, passport) {
         rankPoliticians = politicianService.worstPoliticians;        
       }
 
-      BluebirdPromise.all([rankPoliticians(1, 9), viewService.getPoliticalAssociations()])
+      BluebirdPromise.all([rankPoliticians(1, 24), viewService.getPoliticalAssociations()])
       .spread(function(politicians, politicalAssociations) {
         data.politicians = politicians;
         helper.merge(politicalAssociations, data);

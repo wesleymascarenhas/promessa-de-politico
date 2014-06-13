@@ -25,10 +25,6 @@ var PoliticalParty = Bookshelf.Model.extend({
   tableName: 'political_party'
 });
 
-var PoliticalOrgan = Bookshelf.Model.extend({
-  tableName: 'political_organ'  
-});
-
 var PoliticalOffice = Bookshelf.Model.extend({
   tableName: 'political_office'
 });
@@ -48,17 +44,7 @@ var Politician = Bookshelf.Model.extend({
   },
   office: function() {
     return this.belongsTo(PoliticalOffice, 'political_office_id');
-  },
-  organ: function() {
-    return this.belongsTo(PoliticalOrgan, 'political_organ_id');
-  },
-  coverPhotos: function() {
-    return this.hasMany(PoliticianCoverPhoto, 'politician_id');
   }
-});
-
-var PoliticianCoverPhoto = Bookshelf.Model.extend({
-  tableName: 'politician_cover_photo'
 });
 
 var PoliticianUserVote = Bookshelf.Model.extend({
@@ -118,10 +104,8 @@ module.exports = {
   State: State,
   User: User,
   PoliticalParty: PoliticalParty,
-  PoliticalOrgan: PoliticalOrgan,
   PoliticalOffice: PoliticalOffice,
   Politician: Politician,
-  PoliticianCoverPhoto: PoliticianCoverPhoto,
   PoliticianUserVote: PoliticianUserVote,
   Promise: Promise,
   PromiseCategory: PromiseCategory,

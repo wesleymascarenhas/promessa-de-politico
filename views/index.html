@@ -7,13 +7,16 @@
 <div class="container" ng-controller="indexController">
   <div class="row">
     <div class="col-md-12">
-      <div class="jumbotron">
-        <div class="pull-right">
-          <a ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Facebook" class="icon icon-facebook" target="_blank"></a>
-          <a ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Twitter" class="icon icon-twitter"target="_blank"></a>
-          <a ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br" title="Compartilhe o Promessas de Político no Google+" class="icon icon-googleplus"target="_blank"></a>
-        </div>
-        Em 2013 os brasileiros finalmente sairam às ruas 
+      <div class="well">
+        <div class="">
+          <ul ng-social-buttons
+            data-url="'www.promessadepolitico.com.br/politicos'"
+            data-title="'Promessa de Político'">  
+            <li class="ng-social-facebook">Facebook</li>
+            <li class="ng-social-google-plus">Google+</li>
+            <li class="ng-social-twitter">Twitter</li>            
+          </ul>          
+        </div>        
       </div>
     </div>  
   </div>
@@ -36,7 +39,7 @@
     </div>
   </div>
   <div>
-    <h3>Políticos que cumprem suas promessas</h3>
+    <h3>Políticos que cumpriram promessas nos últimos 4 meses</h3>
     <div class="row">
       <div ng-if="!existsBestPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
@@ -58,17 +61,17 @@
       </div>
       <div ng-if="existsBestPoliticians()" class="col-md-12">
         <div class="row">
-          <div ng-repeat="bestPolitician in bestPoliticians" class="col-md-4">
+          <div ng-repeat="bestPolitician in bestPoliticians" class="col-md-3">
             <div class="politician-thumbnail">
               <div class="row">
-                <div class="col-auto">
+                <div class="col-auto" style="width: 39%;">
                   <a ng-href="/politico/{{ bestPolitician.slug }}">
                     <img ng-if="!bestPolitician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
                     <img ng-if="bestPolitician.photo_filename" ng-src="/img/politicians/{{ bestPolitician.photo_filename }}" class="politician-photo photo-small">
                   </a>
                 </div>
-                <div class="col-auto" style="width: 60%;">
-                  <p class="font-big">
+                <div class="col-auto" style="padding-left: 0px; width: 61%;">
+                  <p>
                     <a ng-href="/politico/{{ bestPolitician.slug }}">
                       {{ bestPolitician.displayName }}
                     </a>
@@ -76,38 +79,33 @@
                       ({{ bestPolitician.total_fulfilled_promises }}/{{ bestPolitician.total_promises }})
                     </small>
                   </p>
-                  <div class="overflow-hidden">
-                    <div class="pull-left" style="width: 50%;">
-                      <div class="votes">
-                        <div class="vote">
-                          <div class="vote-up">
-                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'UP'), 'btn-success': votedInPolitician(bestPolitician, 'UP')}" ng-click="voteInPolitician(bestPolitician, 'UP')">
-                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-up"></span>
-                            </button>
-                          </div>
-                          <div class="vote-count">
-                            <span class="font-normal">
-                              {{ totalPoliticianUpUsersVotes(bestPolitician) }}
-                            </span>
-                          </div>
+                  <div class="overflow-hidden">                   
+                    <div class="votes">
+                      <div class="vote">
+                        <div class="vote-up">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'UP'), 'btn-success': votedInPolitician(bestPolitician, 'UP')}" ng-click="voteInPolitician(bestPolitician, 'UP')">
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                          </button>
                         </div>
-                        <div class="vote">
-                          <div class="vote-down">
-                            <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'DOWN'), 'btn-danger': votedInPolitician(bestPolitician, 'DOWN')}" ng-click="voteInPolitician(bestPolitician, 'DOWN')">
-                              <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-down"></span>
-                            </button>
-                          </div>
-                          <div class="vote-count">
-                            <span class="font-normal">
-                              {{ totalPoliticianDownUsersVotes(bestPolitician) }}
-                            </span>
-                          </div>
+                        <div class="vote-count font-small">
+                          <span>
+                            {{ totalPoliticianUpUsersVotes(bestPolitician) }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="vote">
+                        <div class="vote-down">
+                          <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(bestPolitician, 'DOWN'), 'btn-danger': votedInPolitician(bestPolitician, 'DOWN')}" ng-click="voteInPolitician(bestPolitician, 'DOWN')">
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                          </button>
+                        </div>
+                        <div class="vote-count font-small">
+                          <span>
+                            {{ totalPoliticianDownUsersVotes(bestPolitician) }}
+                          </span>
                         </div>
                       </div>     
-                    </div>
-                    <div class="pull-right align-center" style="width: 50%;">
-                      <knob knob-data="bestPolitician.total_fulfilled_promises" knob-max="bestPolitician.total_promises" knob-options="{readOnly: true, width: 70, height: 70, fgColor: '#5cb85c', thickness: 0.4}"></knob>
-                    </div>
+                    </div>                    
                   </div>
                 </div>
               </div>
@@ -125,7 +123,7 @@
     </div>
   </div>
   <div>
-    <h3>Políticos que <b>não</b> cumprem suas promessas</h3>
+    <h3>Políticos que <b>não</b> cumpriram promessas nos últimos 4 meses</h3>
     <div class="row">
       <div ng-if="!existsWorstPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
@@ -137,7 +135,7 @@
             <span ng-show="hasStateSelected()">
               {{ selectedState.preposition }} {{ selectedState.name }}
             </span>
-            que não cumprem suas promessas
+            que não estão cumprindo suas promessas
           </h2>
           <h3>
             <a ng-click="registerPolitician()">
@@ -148,35 +146,34 @@
       </div>
       <div ng-if="existsWorstPoliticians()" class="col-md-12">
         <div class="row">
-          <div ng-repeat="worstPolitician in worstPoliticians" class="col-md-4">
-          <div class="politician-thumbnail">
-            <div class="row">
-              <div class="col-auto">
-                <a ng-href="/politico/{{ worstPolitician.slug }}">
-                  <img ng-if="!worstPolitician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
-                  <img ng-if="worstPolitician.photo_filename" ng-src="/img/politicians/{{ worstPolitician.photo_filename }}" class="politician-photo photo-small">
-                </a>
-              </div>
-              <div class="col-auto" style="width: 60%;">
-                <p class="font-big">
+          <div ng-repeat="worstPolitician in worstPoliticians" class="col-md-3">
+            <div class="politician-thumbnail">
+              <div class="row">
+                <div class="col-auto" style="width: 39%;">
                   <a ng-href="/politico/{{ worstPolitician.slug }}">
-                    {{ worstPolitician.displayName }}
+                    <img ng-if="!worstPolitician.photo_filename" src="/img/no-image.gif" class="politician-photo photo-small">
+                    <img ng-if="worstPolitician.photo_filename" ng-src="/img/politicians/{{ worstPolitician.photo_filename }}" class="politician-photo photo-small">
                   </a>
-                  <small>
-                    ({{ worstPolitician.total_fulfilled_promises }}/{{ worstPolitician.total_promises }})
-                  </small>
-                </p>
-                <div class="overflow-hidden">
-                  <div class="pull-left" style="width: 50%;">
+                </div>
+                <div class="col-auto" style="padding-left: 0px; width: 61%;">
+                  <p>
+                    <a ng-href="/politico/{{ worstPolitician.slug }}">
+                      {{ worstPolitician.displayName }}
+                    </a>
+                    <small>
+                      ({{ worstPolitician.total_fulfilled_promises }}/{{ worstPolitician.total_promises }})
+                    </small>
+                  </p>
+                  <div class="overflow-hidden">                   
                     <div class="votes">
                       <div class="vote">
                         <div class="vote-up">
                           <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(worstPolitician, 'UP'), 'btn-success': votedInPolitician(worstPolitician, 'UP')}" ng-click="voteInPolitician(worstPolitician, 'UP')">
-                            <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-up"></span>
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
                           </button>
                         </div>
-                        <div class="vote-count">
-                          <span class="font-normal">
+                        <div class="vote-count font-small">
+                          <span>
                             {{ totalPoliticianUpUsersVotes(worstPolitician) }}
                           </span>
                         </div>
@@ -184,28 +181,24 @@
                       <div class="vote">
                         <div class="vote-down">
                           <button type="button" class="btn" ng-class="{'btn-default': !votedInPolitician(worstPolitician, 'DOWN'), 'btn-danger': votedInPolitician(worstPolitician, 'DOWN')}" ng-click="voteInPolitician(worstPolitician, 'DOWN')">
-                            <span style="font-size: 20px;" class="glyphicon glyphicon-thumbs-down"></span>
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
                           </button>
                         </div>
-                        <div class="vote-count">
-                          <span class="font-normal">
+                        <div class="vote-count font-small">
+                          <span>
                             {{ totalPoliticianDownUsersVotes(worstPolitician) }}
                           </span>
                         </div>
-                      </div>
-                    </div>     
-                  </div>
-                  <div class="pull-right align-center" style="width: 50%;">
-                    <knob knob-data="worstPolitician.total_fulfilled_promises" knob-max="worstPolitician.total_promises" knob-options="{readOnly: true, width: 70, height: 70, fgColor: '#5cb85c', thickness: 0.4}"></knob>
+                      </div>     
+                    </div>                    
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
         </div>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-4 col-md-offset-4">
             <a href="/politicos/piores" class="btn btn-block btn-primary">
               Ver lista completa
             </a>

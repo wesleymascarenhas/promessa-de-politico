@@ -34,13 +34,6 @@ create table political_party (
   unique key `uq_political_party_acronym` (`acronym`)
 ) engine = innodb default charset = utf8;
 
-create table political_organ (
-  id   int(11) not null auto_increment,
-  name varchar(100) not null,
-  primary key (id),
-  unique key `uq_political_organ_name` (`name`)
-) engine = innodb default charset = utf8;
-
 create table political_office (
   id          int(11) not null auto_increment,
   title       varchar(100) not null,
@@ -58,8 +51,7 @@ create table politician (
   email                 varchar(100) default null,
   slug                  varchar(100) not null,
   state_id              int(11) default null,
-  political_party_id    int(11) not null,
-  political_organ_id    int(11) default null,
+  political_party_id    int(11) not null,  
   political_office_id   int(11) not null,
   registered_by_user_id int(11) not null,
   registration_date     timestamp default current_timestamp,
@@ -69,22 +61,11 @@ create table politician (
   key `fk_politician_registered_by_user` (`registered_by_user_id`),
   key `fk_politician_political_office` (`political_office_id`),  
   key `fk_politician_political_party` (`political_party_id`),
-  key `fk_politician_political_organ` (`political_organ_id`),
   key `fk_politician_state` (`state_id`),
   constraint `fk_politician_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`),
   constraint `fk_politician_political_office` foreign key (`political_office_id`) references `political_office` (`id`),
   constraint `fk_politician_political_party` foreign key (`political_party_id`) references `political_party` (`id`),
-  constraint `fk_politician_political_organ` foreign key (`political_organ_id`) references `political_organ` (`id`),
   constraint `fk_politician_state` foreign key (`state_id`) references `state` (`id`)
-) engine = innodb default charset = utf8;
-
-create table politician_cover_photo (
-  id              int(11) not null auto_increment,
-  photo_filename  varchar(100) not null,
-  politician_id   int(11) not null,
-  primary key (id),
-  key `fk_politician_cover_photo_politician` (`politician_id`),
-  constraint `fk_politician_cover_photo_politician` foreign key (`politician_id`) references `politician` (`id`)
 ) engine = innodb default charset = utf8;
 
 create table politician_user_vote (
@@ -113,7 +94,8 @@ create table promise (
   description             text default null,
   slug                    varchar(255) not null,
   evidence_date           date default null,
-  state                   enum('NON_STARTED', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'DISCARDED') not null,
+  state                   enum('NON_STARTED', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'NOT_FULFILLED') not null,
+  last_state_update       date default null,
   category_id             int(11) not null,
   politician_id           int(11) not null,
   registered_by_user_id   int(11) not null,
@@ -128,6 +110,22 @@ create table promise (
   constraint `fk_promise_politician` foreign key (`politician_id`) references `politician` (`id`),
   constraint `fk_promise_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`),
   constraint `fk_promise_last_edited_by_user` foreign key (`last_edited_by_user_id`) references `user` (`id`)
+) engine = innodb default charset = utf8;
+
+create table promise_update (
+  id              int(11) not null auto_increment,
+  promise_id      int(11) not null,
+  field           varchar(255) not null,
+  old_content     varchar(255) default null,
+  new_content     varchar(255) default null,
+  update_date     timestamp default current_timestamp,
+  update_type     enum('CREATE_PROMISE', 'UPDATE_PROMISE', 'REMOVE_PROMISE', 'CREATE_EVIDENCE', 'REMOVE_EVIDENCE'),
+  user_id         int(11) not null,
+  primary key (id),
+  key `fk_promise_update_promise` (`promise_id`),
+  key `fk_promise_update_user` (`user_id`),
+  constraint `fk_promise_update_promise` foreign key (`promise_id`) references `promise` (`id`),
+  constraint `fk_promise_update_user` foreign key (`user_id`) references `user` (`id`)
 ) engine = innodb default charset = utf8;
 
 create table promise_evidence (

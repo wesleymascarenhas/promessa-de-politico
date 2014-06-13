@@ -1,13 +1,10 @@
 var BluebirdPromise = require('bluebird'),
     url             = require('url'),
-    restify         = require('restify'),
-    client          = restify.createJsonClient({
-      url: 'http://iframely.com'
-    });
+    request         = require('request');
 
 exports.getOEmbed = function(uri) {
   return new BluebirdPromise(function(resolve, reject) {
-    client.get('/iframely?uri=' + uri, function(err, req, res, obj) {      
+    request.get({url: 'http://iframely.com/iframely?uri=' + uri, json: true}, function(err, res, obj) {      
       if(err) {
         reject(err);
       } else {

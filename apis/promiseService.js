@@ -6,7 +6,8 @@ var Bookshelf           = require('../models/models').Bookshelf,
     PromiseUserComment  = require('../models/models').PromiseUserComment,
     helper              = require('../utils/helper'),
     modelUtils          = require('../utils/modelUtils'),
-    BluebirdPromise     = require('bluebird');
+    BluebirdPromise     = require('bluebird'),
+    $                   = this;
 
 exports.forge = function(data) { 
   return Promise.forge(modelUtils.filterAttributes('Promise', data));
@@ -250,8 +251,8 @@ exports.countGroupingByState = function(politician) {
       if(!mapByState['PARTIALLY_FULFILLED']) {
         mapByState['PARTIALLY_FULFILLED'] = 0;
       }
-      if(!mapByState['DISCARDED']) {
-        mapByState['DISCARDED'] = 0;
+      if(!mapByState['NOT_FULFILLED']) {
+        mapByState['NOT_FULFILLED'] = 0;
       }
       resolve(mapByState);
     }).catch(function(err) {
@@ -302,16 +303,21 @@ exports.vote = function(user, promise) {
 
 exports.update = function(user, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
-    promise.save().then(function(promise) {
-      evidences.forEach(function(evidence) {
-        if(evidence.isNew()) {          
-          evidence.set('promise_id', promise.id);
-          evidence.set('registered_by_user_id', user.id);
-        }
-      });
-      evidences.invokeThen('save').then(function(evidences) {
-        promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
-          resolve(promise);
+    $.findById(promise.id).then(function(oldPromise) {
+      if(oldPromise.get('state') !== promise.get('state')) {
+        promise.set('last_state_update', new Date());
+      }
+      promise.save().then(function(promise) {
+        evidences.forEach(function(evidence) {
+          if(evidence.isNew()) {          
+            evidence.set('promise_id', promise.id);
+            evidence.set('registered_by_user_id', user.id);
+          }
+        });
+        evidences.invokeThen('save').then(function(evidences) {
+          promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
+            resolve(promise);
+          });
         });
       });
     }).catch(function(err) {

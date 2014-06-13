@@ -9,10 +9,22 @@ module.exports = function(app) {
     res.render('land.html');
   });
 
-  app.get('/home', function(req, res, next) {
+  app.get('/como-funciona', function(req, res, next) {
+    res.render('how-it-works.html');
+  });
+
+  app.get('/quem-somos', function(req, res, next) {
+    res.render('who-we-are.html');
+  });
+
+  app.get('/contato', function(req, res, next) {
+    res.render('contact.html');
+  });
+
+  app.get('/politicos', function(req, res, next) {
     var data = {};
     data.user = req.user;
-    BluebirdPromise.all([politicianService.bestPoliticians(1, 9), politicianService.worstPoliticians(1, 9), viewService.getPoliticalAssociations()])
+    BluebirdPromise.all([politicianService.bestPoliticians(1, 12), politicianService.worstPoliticians(1, 12), viewService.getPoliticalAssociations()])
     .spread(function(bestPoliticians, worstPoliticians, politicalAssociations) {
       data.bestPoliticians =  bestPoliticians;
       data.worstPoliticians = worstPoliticians;

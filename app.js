@@ -1,14 +1,15 @@
 /**
  * Module dependencies.
  */
-var express   = require('express'),
-    passport  = require('passport'),  
-    auth      = require('./configs/authentication'),
-		settings  = require('./configs/settings'),
-    engine    = require('./configs/engine'),
-		routes    = require('./configs/routes'),
-		path      = require('path'),
-		app       = express();
+var express     = require('express'),
+    passport    = require('passport'),  
+    auth        = require('./configs/authentication'),
+    middlewares = require('./configs/middlewares'),
+		settings    = require('./configs/settings'),
+    engine      = require('./configs/engine'),
+		routes      = require('./configs/routes'),
+		path        = require('path'),
+		app         = express();
 
 // all environments
 app.set('env', settings.nodeEnv)
@@ -31,7 +32,9 @@ if ('dev' == app.get('env')) {
 
 engine.configure(app);
 auth.configure(app, passport);
+middlewares.configure(app);
 routes.configure(app, passport);
+
 var server = app.listen(app.get('port'), function() {
   console.log('Server listening on port ' + app.get('port'));
 });

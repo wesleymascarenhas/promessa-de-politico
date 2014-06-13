@@ -4,7 +4,7 @@ exports.isAuthenticated = function (req, res, next) {
   if(req.isAuthenticated()) {
     next();
   } else {
-    res.redirect('/home');
+    res.redirect('/politicos');
   }
 }
 
@@ -12,18 +12,6 @@ exports.isNotAuthenticated = function (req, res, next) {
   if(!req.isAuthenticated()) {
     next();
   } else {
-    res.redirect('/home');
+    res.redirect('/politicos');
   }
-}
-
-exports.userExists = function(req, res, next) {
-  userService.findById(req.body.id).then(function(user) {
-    if(user) {
-      next();
-    } else {
-      res.redirect('/signup')    
-    }
-  }).catch(function(err) {
-    next(err);
-  });
 }

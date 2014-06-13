@@ -1,2 +1,14 @@
 angular
-  .module("politiciansPromiseApp", ["ngAnimate", "ui.bootstrap", "ui.knob", "angularMoment", "infinite-scroll", "nya.bootstrap.select", "textAngular", "flow"]);
+  .module("politiciansPromiseApp", 
+    [
+      "ngAnimate",
+      "ngSocial",
+      "ui.bootstrap", 
+      "ui.knob", 
+      "angularMoment", 
+      "infinite-scroll", 
+      "nya.bootstrap.select", 
+      "textAngular",
+      "flow"
+    ]
+  );
