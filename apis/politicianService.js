@@ -6,12 +6,12 @@ var Politician          = require('../models/models').Politician,
     State               = require('../models/models').State,
     Bookshelf           = require('../models/models').Bookshelf,
     modelUtils          = require('../utils/modelUtils'),
-    apiErrors           = require('./errors/apiErrors');
+    apiErrors           = require('./errors/apiErrors'),
     helper              = require('../utils/helper'),
     BluebirdPromise     = require('bluebird'),
     $                   = this;
 
-exports.forge = function(data) {
+exports.forge = function(data) {  
   return Politician.forge(modelUtils.filterAttributes('Politician', data));
 }
 
@@ -165,8 +165,7 @@ exports.register = function(user, politician) {
       politician.set('slug', helper.slugify(politician.get('name')));
       politician.save().then(function(politician) {
         resolve(politician);
-      }).catch(function(err) {
-        console.log(politician);
+      }).catch(function(err) {        
         reject(apiErrors.fromDatabaseError('politician', err));
       });
     }
@@ -226,8 +225,8 @@ var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
     .limit(pageSize).offset((page - 1) * pageSize)
     .then(function(politiciansRows) {
       var politicians = Politician.collection();
-      politiciansRows.forEach(function(politicianRow) {        
-        var politician = $.forge(politicianRow);
+      politiciansRows.forEach(function(politicianRow) {                           
+        var politician = $.forge(politicianRow);        
         politician.set({total_promises: politicianRow.total_promises, total_fulfilled_promises: politicianRow.total_fulfilled_promises});
         politicians.add(politician);
       });

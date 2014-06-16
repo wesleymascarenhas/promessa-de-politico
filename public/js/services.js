@@ -100,12 +100,10 @@ angular
     this.removeComment = function(comment) {
       return $http.post("/ajax", {key: "removeComment", params: [comment.id]});
     };
-  }])
-  .service("promiseCategoryService", ["$http", function($http) {
     this.getAllCategories = function() {
       return $http.post("/ajax", {key: "getAllCategories"});
     };
-  }])
+  }]) 
   .service("authenticationService", ["$modal", "$window", "backendData", function($modal, $window, backendData) {
     var $ = this;
     var user = angular.isDefined(backendData.user) ? backendData.user : null;

@@ -282,7 +282,7 @@ angular
       $scope.editedPolitician.state_id = $scope.editedPolitician.state.id;
     };
   }])
-  .controller("promiseController", ["$scope", "$window", "backendData", "dataService", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", "alertService", function($scope, $window, backendData, dataService, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService, alertService) {    
+  .controller("promiseController", ["$scope", "$window", "backendData", "dataService", "politicianService", "promiseService", "oembedService", "authenticationService", "modalService", "alertService", function($scope, $window, backendData, dataService, politicianService, promiseService, oembedService, authenticationService, modalService, alertService) {    
     $scope.editingPromise = false;
     $scope.registeringPromise = false;  
     dataService.mergeData(backendData, $scope);
@@ -400,7 +400,7 @@ angular
         }
         if(!$scope.categories) {
           NProgress.start();
-          promiseCategoryService.getAllCategories().then(function(response) {
+          promiseService.getAllCategories().then(function(response) {
             NProgress.done();
             dataService.mergeData(response.data.data, $scope);            
           });

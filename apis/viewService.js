@@ -1,7 +1,6 @@
 var BluebirdPromise        = require('bluebird'),
     politicianService      = require('./politicianService')
     promiseService         = require('./promiseService'),
-    promiseCategoryService = require('./promiseCategoryService'),
     helper                 = require('../utils/helper'),
     _                      = require('underscore');
 
@@ -79,7 +78,7 @@ exports.getAllPromises = function(user, politician) {
   var that = this;
   return new BluebirdPromise(function(resolve, reject) {  
     var vars = {};
-    BluebirdPromise.all([promiseCategoryService.findByPolitician(politician), promiseService.countGroupingByCategory(politician)])
+    BluebirdPromise.all([promiseService.findCategoriesByPolitician(politician), promiseService.countGroupingByCategory(politician)])
     .spread(function(categories, totalPromisesByCategory) {
       vars.categories = categories;
       if(categories.length > 0) {
@@ -148,7 +147,7 @@ exports.getLatestPromises = function(user, politician, page, pageSize) {
 exports.getAllCategories = function() {
   return new BluebirdPromise(function(resolve, reject) {
     var vars = {};
-    promiseCategoryService.findAll().then(function(categories) {
+    promiseService.findAllCategories().then(function(categories) {
       vars.categories = categories;
       resolve(vars);
     }).catch(function(err) {

@@ -1,5 +1,4 @@
-var promiseCategoryService = require('../apis/promiseCategoryService'),
-    politicianService      = require('../apis/politicianService'),
+var politicianService      = require('../apis/politicianService'),
     promiseService         = require('../apis/promiseService'),
     oembedService          = require('../apis/oembedService'),
     viewService            = require('../apis/viewService'),
@@ -37,7 +36,7 @@ module.exports = function(app, passport) {
       auth: false,
       action: function(user, params) {
         var politician = politicianService.forge({id: params[0]});
-        var category = promiseCategoryService.forge({id: params[1]});
+        var category = promiseService.forgeCategory({id: params[1]});
         return viewService.getPromises(user, politician, category);
       }
     },
@@ -45,7 +44,7 @@ module.exports = function(app, passport) {
       auth: false,
       action: function(user, params) {
         var politician = politicianService.forge({id: params[0]});
-        var category = promiseCategoryService.forge({id: params[1]});
+        var category = promiseService.forgeCategory({id: params[1]});
         return viewService.getAllPromises(user, politician, category);
       }
     },

@@ -39,7 +39,12 @@
     </div>
   </div>
   <div>
-    <h3>Políticos que cumpriram promessas nos últimos meses</h3>
+    <h3>
+        Políticos que cumpriram promessas nos últimos meses 
+        <a href="/como-funciona#politicos-que-cumpriram-promessas-nos-ultimos-meses" title="Saiba como funciona este ranque">
+          <span class="badge" style="font-size: 14px;">?</span>
+        </a>
+    </h3>
     <div class="row">
       <div ng-if="!existsBestPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
@@ -123,7 +128,12 @@
     </div>
   </div>
   <div>
-    <h3>Políticos que <b>não</b> cumpriram promessas nos últimos meses</h3>
+    <h3>
+      Políticos que <b>não</b> cumpriram promessas nos últimos meses
+      <a href="/como-funciona#politicos-que-nao-cumpriram-promessas-nos-ultimos-meses" title="Saiba como funciona este ranque">
+        <span class="badge" style="font-size: 14px;">?</span>
+      </a>
+    </h3>
     <div class="row">
       <div ng-if="!existsWorstPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
@@ -208,7 +218,10 @@
     </div>
   </div>
   <div ng-if="existsPoliticiansWithoutPromises()">
-    <h3>Políticos que ainda não tem promessas registradas</h3>
+    <h3>
+      Políticos que ainda não tem promessas registradas
+      <span class="label label-info">Contribua!</span>
+    </h3>
     <div class="row">      
       <div class="col-md-12">
        <div class="row" ng-repeat="row in politiciansWithoutPromises | partition:4">

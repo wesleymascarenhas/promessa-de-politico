@@ -1,10 +1,9 @@
 var politicianService      = require('../apis/politicianService'),
-    promiseService         = require('../apis/promiseService'),
-    promiseCategoryService = require('../apis/promiseCategoryService'),
+    promiseService         = require('../apis/promiseService'),    
     viewService            = require('../apis/viewService'),
-    BluebirdPromise        = require('bluebird'),
     helper                 = require('../utils/helper'),
-    authorization          = require('../utils/authorization');
+    authorization          = require('../utils/authorization'),
+    BluebirdPromise        = require('bluebird');
 
 module.exports = function(app, passport) {
 
@@ -39,7 +38,7 @@ module.exports = function(app, passport) {
       } 
       data.user = user;
       data.politician = politician;
-      return BluebirdPromise.all([promiseCategoryService.findAll(), promiseService.count(politician), politicianService.countUsersVotes(politician), user ? politicianService.getUserVote(user, politician) : null])
+      return BluebirdPromise.all([promiseService.findAllCategories(), promiseService.count(politician), politicianService.countUsersVotes(politician), user ? politicianService.getUserVote(user, politician) : null])
       .spread(function(categories, totalPromises, totalPoliticianUsersVotes, politicianUserVote) {   
         data.categories = categories;
         data.totalPromises = totalPromises;
@@ -71,7 +70,6 @@ module.exports = function(app, passport) {
 
   app.get('/politicos/:rankType', function(req, res, next) {
     var rankType = req.params.rankType;
-
     if(rankType === 'cumprindo-promessas' || rankType === 'nao-estao-cumprindo-promessas' || rankType === 'sem-promessas') {
       var data = {};    
       data.user = req.user;
@@ -80,8 +78,8 @@ module.exports = function(app, passport) {
       if(rankType === 'cumprindo-promessas') {
         data.rankType = 'best';
         rankPoliticians = politicianService.bestPoliticians;
-      } else if(rankType === 'piores') {
-        data.rankType = 'nao-estao-cumprindo-promessas';
+      } else if(rankType === 'nao-estao-cumprindo-promessas') {
+        data.rankType = 'worst';
         rankPoliticians = politicianService.worstPoliticians;        
       } else if(rankType === 'sem-promessas') {
         data.rankType = 'withoutPromises';
@@ -114,5 +112,4 @@ module.exports = function(app, passport) {
       next();
     }
   });
-
 }

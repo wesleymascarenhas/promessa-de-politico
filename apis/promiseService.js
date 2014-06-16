@@ -5,6 +5,7 @@ var Bookshelf           = require('../models/models').Bookshelf,
     PromiseEvidence     = require('../models/models').PromiseEvidence,
     PromiseEvidences    = require('../models/models').PromiseEvidences,
     PromiseUserComment  = require('../models/models').PromiseUserComment,
+    PromiseCategory     = require('../models/models').PromiseCategory;
     helper              = require('../utils/helper'),
     modelUtils          = require('../utils/modelUtils'),
     BluebirdPromise     = require('bluebird'),
@@ -26,6 +27,10 @@ exports.forgeEvidenceCollection = function(data) {
   return PromiseEvidences.forge(modelUtils.filterAttributes('PromiseEvidence', data));
 }
 
+exports.forgeCategory = function(data) {
+  return PromiseCategory.forge(data);
+}
+
 exports.findById = function(promise_id, related) {
   return this.forge({id: promise_id}).fetch({withRelated: related});
 }
@@ -36,6 +41,18 @@ exports.findAllByPolitician = function(politician, related) {
 
 exports.findAllByPoliticianAndCategory = function(politician, category, related) {
   return Promise.collection().query({where: {politician_id: politician.id, category_id: category.id}}).fetch({withRelated: related});
+}
+
+exports.findCategoriesByPolitician = function(politician) {
+  return PromiseCategory.collection().query(function(qb) {
+    qb.whereIn('id', function() {
+      this.distinct('category_id').select().from('promise').where('politician_id', politician.id);
+    }).orderBy('name', 'asc');
+  }).fetch();
+}
+
+exports.findAllCategories = function() {
+  return PromiseCategory.collection().fetch();
 }
 
 exports.olderPromises = function(politician, related, page, pageSize) {
