@@ -10,7 +10,7 @@ module.exports = function(app, passport) {
     var user = req.user;
     var slug = req.params.politicianSlug;
     var data = {};
-    politicianService.findBySlug(slug, ['party', 'organ', 'office'])
+    politicianService.findBySlug(slug, ['party', 'office'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;

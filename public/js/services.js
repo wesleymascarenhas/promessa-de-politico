@@ -1,5 +1,12 @@
 angular
   .module("politiciansPromiseApp")
+  .service("dataService", [function() {
+    this.mergeData = function(source, destiny) {
+      for (var attr in source) { 
+        destiny[attr] = source[attr]; 
+      }
+    };
+  }])
   .service("alertService", ["$timeout", function($timeout) {
     var alerts = [];
     this.getAlerts = function() {
@@ -50,6 +57,9 @@ angular
     this.worstPoliticians = function(page, pageSize, politicalParty, state) {
       return $http.post("/ajax", {key: "worstPoliticians", params: [page, pageSize, politicalParty ? politicalParty.id : null, state ? state.id : null]});
     };
+    this.politiciansWithoutPromises = function(page, pageSize, politicalParty, state) {
+      return $http.post("/ajax", {key: "politiciansWithoutPromises", params: [page, pageSize, politicalParty ? politicalParty.id : null, state ? state.id : null]});
+    }
   }])
   .service("oembedService", ["$http", function($http) {
     this.getOEmbed = function(url) {

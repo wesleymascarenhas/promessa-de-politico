@@ -9,9 +9,11 @@ angular
       userService.sendEmail($scope.name, $scope.email, $scope.message);
     }
   }])
-  .controller("headerController", ["$scope", "$window", "politicianService", "authenticationService", function($scope, $window, politicianService, authenticationService) {
+  .controller("headerController", ["$scope", "$window", "backendData", "politicianService", "authenticationService", function($scope, $window, backendData, politicianService, authenticationService) {
     $scope.user = authenticationService.getUser();
-
+    $scope.howItWorksActive = backendData.howItWorksActive;
+    $scope.whoWeAreActive = backendData.whoWeAreActive;
+    $scope.contactActive = backendData.contactActive;
     $scope.authenticate = function() {
       authenticationService.ensureAuth();
     }
@@ -30,19 +32,11 @@ angular
     $scope.selectPolitician = function(politician) {
       $window.location.href = "/politico/" + politician.slug;
     };
+    $scope.isSectionActive = function(section) {
+      return true === $scope[section];
+    };
   }])
-  .controller("politicianController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "authenticationService", "alertService", function($scope, $window, backendData, politicianService, promiseService, authenticationService, alertService) {
-    $scope.mergeData = function(data) {
-      for (var attr in data) { 
-        $scope[attr] = data[attr]; 
-      }        
-    };
-    $scope.mergeAttrs = function(data, target) {
-      for (var attr in data) { 
-        target[attr] = data[attr]; 
-      }  
-    };
-    
+  .controller("politicianController", ["$scope", "$window", "backendData", "dataService", "politicianService", "promiseService", "authenticationService", "alertService", function($scope, $window, backendData, dataService, politicianService, promiseService, authenticationService, alertService) {    
     $scope.editedPolitician = {};
     $scope.tabId = "LatestPromises";
     $scope.newPromise = {state: "", evidence_date: moment().toDate(), evidences: [""]};
@@ -58,7 +52,7 @@ angular
         return {politician_id: $scope.editedPolitician.id};
       }
     };    
-    $scope.mergeData(backendData);
+    dataService.mergeData(backendData, $scope);
 
     $scope.hasOnePromise = function() {
       return $scope.totalPromises == 1;
@@ -170,7 +164,7 @@ angular
       NProgress.start();
       promiseService.getPromises($scope.politician, category).then(function(response) {
         NProgress.done();
-        $scope.mergeData(response.data.data);            
+        dataService.mergeData(response.data.data, $scope);            
         $scope.category = category;
       });
     };
@@ -215,7 +209,7 @@ angular
       promise.then(function(response) {      
         NProgress.done();
         $scope.tabId = tabId;    
-        $scope.mergeData(response.data.data);
+        dataService.mergeData(response.data.data, $scope);
       }); 
     };
     $scope.isFirstIndex = function(index) {
@@ -236,7 +230,7 @@ angular
       if(authenticationService.ensureAuth()) {
         if(!$scope.politicalParties || !$scope.politicalOffices || !$scope.states) {
           politicianService.getPoliticalAssociations().then(function(response) {
-            $scope.mergeData(response.data.data);            
+            dataService.mergeData(response.data.data, $scope);            
           });
         }
         $scope.editedPolitician = angular.copy($scope.politician);
@@ -270,6 +264,9 @@ angular
       promise($scope.editedPolitician).then(function(response) {
         $scope.editedPolitician.id = response.data.data.id;
         $scope.flowModel.flow.upload();
+      }).catch(function(err) {
+        NProgress.done();
+        alertService.addAlert("danger", errorMessage('politicianRegistration', err.data.key));
       });
     };
     $scope.isPresidentOfficeSelected = function() {
@@ -285,20 +282,10 @@ angular
       $scope.editedPolitician.state_id = $scope.editedPolitician.state.id;
     };
   }])
-  .controller("promiseController", ["$scope", "$window", "backendData", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", "alertService", function($scope, $window, backendData, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService, alertService) {
-    $scope.mergeData = function(data) {
-      for (var attr in data) { 
-        $scope[attr] = data[attr]; 
-      }        
-    };
-    $scope.mergeAttrs = function(data, target) {
-      for (var attr in data) { 
-        target[attr] = data[attr]; 
-      }  
-    };
+  .controller("promiseController", ["$scope", "$window", "backendData", "dataService", "politicianService", "promiseService", "promiseCategoryService", "oembedService", "authenticationService", "modalService", "alertService", function($scope, $window, backendData, dataService, politicianService, promiseService, promiseCategoryService, oembedService, authenticationService, modalService, alertService) {    
     $scope.editingPromise = false;
     $scope.registeringPromise = false;  
-    $scope.mergeData(backendData);
+    dataService.mergeData(backendData, $scope);
     if($scope.registeringPromise) {
       $scope.editedPromise = {category: backendData.category, category_id: backendData.category.id, evidences: [{}]};
     } else {
@@ -415,7 +402,7 @@ angular
           NProgress.start();
           promiseCategoryService.getAllCategories().then(function(response) {
             NProgress.done();
-            $scope.mergeData(response.data.data);            
+            dataService.mergeData(response.data.data, $scope);            
           });
         }   
         $scope.editingPromise = true;
@@ -463,7 +450,7 @@ angular
       promiseService.editPromise(editedPromise, evidencesData).then(function(response) {
         NProgress.done();
         $scope.promise = angular.copy(editedPromise);
-        $scope.mergeAttrs(response.data.data.promise, $scope.promise);
+        dataService.mergeData(response.data.data.promise, $scope.promise);
         $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
         $scope.cancelPromiseEdition();
         alertService.addAlert("success", "Promessa editada com sucesso!");      
@@ -554,13 +541,8 @@ angular
       });
     };    
   }])
-  .controller("indexController", ["$scope", "$window", "politicianService", "authenticationService", "backendData", function($scope, $window, politicianService, authenticationService, backendData) {
-    $scope.mergeData = function(data) {
-      for (var attr in data) { 
-        $scope[attr] = data[attr]; 
-      }        
-    };
-    $scope.mergeData(backendData);
+  .controller("indexController", ["$scope", "$window", "politicianService", "authenticationService", "backendData", "dataService", function($scope, $window, politicianService, authenticationService, backendData, dataService) {    
+    dataService.mergeData(backendData, $scope);
     $scope.politicalParties.unshift({acronym: "Todos os partidos"});
     $scope.selectedPoliticalParty = $scope.politicalParties[0];
     $scope.states.unshift({name: "Todos os estados"});
@@ -577,6 +559,9 @@ angular
     $scope.existsWorstPoliticians = function() {
       return $scope.worstPoliticians.length !== 0;
     };
+    $scope.existsPoliticiansWithoutPromises = function() {
+      return $scope.politiciansWithoutPromises.length !== 0;
+    };
     $scope.hasPoliticalPartySelected = function() {
       return $scope.selectedPoliticalParty.id;
     };
@@ -585,7 +570,7 @@ angular
     };
     $scope.filterSelected = function() {
       politicianService.filterPoliticians(1, 12, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
-        $scope.mergeData(response.data.data);
+        dataService.mergeData(response.data.data, $scope);
       });
     };
     $scope.totalPoliticianUpUsersVotes = function(politician) {      
@@ -650,13 +635,8 @@ angular
       }
     };
   }])
-  .controller("politiciansRankController", ["$scope", "$window", "politicianService", "authenticationService", "backendData", function($scope, $window, politicianService, authenticationService, backendData) {
-    $scope.mergeData = function(data) {
-      for (var attr in data) { 
-        $scope[attr] = data[attr]; 
-      }        
-    };
-    $scope.mergeData(backendData);
+  .controller("politiciansRankController", ["$scope", "$window", "politicianService", "authenticationService", "backendData", "dataService", function($scope, $window, politicianService, authenticationService, backendData, dataService) {    
+    dataService.mergeData(backendData, $scope);
     $scope.hasMorePoliticians = true;
     $scope.rankPage = 1;
     $scope.politicalParties.unshift({acronym: "Todos os partidos"});
@@ -670,6 +650,9 @@ angular
     };
     $scope.isWorstRank = function() {
       return $scope.rankType === "worst";
+    };
+    $scope.isWithoutPromisesRank = function() {
+      return $scope.rankType === "withoutPromises";
     };
     $scope.registerPolitician = function() {
       if(authenticationService.ensureAuth()) {
@@ -688,9 +671,11 @@ angular
     $scope.filterSelected = function() {
       var filterPoliticiansPromise = null;
       if($scope.isBestRank()) {
-        filterPoliticiansPromise = politicianService.bestPoliticians
+        filterPoliticiansPromise = politicianService.bestPoliticians;
+      } else if($scope.isWorstRank()) {
+        filterPoliticiansPromise = politicianService.worstPoliticians;
       } else {
-        filterPoliticiansPromise = politicianService.worstPoliticians
+        filterPoliticiansPromise = politicianService.politiciansWithoutPromises;
       }
       filterPoliticiansPromise($scope.actualPage, 24, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
         $scope.politicians = response.data.data;

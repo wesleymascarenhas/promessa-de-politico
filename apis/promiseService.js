@@ -1,5 +1,6 @@
 var Bookshelf           = require('../models/models').Bookshelf,
     Promise             = require('../models/models').Promise,
+    PromiseUpdate       = require('../models/models').PromiseUpdate,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
     PromiseEvidence     = require('../models/models').PromiseEvidence,
     PromiseEvidences    = require('../models/models').PromiseEvidences,
@@ -301,25 +302,48 @@ exports.vote = function(user, promise) {
   });
 }
 
+var generatePromiseUpdates = function(user, oldPromise, newPromise) {
+  var promiseUpdates = PromiseUpdate.collection();
+  var promiseFilteredData = newPromise.pick(modelUtils.modelsAttributes.PromiseUpdateFieldsToAnalyze);
+  _.each(_.pairs(promiseFilteredData), function(pair) {
+    var key = pair[0];
+    var value = pair[1];
+    if(oldPromise.get(key) !== promiseFilteredData[key]) {
+      promiseUpdates.add({
+        promise_id: newPromise.id,
+        user_id: user.id,
+        field: key,
+        old_value: oldPromise.get(key),
+        new_value: promiseFilteredData[key],
+        update_type: 'PROMISE_UPDATED'
+      });
+    }
+  });
+  return promiseUpdates.invokeThen('save');
+}
+
 exports.update = function(user, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
-    $.findById(promise.id).then(function(oldPromise) {
+    $.findById(promise.id).bind({}).then(function(oldPromise) {
+      this.oldPromise = oldPromise;
       if(oldPromise.get('state') !== promise.get('state')) {
         promise.set('last_state_update', new Date());
       }
-      promise.save().then(function(promise) {
-        evidences.forEach(function(evidence) {
-          if(evidence.isNew()) {          
-            evidence.set('promise_id', promise.id);
-            evidence.set('registered_by_user_id', user.id);
-          }
-        });
-        evidences.invokeThen('save').then(function(evidences) {
-          promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
-            resolve(promise);
-          });
-        });
+      return promise.save();
+    }).then(function(promise) {
+      return generatePromiseUpdates(user, this.oldPromise, promise);
+    }).then(function(promiseUpdates) {
+      evidences.forEach(function(evidence) {
+        if(evidence.isNew()) {          
+          evidence.set('promise_id', promise.id);
+          evidence.set('registered_by_user_id', user.id);
+        }
       });
+      return evidences.invokeThen('save');
+    }).then(function(evidences) {
+      return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
+    }).then(function(promise) {
+      resolve(promise);      
     }).catch(function(err) {
       reject(err);
     });
@@ -332,15 +356,17 @@ exports.register = function(user, politician, promise, evidences) {
     promise.set('registered_by_user_id', user.id);
     promise.set('slug', helper.slugify(promise.get('title')));
     promise.save().then(function(promise) {
+      return PromiseUpdate.forge({promise_id: promise.id, user_id: user.id, update_type: 'PROMISE_CREATED'}).save();
+    }).then(function(promiseUpdate) {
       evidences.forEach(function(evidence) {
         evidence.set('promise_id', promise.id);
         evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
       });
-      evidences.invokeThen('save').then(function(evidences) {
-        promise.load(['category', 'evidences', 'evidences.registeredByUser']).then(function(promise) {          
-          resolve(promise);
-        });
-      });
+      return evidences.invokeThen('save');
+    }).then(function(evidences) {        
+      return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
+    }).then(function(promise) {          
+      resolve(promise);      
     }).catch(function(err) {
       reject(err);
     });

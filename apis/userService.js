@@ -25,7 +25,7 @@ exports.createByGoogleAccount = function(name, gender, username, email, google_a
 }
 
 exports.update = function(user, attributes) {
-  return user.save(modelUtils.getAttributesMap(user, attributes), {patch: true});
+  return user.save(user.pick(attributes), {patch: true});
 }
 
 exports.findAll = function() {

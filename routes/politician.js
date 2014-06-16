@@ -72,17 +72,20 @@ module.exports = function(app, passport) {
   app.get('/politicos/:rankType', function(req, res, next) {
     var rankType = req.params.rankType;
 
-    if(rankType === 'melhores' || rankType === 'piores') {
+    if(rankType === 'cumprindo-promessas' || rankType === 'nao-estao-cumprindo-promessas' || rankType === 'sem-promessas') {
       var data = {};    
       data.user = req.user;
 
       var rankPoliticians = null;
-      if(rankType === 'melhores') {
+      if(rankType === 'cumprindo-promessas') {
         data.rankType = 'best';
         rankPoliticians = politicianService.bestPoliticians;
-      } else {
-        data.rankType = 'worst';
+      } else if(rankType === 'piores') {
+        data.rankType = 'nao-estao-cumprindo-promessas';
         rankPoliticians = politicianService.worstPoliticians;        
+      } else if(rankType === 'sem-promessas') {
+        data.rankType = 'withoutPromises';
+        rankPoliticians = politicianService.politiciansWithoutPromises;        
       }
 
       BluebirdPromise.all([rankPoliticians(1, 24), viewService.getPoliticalAssociations()])
@@ -102,7 +105,6 @@ module.exports = function(app, passport) {
           });
         }
       }).then(function() { 
-        console.log(data);
         res.render('politicians_rank.html', {backendData: data});
       }).catch(function(err) {
         console.log(err.stack);

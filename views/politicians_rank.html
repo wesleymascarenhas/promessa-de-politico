@@ -7,10 +7,13 @@
 <div class="container" ng-controller="politiciansRankController">
   <div>
     <h1 ng-if="isBestRank()" class="page-header">
-      Políticos que estão cumprindo suas promessas
+      Políticos que cumpriram promessas nos últimos meses
     </h1>
     <h1 ng-if="isWorstRank()" class="page-header">
-      Políticos que <b>não</b> estão cumprindo suas promessas
+      Políticos que <b>não</b> cumpriram promessas nos últimos meses
+    </h1>
+    <h1 ng-if="isWithoutPromisesRank()" class="page-header">
+      Políticos que ainda não tem promessas registradas
     </h1>
     <div class="row">
       <div class="col-md-8">
@@ -57,7 +60,7 @@
             <span ng-show="hasStateSelected()">
               {{ selectedState.preposition }} {{ selectedState.name }}
             </span>
-            que não estão cumprindo suas promessas
+            que não cumpriram promessas nos últimos meses
           </h2>
           <h3>
             <a ng-click="registerPolitician()">
@@ -67,8 +70,8 @@
         </div>
       </div>
       <div ng-if="existsPoliticians()" class="col-md-12">
-        <div class="row" infinite-scroll="appendNextRankPage()" infinite-scroll-disabled="!hasMorePoliticians">
-          <div ng-repeat="politician in politicians" class="col-md-3">
+        <div class="row" ng-repeat="row in politicians | partition:4" infinite-scroll="appendNextRankPage()" infinite-scroll-disabled="!hasMorePoliticians">
+          <div ng-repeat="politician in row" class="col-md-3">
             <div class="politician-thumbnail">
               <div class="row">
                 <div class="col-auto" style="width: 39%;">
@@ -82,7 +85,7 @@
                     <a ng-href="/politico/{{ politician.slug }}">
                       {{ politician.displayName }}
                     </a>
-                    <small>
+                    <small ng-if="politician.total_fulfilled_promises">
                       ({{ politician.total_fulfilled_promises }}/{{ politician.total_promises }})
                     </small>
                   </p>

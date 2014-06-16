@@ -73,6 +73,16 @@ var Promise = Bookshelf.Model.extend({
   }
 });
 
+var PromiseUpdate = Bookshelf.Model.extend({
+  tableName: 'promise_update',
+  user: function() {
+    return this.belongsTo(User, 'user_id');
+  },
+  promise: function() {
+    return this.belongsTo(Promise, 'promise_id');
+  }
+});
+
 var PromiseCategory = Bookshelf.Model.extend({
   tableName: 'promise_category'  
 });
@@ -108,6 +118,7 @@ module.exports = {
   Politician: Politician,
   PoliticianUserVote: PoliticianUserVote,
   Promise: Promise,
+  PromiseUpdate: PromiseUpdate,
   PromiseCategory: PromiseCategory,
   PromiseEvidence: PromiseEvidence,
   PromiseEvidences: PromiseEvidences,

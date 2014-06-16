@@ -30,14 +30,20 @@
         <a class="navbar-brand" href="/politicos">Promessa de Político</a>
       </div>
       <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li ng-class="{'active': isSectionActive('howItWorksActive')}">
+            <a href="/como-funciona">Como funciona</a>
+          </li>
+          <li ng-class="{'active': isSectionActive('whoWeAreActive')}">
+            <a href="/quem-somos">Quem somos</a>
+          </li>
+          <li ng-class="{'active': isSectionActive('contactActive')}">
+            <a href="/contato">Contato</a>
+          </li>         
+        </ul>     
         <form class="navbar-form navbar-left">
           <input type="search" ng-model="selectedPolitician" typeahead="politician.displayName for politician in searchPoliticians($viewValue)" typeahead-min-length="3" typeahead-wait-ms="500" typeahead-on-select="selectPolitician($item)" placeholder="Busque por políticos" class="form-control" style="width: 300px;">
         </form>
-        <ul class="nav navbar-nav">
-          <li><a href="/como-funciona">Como funciona</a></li>
-          <li><a href="/quem-somos">Quem somos</a></li>
-          <li><a href="/contato">Contato</a></li>         
-        </ul>     
         <ul ng-show="user" class="nav navbar-nav navbar-right">
           <li class="dropdown">           
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -116,6 +122,7 @@
   <script src="/bower_components/ng-flow/dist/ng-flow-standalone.min.js"></script>  
   <script src="/bower_components/ng-flow/dist/ng-flow.min.js"></script>
   
+  <script src="/js/errors.js"></script>
   <script src="/js/app.js"></script>
   <script>
     angular
@@ -125,6 +132,7 @@
         <% if backendData %> <$ backendData|jsonString $> <% else %> {} <% endif %>
       );
   </script>
+  <script src="/js/filters.js"></script>
   <script src="/js/services.js"></script>
   <script src="/js/directives.js"></script>
   <script src="/js/controllers.js"></script>
@@ -135,17 +143,7 @@
     });
     $(document).ajaxStop(function() {
       NProgress.done();
-    });
-    // Show the progress bar 
-    NProgress.start();
-    // Increase randomly
-    var interval = setInterval(function() { NProgress.inc(); }, 1000);        
-    // Trigger finish when page fully loaded
-    jQuery(window).load(function () {
-        clearInterval(interval);
-        NProgress.done();
-    });
-
+    });    
   </script>
   <% block scripts %>
   <% endblock %>

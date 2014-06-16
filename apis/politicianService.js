@@ -6,6 +6,7 @@ var Politician          = require('../models/models').Politician,
     State               = require('../models/models').State,
     Bookshelf           = require('../models/models').Bookshelf,
     modelUtils          = require('../utils/modelUtils'),
+    apiErrors           = require('./errors/apiErrors');
     helper              = require('../utils/helper'),
     BluebirdPromise     = require('bluebird'),
     $                   = this;
@@ -141,7 +142,7 @@ var countUsersVotesFromMany = function(politician) {
 }
 
 exports.countUsersVotes = function(politician) {  
-  if(Array.isArray(politician)) {
+  if(politician instanceof Bookshelf.Collection) {
     return countUsersVotesFromMany(politician);
   } else {
     return countUsersVotesFromOne(politician);
@@ -162,7 +163,12 @@ exports.register = function(user, politician) {
     } else {
       politician.set('registered_by_user_id', user.id);
       politician.set('slug', helper.slugify(politician.get('name')));
-      resolve(politician.save());
+      politician.save().then(function(politician) {
+        resolve(politician);
+      }).catch(function(err) {
+        console.log(politician);
+        reject(apiErrors.fromDatabaseError('politician', err));
+      });
     }
   });
 }
@@ -185,27 +191,45 @@ exports.allStates = function() {
 
 var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
   return new BluebirdPromise(function(resolve, reject) {
-    var condition = type === 'best' ? '>=' : '<';
-    var order = type === 'best' ? 'desc' : 'asc';
-    var query = Bookshelf.knex('promise')
-    .select(Bookshelf.knex.raw('politician.*'), 'politician_id', Bookshelf.knex.raw('count(*) as total_promises'), Bookshelf.knex.raw('(select count(*) from promise where politician_id = politician.id and state = "FULFILLED") as total_fulfilled_promises, round(((select count(*) from promise where politician_id = politician.id and state = "FULFILLED") * 100) / count(*)) as percentage_promises_fulfilled'))
-    .join('politician', 'politician.id', '=', 'promise.politician_id');
+    var condition = type === 'best' ? '<=' : '>';
+    
+    var query = Bookshelf.knex('politician')
+    .select(
+      'politician.*',
+      Bookshelf.knex.raw('datediff(now(), promise.last_state_update)'),
+      Bookshelf.knex.raw('(select count(*) from promise where promise.politician_id = politician.id and promise.state = \'FULFILLED\') as total_fulfilled_promises'),
+      Bookshelf.knex.raw('(select count(*) from promise where promise.politician_id = politician.id) as total_promises')
+    )
+    .join('promise', 'politician.id', '=', 'promise.politician_id');
+    
     if(politicalParty) {
-      query.where({political_party_id: politicalParty.id});
+      query.where('politician.political_party_id', '=', politicalParty.id);
     }
     if(state) {
-      query.where({state_id: state.id});
+      query.where('politician.state_id', '=', state.id);
     }
-    query.having('percentage_promises_fulfilled', condition, 50)
-    .groupBy('politician_id')
-    .orderBy('percentage_promises_fulfilled', order)
+    
+    query.where(function() {
+      this.where(function() {
+        this.where('promise.state', '=', 'FULFILLED')
+        .whereRaw('datediff(now(), promise.last_state_update) ' + condition + ' ?', [120]);
+      });
+      if(type === 'worst') {  
+        this.orWhere(function() {
+          this.whereRaw('(select count(promise.id) from promise where promise.politician_id = politician.id and promise.state = ?) = ?', ['FULFILLED', 0]);
+        });
+      }
+    });
+      
+    query.orderBy('total_promises', 'desc')
+    .groupBy('politician.id')
     .limit(pageSize).offset((page - 1) * pageSize)
     .then(function(politiciansRows) {
-      var politicians = [];
+      var politicians = Politician.collection();
       politiciansRows.forEach(function(politicianRow) {        
         var politician = $.forge(politicianRow);
-        politician.set({total_promises: politicianRow.total_promises, total_fulfilled_promises: politicianRow.total_fulfilled_promises, percentage_promises_fulfilled: politicianRow.percentage_promises_fulfilled});
-        politicians.push(politician);
+        politician.set({total_promises: politicianRow.total_promises, total_fulfilled_promises: politicianRow.total_fulfilled_promises});
+        politicians.add(politician);
       });
       resolve(politicians);
     }).catch(function(err) {
@@ -221,6 +245,20 @@ exports.bestPoliticians = function(page, pageSize, politicalParty, state) {
 
 exports.worstPoliticians = function(page, pageSize, politicalParty, state) {
   return rankPoliticians('worst', page, pageSize, politicalParty, state);
+}
+
+exports.politiciansWithoutPromises = function(page, pageSize, politicalParty, state) {
+  return Politician.collection().query(function(qb) {
+    if(politicalParty) {
+      qb.where('political_party_id', '=', politicalParty.id);
+    }
+    if(state) {
+      qb.where('state_id', '=', state.id);
+    }    
+    qb.whereNotExists(function() {
+      this.select('*').from('promise').whereRaw('promise.politician_id = politician.id');
+    }).limit(pageSize).offset((page - 1) * pageSize);
+  }).fetch();
 }
 
 exports.search = function(value, columns) {

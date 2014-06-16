@@ -4,6 +4,7 @@ var promiseCategoryService = require('../apis/promiseCategoryService'),
     oembedService          = require('../apis/oembedService'),
     viewService            = require('../apis/viewService'),
     helper                 = require('../utils/helper'),
+    apiErrors              = require('../apis/errors/apiErrors'),
     Promise                = require('bluebird');
 
 module.exports = function(app, passport) {
@@ -200,6 +201,16 @@ module.exports = function(app, passport) {
         return politicianService.worstPoliticians(page, pageSize, politicalParty, state); 
       }
     },
+    politiciansWithoutPromises: {
+      auth: false,
+      action: function(user, params) {
+        var page = params[0];
+        var pageSize = params[1];
+        var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
+        var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
+        return politicianService.politiciansWithoutPromises(page, pageSize, politicalParty, state);  
+      }
+    },
     sendEmail: {
       auth: false,
       action: function(user, params) {
@@ -226,11 +237,13 @@ module.exports = function(app, passport) {
         res.status(401).send('Authentication required');
       } else {
         mappedPromise.action(user, params).then(function(data) {
-          console.log(data);
           res.json({data: data});        
         }).catch(function(err) {
-          console.log(err.stack)
-          res.status(500).send('Internal error');
+          if(err instanceof apiErrors.GenericError) {
+            res.json(err.statusCode, err.toJSON());
+          } else {
+            res.json(500, {statusCode: 500, key: 'internalError'});
+          }
         });
       }
     }
