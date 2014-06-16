@@ -3,6 +3,11 @@ var path = require('path'),
     _nodeIP = process.env.NODE_IP || '127.0.0.1',
     _nodePort = process.env.NODE_PORT || 3000,
     _publicPath = path.join(path.dirname(process.mainModule.filename), "./public"),
+    _email = {
+      contact: 'sandro.csimas@gmail.com',
+      apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',
+      domain: 'promessadepolitico.com.br'      
+    },
     _database = {
       dev: {
         dialect: 'mysql',
@@ -42,6 +47,7 @@ module.exports = {
   nodePort: _nodePort,
   nodeIP: _nodeIP,
   publicPath: _publicPath,
+  email: _email,
   database: _database[_nodeEnv],
   facebook: _facebook[_nodeEnv],
   twitter: _twitter[_nodeEnv],

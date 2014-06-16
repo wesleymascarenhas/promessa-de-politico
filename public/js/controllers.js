@@ -6,7 +6,19 @@ angular
   }])
   .controller("contactController", ["$scope", "alertService", "userService", function($scope, alertService, userService) {
     $scope.sendEmail = function() {
-      userService.sendEmail($scope.name, $scope.email, $scope.message);
+      NProgress.start();
+      userService.sendEmail($scope.name, $scope.email, $scope.subject, $scope.message).then(function(response) {
+        alertService.addAlert("success", "E-mail enviado com sucesso, aguarde o nosso contato.");
+        $scope.name = "";
+        $scope.email = "";
+        $scope.subject = "";
+        $scope.message = "";
+        $scope.contactForm.$setPristine();
+      }).catch(function(response) {
+        alertService.addAlert("danger", "Erro ao enviar e-mail, por favor tente novamente mais tarde.");
+      }).finally(function() {
+        NProgress.done();
+      });
     }
   }])
   .controller("headerController", ["$scope", "$window", "backendData", "politicianService", "authenticationService", function($scope, $window, backendData, politicianService, authenticationService) {
@@ -264,9 +276,9 @@ angular
       promise($scope.editedPolitician).then(function(response) {
         $scope.editedPolitician.id = response.data.data.id;
         $scope.flowModel.flow.upload();
-      }).catch(function(err) {
+      }).catch(function(response) {
         NProgress.done();
-        alertService.addAlert("danger", errorMessage('politicianRegistration', err.data.key));
+        alertService.addAlert("danger", errorMessage('politicianRegistration', response.data.key));
       });
     };
     $scope.isPresidentOfficeSelected = function() {

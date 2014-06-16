@@ -1,6 +1,7 @@
 var politicianService      = require('../apis/politicianService'),
     promiseService         = require('../apis/promiseService'),
     oembedService          = require('../apis/oembedService'),
+    mailService            = require('../apis/mailService'),
     viewService            = require('../apis/viewService'),
     helper                 = require('../utils/helper'),
     apiErrors              = require('../apis/errors/apiErrors'),
@@ -215,8 +216,9 @@ module.exports = function(app, passport) {
       action: function(user, params) {
         var name = params[0];
         var email = params[1];
-        var message = params[2];
-        return userService.sendEmail(name, email, message);
+        var subject = params[2];
+        var message = params[3];
+        return mailService.sendEmail(name, email, subject, message);
       }
     }
   }

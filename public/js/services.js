@@ -25,8 +25,8 @@ angular
     this.getAuthenticatedUser = function() {
       return $http.post("/ajax", {key: "getAuthenticatedUser"});
     };
-    this.sendMessage = function(name, email, message) {
-      return $http.post("/ajax", {key: "sendMessage", params: [name, email, message]});
+    this.sendEmail = function(name, email, subject, message) {
+      return $http.post("/ajax", {key: "sendEmail", params: [name, email, subject, message]});
     };
   }])
   .service("politicianService", ["$http", function($http) {
