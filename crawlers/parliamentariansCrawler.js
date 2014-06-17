@@ -17,7 +17,7 @@ function capitalized(str) {
   str.split(' ').forEach(function(split) {
     split = split.toLowerCase();
     if(split !== 'de' && split !== 'da' && split !== 'do') {
-      split = _.capitalize(split);  
+      split = _.capitalize(split);
     }
     cap += split + ' ';
   });
@@ -57,16 +57,16 @@ Promise.all([politicianService.allPoliticalParties(), politicianService.allPolit
     promises.push(politicianService.register(user, politician));
   });
 
-  Promise.all(promises).then(function() {    
+  Promise.all(promises).then(function() {
     console.log(politicians.size() + ' politicians saved');
     var downloadPromises = [];
-    politicians.forEach(function(politician) {  
+    politicians.forEach(function(politician) {
       downloadPromises.push(
         new Promise(function(resolve, reject) {
           fileUtils.downloadPoliticianPhoto(politician.get('photo_filename'), politician, fileUtils.extensions.image).then(function(politician) {
             politicianService.update(politician).then(function(politician) {
-              resolve(politician);              
-            });  
+              resolve(politician);
+            });
           }).catch(function(err) {
             console.log('Error downloading politician ' + politician.id + ' photo: ' + err.message);
             resolve(politician);
@@ -83,7 +83,3 @@ Promise.all([politicianService.allPoliticalParties(), politicianService.allPolit
     process.exit(1);
   });
 });
-
-
-
-

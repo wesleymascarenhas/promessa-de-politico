@@ -4,7 +4,7 @@ var BluebirdPromise = require('bluebird'),
 
 exports.getOEmbed = function(uri) {
   return new BluebirdPromise(function(resolve, reject) {
-    request.get({url: 'http://iframely.com/iframely?uri=' + uri, json: true}, function(err, res, obj) {      
+    request.get({url: 'http://iframely.com/iframely?uri=' + uri, json: true}, function(err, res, obj) {
       if(err) {
         reject(err);
       } else {
@@ -12,5 +12,5 @@ exports.getOEmbed = function(uri) {
         resolve(obj);
       }
     });
-  });  
+  });
 }

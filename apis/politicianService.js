@@ -11,7 +11,7 @@ var Politician          = require('../models/models').Politician,
     BluebirdPromise     = require('bluebird'),
     $                   = this;
 
-exports.forge = function(data) {  
+exports.forge = function(data) {
   return Politician.forge(modelUtils.filterAttributes('Politician', data));
 }
 
@@ -68,16 +68,16 @@ exports.vote = function(user, politician, vote_type) {
     politicianUserVote.fetch().then(function(userVote) {
       if(userVote) {
         if(vote_type === userVote.get('vote_type')) {
-          Bookshelf.knex('politician_user_vote')        
+          Bookshelf.knex('politician_user_vote')
           .where('user_id', user.id)
           .andWhere('politician_id', politician.id)
           .del().then(function(rowsDeleted) {
             resolve(null);
           }).catch(function(err) {
             reject(err);
-          });          
+          });
         } else {
-          Bookshelf.knex('politician_user_vote')        
+          Bookshelf.knex('politician_user_vote')
           .where('user_id', user.id)
           .andWhere('politician_id', politician.id)
           .update({'vote_type': vote_type}).then(function(rowsUpdated) {
@@ -101,7 +101,7 @@ var countUsersVotesFromOne = function(politician) {
     .select('vote_type', Bookshelf.knex.raw('count(*) as votes'))
     .where('politician_id', politician.id)
     .groupBy('vote_type')
-    .then(function(usersVotesCounts) {  
+    .then(function(usersVotesCounts) {
       var usersVotesCountsMap = {};
       usersVotesCounts.forEach(function(userVoteCount) {
         usersVotesCountsMap[userVoteCount.vote_type] = userVoteCount.votes;
@@ -120,7 +120,7 @@ var countUsersVotesFromMany = function(politician) {
       .select('politician_id', 'vote_type', Bookshelf.knex.raw('count(*) as votes'))
       .whereIn('politician_id', modelUtils.getIds(politician))
       .groupBy('politician_id', 'vote_type')
-      .then(function(usersVotesCounts) {  
+      .then(function(usersVotesCounts) {
         var usersVotesCountsMap = {};
         usersVotesCounts.forEach(function(userVoteCount) {
           if(!(userVoteCount.politician_id in usersVotesCountsMap)) {
@@ -128,7 +128,7 @@ var countUsersVotesFromMany = function(politician) {
           }
           if(!(userVoteCount.vote_type)) {
             usersVotesCountsMap[userVoteCount.politician_id][userVoteCount.vote_type] = 0;
-          } 
+          }
           usersVotesCountsMap[userVoteCount.politician_id][userVoteCount.vote_type] = userVoteCount.votes;
         });
         resolve(usersVotesCountsMap);
@@ -141,7 +141,7 @@ var countUsersVotesFromMany = function(politician) {
   });
 }
 
-exports.countUsersVotes = function(politician) {  
+exports.countUsersVotes = function(politician) {
   if(politician instanceof Bookshelf.Collection) {
     return countUsersVotesFromMany(politician);
   } else {
@@ -165,7 +165,7 @@ exports.register = function(user, politician) {
       politician.set('slug', helper.slugify(politician.get('name')));
       politician.save().then(function(politician) {
         resolve(politician);
-      }).catch(function(err) {        
+      }).catch(function(err) {
         reject(apiErrors.fromDatabaseError('politician', err));
       });
     }
@@ -191,7 +191,7 @@ exports.allStates = function() {
 var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
   return new BluebirdPromise(function(resolve, reject) {
     var condition = type === 'best' ? '<=' : '>';
-    
+
     var query = Bookshelf.knex('politician')
     .select(
       'politician.*',
@@ -200,33 +200,33 @@ var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
       Bookshelf.knex.raw('(select count(*) from promise where promise.politician_id = politician.id) as total_promises')
     )
     .join('promise', 'politician.id', '=', 'promise.politician_id');
-    
+
     if(politicalParty) {
       query.where('politician.political_party_id', '=', politicalParty.id);
     }
     if(state) {
       query.where('politician.state_id', '=', state.id);
     }
-    
+
     query.where(function() {
       this.where(function() {
         this.where('promise.state', '=', 'FULFILLED')
         .whereRaw('datediff(now(), promise.last_state_update) ' + condition + ' ?', [120]);
       });
-      if(type === 'worst') {  
+      if(type === 'worst') {
         this.orWhere(function() {
           this.whereRaw('(select count(promise.id) from promise where promise.politician_id = politician.id and promise.state = ?) = ?', ['FULFILLED', 0]);
         });
       }
     });
-      
+
     query.orderBy('total_promises', 'desc')
     .groupBy('politician.id')
     .limit(pageSize).offset((page - 1) * pageSize)
     .then(function(politiciansRows) {
       var politicians = Politician.collection();
-      politiciansRows.forEach(function(politicianRow) {                           
-        var politician = $.forge(politicianRow);        
+      politiciansRows.forEach(function(politicianRow) {
+        var politician = $.forge(politicianRow);
         politician.set({total_promises: politicianRow.total_promises, total_fulfilled_promises: politicianRow.total_fulfilled_promises});
         politicians.add(politician);
       });
@@ -236,7 +236,6 @@ var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
     });
   });
 }
-
 
 exports.bestPoliticians = function(page, pageSize, politicalParty, state) {
   return rankPoliticians('best', page, pageSize, politicalParty, state);
@@ -253,7 +252,7 @@ exports.politiciansWithoutPromises = function(page, pageSize, politicalParty, st
     }
     if(state) {
       qb.where('state_id', '=', state.id);
-    }    
+    }
     qb.whereNotExists(function() {
       this.select('*').from('promise').whereRaw('promise.politician_id = politician.id');
     }).limit(pageSize).offset((page - 1) * pageSize);

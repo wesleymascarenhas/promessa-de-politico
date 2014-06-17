@@ -13,7 +13,7 @@ exports.configure = function(app) {
       variableEnd: '$>',
       commentStart: '<#',
       commentEnd: '#>'
-    }, 
+    },
     autoescape: true,
     express: app
   });
@@ -31,6 +31,3 @@ exports.configure = function(app) {
   });
 
 }
-
-
-

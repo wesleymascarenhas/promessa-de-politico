@@ -1,5 +1,5 @@
 exports.configure = function(app, passport) {
-	console.log('Configuring routes');
+  console.log('Configuring routes');
 
   app.use(function(req, res, next) {
     res.locals.user = req.user;

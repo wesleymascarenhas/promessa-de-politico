@@ -11,27 +11,27 @@
         <div class="">
           <ul ng-social-buttons
             data-url="'www.promessadepolitico.com.br/politicos'"
-            data-title="'Promessa de Político'">  
+            data-title="'Promessa de Político'">
             <li class="ng-social-facebook">Facebook</li>
-            <li class="ng-social-twitter">Twitter</li>            
+            <li class="ng-social-twitter">Twitter</li>
             <li class="ng-social-google-plus">Google+</li>
-          </ul>          
-        </div>        
+          </ul>
+        </div>
       </div>
-    </div>  
+    </div>
   </div>
   <div class="row">
     <div class="col-md-8">
       <div class="row">
         <div class="col-md-4">
-          <select class="form-control" nya-selectpicker ng-model="selectedPoliticalParty" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="filterSelected()" data-container="body"></select>        
-        </div>        
-        <div class="col-md-4">                      
+          <select class="form-control" nya-selectpicker ng-model="selectedPoliticalParty" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="filterSelected()" data-container="body"></select>
+        </div>
+        <div class="col-md-4">
           <select class="form-control" nya-selectpicker ng-model="selectedState" ng-options="state.name for state in states" ng-change="filterSelected()" data-container="body"></select>
         </div>
       </div>
     </div>
-    <div class="col-md-4 align-right">         
+    <div class="col-md-4 align-right">
       <a class="btn btn-primary btn-lg" ng-click="registerPolitician()">
         <span class="glyphicon glyphicon-plus"></span>
         Adicionar Político
@@ -40,7 +40,7 @@
   </div>
   <div>
     <h3>
-        Políticos que cumpriram promessas nos últimos meses 
+        Políticos que cumpriram promessas nos últimos meses
         <a href="/como-funciona#politicos-que-cumpriram-promessas-nos-ultimos-meses" title="Saiba como funciona este ranque">
           <span class="badge" style="font-size: 14px;">?</span>
         </a>
@@ -49,7 +49,7 @@
       <div ng-if="!existsBestPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
           <h2>
-            Ajude-nos a encontrar políticos exemplares 
+            Ajude-nos a encontrar políticos exemplares
             <span ng-show="hasPoliticalPartySelected()">
               do {{ selectedPoliticalParty.acronym }}
             </span>
@@ -84,7 +84,7 @@
                       ({{ bestPolitician.total_fulfilled_promises }}/{{ bestPolitician.total_promises }})
                     </small>
                   </p>
-                  <div class="overflow-hidden">                   
+                  <div class="overflow-hidden">
                     <div class="votes">
                       <div class="vote">
                         <div class="vote-up">
@@ -109,8 +109,8 @@
                             {{ totalPoliticianDownUsersVotes(bestPolitician) }}
                           </span>
                         </div>
-                      </div>     
-                    </div>                    
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -138,7 +138,7 @@
       <div ng-if="!existsWorstPoliticians()" class="col-md-12 align-center">
         <div class="jumbotron">
           <h2>
-            Ajude-nos a encontrar políticos 
+            Ajude-nos a encontrar políticos
             <span ng-show="hasPoliticalPartySelected()">
               do {{ selectedPoliticalParty.acronym }}
             </span>
@@ -174,7 +174,7 @@
                       ({{ worstPolitician.total_fulfilled_promises }}/{{ worstPolitician.total_promises }})
                     </small>
                   </p>
-                  <div class="overflow-hidden">                   
+                  <div class="overflow-hidden">
                     <div class="votes">
                       <div class="vote">
                         <div class="vote-up">
@@ -199,8 +199,8 @@
                             {{ totalPoliticianDownUsersVotes(worstPolitician) }}
                           </span>
                         </div>
-                      </div>     
-                    </div>                    
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -222,7 +222,7 @@
       Políticos que ainda não tem promessas registradas
       <span class="label label-info">Contribua!</span>
     </h3>
-    <div class="row">      
+    <div class="row">
       <div class="col-md-12">
        <div class="row" ng-repeat="row in politiciansWithoutPromises | partition:4">
           <div ng-repeat="politicianWithoutPromises in row" class="col-md-3">
@@ -238,9 +238,9 @@
                   <p>
                     <a ng-href="/politico/{{ politicianWithoutPromises.slug }}">
                       {{ politicianWithoutPromises.displayName }}
-                    </a>                   
+                    </a>
                   </p>
-                  <div class="overflow-hidden">                   
+                  <div class="overflow-hidden">
                     <div class="votes">
                       <div class="vote">
                         <div class="vote-up">
@@ -265,8 +265,8 @@
                             {{ totalPoliticianDownUsersVotes(politicianWithoutPromises) }}
                           </span>
                         </div>
-                      </div>     
-                    </div>                    
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -282,9 +282,9 @@
         </div>
       </div>
     </div>
-  </div>   
+  </div>
 </div>
 <% endblock %>
 
-<% block scripts %> 
+<% block scripts %>
 <% endblock %>

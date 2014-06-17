@@ -6,7 +6,7 @@ var path = require('path'),
     _email = {
       contact: 'sandro.csimas@gmail.com',
       apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',
-      domain: 'promessadepolitico.com.br'      
+      domain: 'promessadepolitico.com.br'
     },
     _database = {
       dev: {
@@ -39,8 +39,6 @@ var path = require('path'),
         callbackURL: 'http://www.promessadepolitico.com.br:' + _nodePort + '/auth/google/callback'
       }
     }
-
-console.log("PUBLIC" + _publicPath)
 
 module.exports = {
   nodeEnv: _nodeEnv,

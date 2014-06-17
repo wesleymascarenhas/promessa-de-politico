@@ -220,7 +220,7 @@ a:hover {
 
 .promises-menu .nav-pills > li > a, .promises-menu .nav-pills > li > a:hover, .promises-menu .nav-pills > li > a:focus {
   color: #777;
-  background-color: #f8f8f8;  
+  background-color: #f8f8f8;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
   border-top-left-radius: 0px;
@@ -259,7 +259,7 @@ a:hover {
 .promise-infos .promise-state {
   margin-bottom: 12px;
 }
- 
+
 .promise-infos .promise-state .state {
   margin-right: 5px;
 }
@@ -299,7 +299,7 @@ a:hover {
 }
 
 .promise .evidences .well {
-  min-height: 105px;  
+  min-height: 105px;
 }
 
 .promise .evidences .media-url {
@@ -310,7 +310,7 @@ a:hover {
   line-height: 1.5;
 }
 
-.promise .evidences .media-host {  
+.promise .evidences .media-host {
   padding-top: 10px;
 }
 
@@ -335,7 +335,7 @@ a:hover {
 }
 
 .comments {
-  border-radius: 4px;  
+  border-radius: 4px;
 }
 
 .comments-title {
@@ -405,7 +405,7 @@ a:hover {
 
 .comments-box .form-group:nth-child(2) {
   width:18%;
-} 
+}
 .comments-box .form-group * {
   width:100%;
 }
@@ -413,7 +413,7 @@ a:hover {
 
 /* Required field START */
 .required-field-block {
-  position: relative;   
+  position: relative;
 }
 
 .required-field-block .required-icon {
@@ -436,7 +436,7 @@ a:hover {
   transition: background 0.1s linear;
   font-size: 75%;
 }
-  
+
 .required-field-block .required-icon {
   background-color: transparent;
   position: absolute;
