@@ -12,7 +12,7 @@ var express     = require('express'),
 		app         = express();
 
 // all environments
-app.set('env', settings.nodeEnv)
+app.set('env', settings.nodeEnv);
 app.set('port', settings.nodePort);
 app.set('views', settings.viewsPath);
 

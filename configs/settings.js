@@ -64,6 +64,8 @@ var path = require('path'),
       }
     }
 
+console.log('Using ' + _nodeEnv + ' settings');
+
 module.exports = {
   nodeEnv: _nodeEnv,
   nodePort: _nodePort,
