@@ -3,6 +3,7 @@ var path = require('path'),
     _nodeIP = process.env.NODE_IP || '127.0.0.1',
     _nodePort = process.env.NODE_PORT || 3000,
     _publicPath = path.join(path.dirname(process.mainModule.filename), './public'),
+    _viewsPath = path.join(path.dirname(process.mainModule.filename), './views'),
     _email = {
       contact: 'sandro.csimas@gmail.com',
       apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',

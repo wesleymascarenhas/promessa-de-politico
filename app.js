@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 var express     = require('express'),
-    passport    = require('passport'),  
+    passport    = require('passport'),
     auth        = require('./configs/authentication'),
     middlewares = require('./configs/middlewares'),
 		settings    = require('./configs/settings'),
@@ -14,7 +14,7 @@ var express     = require('express'),
 // all environments
 app.set('env', settings.nodeEnv)
 app.set('port', settings.nodePort);
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', settings.viewsPath);
 
 app.use(express.favicon());
 app.use(express.logger('dev'));
