@@ -71,6 +71,7 @@ module.exports = {
   nodePort: _nodePort,
   nodeIP: _nodeIP,
   publicPath: _publicPath,
+  viewsPath: _viewsPath,
   email: _email,
   database: _database[_nodeEnv],
   facebook: _facebook[_nodeEnv],
