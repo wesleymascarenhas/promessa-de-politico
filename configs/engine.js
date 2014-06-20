@@ -5,7 +5,7 @@ exports.configure = function(app) {
   console.log('Configuring view engine');
 
   app.engine('html', nunjucks.render);
-  var env = nunjucks.configure('views', {
+  var env = nunjucks.configure(app.get('views'), {
     tags: {
       blockStart: '<%',
       blockEnd: '%>',

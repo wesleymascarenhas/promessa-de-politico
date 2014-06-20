@@ -1,6 +1,3 @@
-/**
- * Module dependencies.
- */
 var express     = require('express'),
     passport    = require('passport'),
     auth        = require('./configs/authentication'),
@@ -15,6 +12,7 @@ var express     = require('express'),
 app.set('env', settings.nodeEnv);
 app.set('port', settings.nodePort);
 app.set('views', settings.viewsPath);
+app.set('public', settings.publicPath);
 
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -23,7 +21,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser('promessa-de-politico'));
 app.use(express.session('promessa-de-politico'));
-app.use(express.static(settings.publicPath));
+app.use(express.static(app.get('public')));
 
 // development only
 if ('dev' == app.get('env')) {
