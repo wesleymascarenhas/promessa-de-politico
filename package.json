@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "newrelic": "1.7.3",
     "express": "3.4.4",
     "connect-multiparty": "1.0.3",
     "nunjucks": "1.0.4",

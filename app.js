@@ -1,3 +1,5 @@
+require('newrelic');
+
 var express     = require('express'),
     passport    = require('passport'),
     auth        = require('./configs/authentication'),
