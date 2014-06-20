@@ -4,9 +4,12 @@
 <% endblock %>
 
 <% block content %>
-<div class="container">  
-  <h1><$ statusCode $>: <$ statusMessage $></h1>
-  <h3><$ errorMessage $></h3>
+<div class="container">
+  <div class="jumbotron align-center" style="background-color: #fff;">
+    <h1><span class="label <$ 'label-info' if statusCode == 404 else 'label-danger' $>"><$ statusCode $></span> <$ statusMessage $></h1>
+    <h3><$ errorMessage $></h3>
+    <img src="/img/vote.jpg" class="img-circle">
+  </div>
 </div>
 <% endblock %>
 

@@ -40,6 +40,10 @@ a:hover {
   padding-top: 20px;
 }
 
+.indent-paragraphs p {
+  text-indent: 40px;
+}
+
 .line-height-1-0 {
   line-height: 1.0;
 }
@@ -102,6 +106,10 @@ a:hover {
 
 .font-biggest {
   font-size: 22px !important;
+}
+
+.font-bold {
+  font-weight: bold;
 }
 
 .no-padding-right {

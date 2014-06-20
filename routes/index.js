@@ -4,7 +4,7 @@ var politicianService     = require('../apis/politicianService'),
     BluebirdPromise       = require('bluebird');
 
 module.exports = function(app) {
-	
+
   app.get('/', function(req, res, next) {
     res.render('land.html');
   });
@@ -13,9 +13,9 @@ module.exports = function(app) {
     res.render('how-it-works.html', {backendData: {howItWorksActive: true}});
   });
 
-  app.get('/quem-somos', function(req, res, next) {
-    res.render('who-we-are.html', {backendData: {whoWeAreActive: true}});
-  });
+  // app.get('/quem-somos', function(req, res, next) {
+  //   res.render('who-we-are.html', {backendData: {whoWeAreActive: true}});
+  // });
 
   app.get('/contato', function(req, res, next) {
     res.render('contact.html', {backendData: {contactActive: true}});
@@ -48,7 +48,7 @@ module.exports = function(app) {
           return data;
         });
       }
-    }).then(function() { 
+    }).then(function() {
       res.render('index.html', {backendData: data});
     }).catch(function(err) {
       console.log(err.stack);

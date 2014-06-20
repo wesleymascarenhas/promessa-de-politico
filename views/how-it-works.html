@@ -6,16 +6,46 @@
 <% block content %>
 <div class="container">
   <div class="row font-big">
-    <div class="col-md-10 col-md-offset-1">
-      <p>O Promessa de Político tem o objetivo de fornecer aos cidadãos brasileiros uma forma mais fácil de acompanhar as promessas dos nossos políticos.</p>
-      <p>Através dessa plataforma todos podem participar registrando os políticos que ainda não estão cadastrados, bem como suas promessas de campanha.</p>
-      <p>Além disso é possível atualizar as informações da promessa de acordo com o seu andamento, discutir com os outros brasileiros, </p>
-      <p>Com a colaboração de todos o Promessa de Político consegue analisar quem são os políticos que estão cumprindo ou não suas promessas, exibindo-os na sua página principal.
-      </p>      
+    <div class="col-md-10 col-md-offset-1 align-justify indent-paragraphs">
+      <h1 class="text-center">O projeto</h1>
+      <p>
+        Sabe aquele velho ditado que diz que o brasileiro não tem memória? Sendo verdade ou não nós vimos que o povo brasileiro se comportou diferente desde o ano 2013. Este projeto veio para transformar esse ditado numa lenda e deixar registrado para sempre aqui na internet, quem são os políticos que estão ou não cumprindo suas propostas e promessas. Agora não tem como esquecer!
+      </p>
+      <p>
+        O Promessa de Político é um projeto criado por um desenvolvedor de sistemas apaixonado por tecnologia, com pouco interesse em política, mas que, assim como todos os brasileiros, percebe que o nosso país poderia ser muito melhor se alguns dos nossos governantes fizessem seu trabalho de forma digna e honesta ou nem estivessem no poder.
+      </p>
+      <p>
+        O ponto focal deste projeto são as promessas dos políticos e tem como principal objetivo facilitar o acompanhamento dessas promessas de forma transparente e colaborativa.
+        Todos podem contribuir registrando os políticos que ainda não estão cadastrados, bem como suas promessas de campanha. Além disso é possível atualizar as informações da promessa de acordo com o seu andamento, discutir com os outros cidadãos, apoiar os políticos que estão fazendo o seu papel e cobrar daqueles que não estão cumprindo suas promessas.
+      </p>
+      <p>
+        Com a união de todos o Promessa de Político pode crescer e nos auxiliar nas futuras decisões. Vote com consciência e divulgue essa idéia!
+      </p>
     </div>
-  </div>  
+  </div>
+  <div class="row font-big">
+    <div class="col-md-10 col-md-offset-1 align-justify indent-paragraphs">
+      <h1 class="text-center">Listagens na página inicial</h1>
+      <h3>
+        <a id="politicos-que-cumpriram-promessas-nos-ultimos-meses" href="#politicos-que-cumpriram-promessas-nos-ultimos-meses">
+          Lista de políticos que cumpriram promessas nos últimos meses
+        </a>
+      </h3>
+      <p>
+        Os políticos exibidos nessa lista são os políticos que tiveram alguma das suas promessas atualizadas para o estado <promise-state for="FULFILLED"/></promise-state> nos útlimos <b>4 meses</b>. A escolha deste período não teve nenhuma base sólida, foi apenas para conseguir lançar a primeira versão do Promessa de Político. Em breve este critério será melhorado, para isso contamos com sugestões!
+      </p>
+      <h3>
+        <a id="politicos-que-nao-cumpriram-promessas-nos-ultimos-meses" href="#politicos-que-nao-cumpriram-promessas-nos-ultimos-meses">
+          Lista de políticos que <b>não</b> cumpriram promessas nos últimos meses
+        </a>
+      </h3>
+      <p>
+        Os políticos exibidos nessa lista são os políticos que <b>não</b> tiveram nenhuma das suas promessas alteradas para o estado <promise-state for="FULFILLED"/></promise-state> nos útlimos <b>4 meses</b>. A escolha deste período segue da mesma forma explicada anteriormente.
+      </p>
+    </div>
+  </div>
 </div>
 <% endblock %>
 
-<% block scripts %> 
+<% block scripts %>
 <% endblock %>

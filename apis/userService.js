@@ -58,6 +58,6 @@ exports.findByUsername = function(username) {
 
 exports.sendEmail = function(name, email, message) {
   return new Promise(function(resolve, reject) {
-    
+
   });
 }

@@ -4,12 +4,12 @@
 <% endblock %>
 
 <% block content %>
-<div class="container" ng-controller="promiseController">  
+<div class="container" ng-controller="promiseController">
   <div class="align-right">
     <div ng-if="!isRegisteringPromise()">
-      <a href="#" title="Compartilhe essa promessa no Facebook" class="icon icon-facebook"></a>
-      <a href="#" title="Compartilhe essa promessa no Twitter" class="icon icon-twitter"></a>
-      <a href="#" title="Compartilhe essa promessa no Google+" class="icon icon-googleplus"></a>
+      <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+      <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+      <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
     </div>
   </div>
   <div class="row">
@@ -66,7 +66,7 @@
               {{ totalPromiseUsersVotes }}
               •
               <span class="glyphicon glyphicon-comment"></span>
-              {{ totalPromiseUsersComments }}          
+              {{ totalPromiseUsersComments }}
               •
               <span class="glyphicon glyphicon-paperclip"></span>
               {{ totalPromiseEvidences }}
@@ -75,10 +75,10 @@
           <div class="overflow-hidden">
             <div class="pull-left">
               <h4 class="dates">
-                  <span ng-show="promise.evidence_date">           
+                  <span ng-show="promise.evidence_date">
                     Promessa feita <span am-time-ago="promise.evidence_date"></span>
                     •
-                  </span> 
+                  </span>
                   Registrada por
                   <a href="/usuario/{{ promise.registeredByUser.username }}">
                     {{ promise.registeredByUser.name }}
@@ -110,16 +110,16 @@
                 </p>
                 <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
                 <div class="media-host">
-                  Adicionado por 
+                  Adicionado por
                   <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
                   <span am-time-ago="evidence.registration_date"></span>
                 </div>
               </div>
             </div>
-            <button ng-show="isHiddenEvidence(promise.evidences.length - 1)" ng-click="showAllEvidences()" class="btn btn-block btn-none" style="margin-top: 10px;">Exibir todas as evidências</button> 
+            <button ng-show="isHiddenEvidence(promise.evidences.length - 1)" ng-click="showAllEvidences()" class="btn btn-block btn-none" style="margin-top: 10px;">Exibir todas as evidências</button>
           </div>
-        </div>      
-      </div>   
+        </div>
+      </div>
       <div ng-show="isRegisteringPromise() || isEditingPromise()" class="header">
         <form name="promiseForm" novalidate>
           <div class="form-group" ng-if="isEditingPromise()">
@@ -146,12 +146,12 @@
           </div>
           <div class="form-group">
             <textarea ng-model="editedPromise.description" name="description" class="form-control" placeholder="Uma breve descrição da promessa"></textarea>
-          </div> 
+          </div>
           <div class="form-group" style="height: 33px;">
             <div class="pull-left">
               <select class="form-control" nya-selectpicker ng-model="editedPromise.category" ng-options="category.name for category in categories" ng-change="categorySelected()" data-container="body">
               </select>
-            </div>                  
+            </div>
             <div class="pull-right">
               <button type="button" class="btn" ng-click="choosePromiseState('NON_STARTED')" ng-class="
                 {
@@ -184,9 +184,9 @@
                 }
               ">Não Cumpriu</button>
             </div>
-          </div>          
+          </div>
           <div class="form-group">
-            <label>Data em que a promessa foi feita</label>            
+            <label>Data em que a promessa foi feita</label>
             <div class="row">
               <div class="col-md-4" ng-class="{'has-error': promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine}">
                 <label class="control-label" for="evidence_date" ng-show="promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine">Formato inválido (Exemplo: 05/05/2014)</label>
@@ -195,7 +195,7 @@
                   <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-click="openEvidenceDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                   </span>
-                </div>         
+                </div>
               </div>
             </div>
           </div>
@@ -204,13 +204,13 @@
             <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
               <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
             </div>
-            
-                   
+
+
             <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
               <div>
                 <div class="well">
                   <div ng-show="evidence.url">
-                    <div class="pull-right">                    
+                    <div class="pull-right">
                       <button ng-show="!isLastEvidence($index)" ng-click="removeEvidence(evidence, $index)" class="btn btn-danger" type="button">
                         <span class="glyphicon glyphicon-minus"></span>
                       </button>
@@ -234,7 +234,7 @@
                       </p>
                       <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
                       <div ng-if="evidence.registeredByUser" class="media-host">
-                        Adicionado por 
+                        Adicionado por
                         <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
                         <span am-time-ago="evidence.registration_date"></span>
                       </div>
@@ -261,7 +261,7 @@
                       <div class="media-body">
                         <div class="form-group">
                           <input ng-model="evidence.title" class="form-control" placeholder="Título da evidência">
-                        </div>                      
+                        </div>
                         <div class="form-group">
                           <textarea ng-model="evidence.description" class="form-control" placeholder="Subtítulo ou descrição da evidência" rows="3"></textarea>
                         </div>
@@ -270,20 +270,20 @@
                     </div>
                   </div>
                 </div>
-              </div>   
-            </div>                      
-          </div>           
+              </div>
+            </div>
+          </div>
         </form>
       </div>
       <div ng-if="!isRegisteringPromise()">
-        <div ng-show="!isEditingPromise()" class="page-section">     
-          <div class="comments thumbnail">     
+        <div ng-show="!isEditingPromise()" class="page-section">
+          <div class="comments thumbnail">
             <div class="comments-title">
-              <label>{{ totalPromiseUsersComments }} Comentário(s)</label>            
+              <label>{{ totalPromiseUsersComments }} Comentário(s)</label>
             </div>
             <div class="comments-content">
               <form name="commentForm" class="form-horizontal">
-                <div class="comments-comment">    
+                <div class="comments-comment">
                     <div class="form-group">
                       <div class="col-md-10">
                         <div text-angular name="userComment" ng-model="userComment" ta-toolbar="[]" required>
@@ -294,7 +294,7 @@
                           Comentar
                         </button>
                       </div>
-                    </div>                      
+                    </div>
                 </div>
               </form>
               <div class="comments-box">
@@ -314,10 +314,10 @@
                       </div>
                       <div ta-bind ng-model="comment.content"></div>
                       <span class="comment-date" am-time-ago="comment.registration_date"></span>
-                    </div>                
-                  </li>            
+                    </div>
+                  </li>
                 </ul>
-              </div>                        
+              </div>
             </div>
           </div>
         </div>
