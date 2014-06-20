@@ -16,11 +16,11 @@ var path = require('path'),
         user: 'root',
         password: 'sandroa1s2d3',
         schema: 'promessa_de_politico',
-        charset: 'utf8',
+        charset: 'utf8'
       },
       prod: {
         dialect: 'mysql',
-        host: '162.243.200.220',
+        host: 'localhost',
         user: 'root',
         password: 'roota1s2d3',
         schema: 'promessa_de_politico',
@@ -64,7 +64,7 @@ var path = require('path'),
       }
     }
 
-console.log('Using ' + _nodeEnv + ' settings');
+console.log('Using ' + _nodeEnv + ' environment settings');
 
 module.exports = {
   nodeEnv: _nodeEnv,
