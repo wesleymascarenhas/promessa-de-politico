@@ -1,5 +1,9 @@
 <% extends "template.html" %>
 
+<% block meta %>
+<meta property="og:image" content="http://www.promessadepolitico.com.br/img/land-marketing.jpg"/>
+<% endblock %>
+
 <% block stylesheets %>
 <% endblock %>
 
@@ -8,20 +12,16 @@
   <div class="row">
     <div class="col-md-12">
       <div class="well">
-        <div class="row">
-          <div class="col-md-6">
-            <ul ng-social-buttons
-              data-url="'www.promessadepolitico.com.br/politicos'"
-              data-title="'Promessa de Político'">
-              <li class="ng-social-facebook">Facebook</li>
-              <li class="ng-social-twitter">Twitter</li>
-              <li class="ng-social-google-plus">Google+</li>
-            </ul>
-          </div>
-          <div class="col-md-6">
-            <div class="fb-like align-right" data-href="http://www.facebook.com/promessa-de-politico" data-layout="standard" data-action="like" data-show-faces="true" data-share="false"></div>
-          </div>
-        </div>
+        <ul ng-social-buttons
+          data-url="'www.promessadepolitico.com.br/politicos'"
+          data-title="'Promessa de Político'">
+          <li class="ng-social-facebook">Facebook</li>
+          <li class="ng-social-twitter">Twitter</li>
+          <li class="ng-social-google-plus">Google+</li>
+          <li>
+            <div class="fb-like align-right" data-href="http://www.facebook.com/promessa-de-politico" data-layout="standard" data-action="like" data-show-faces="false" data-share="false"></div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
