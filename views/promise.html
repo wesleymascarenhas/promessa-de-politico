@@ -79,10 +79,7 @@
                     Promessa feita <span am-time-ago="promise.evidence_date"></span>
                     •
                   </span>
-                  Registrada por
-                  <a href="/usuario/{{ promise.registeredByUser.username }}">
-                    {{ promise.registeredByUser.name }}
-                  </a>
+                  Registrada por {{ promise.registeredByUser.name }}
                   <span am-time-ago="promise.registration_date"></span>
               </h4>
             </div>
@@ -110,8 +107,7 @@
                 </p>
                 <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
                 <div class="media-host">
-                  Adicionado por
-                  <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
+                  Adicionado por {{ evidence.registeredByUser.name }}
                   <span am-time-ago="evidence.registration_date"></span>
                 </div>
               </div>
@@ -234,8 +230,7 @@
                       </p>
                       <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
                       <div ng-if="evidence.registeredByUser" class="media-host">
-                        Adicionado por
-                        <a ng-href="/usuario/{{ evidence.registeredByUser.username }}">{{ evidence.registeredByUser.name }}</a>
+                        Adicionado por {{ evidence.registeredByUser.name }}
                         <span am-time-ago="evidence.registration_date"></span>
                       </div>
                     </div>
@@ -310,7 +305,7 @@
                     </div>
                     <div class="comment-text line-height-1-5">
                       <div>
-                        <a ng-href="/usuario/{{ comment.user.username }}">{{ comment.user.name }}</a>
+                        {{ comment.user.name }}
                       </div>
                       <div ta-bind ng-model="comment.content"></div>
                       <span class="comment-date" am-time-ago="comment.registration_date"></span>
