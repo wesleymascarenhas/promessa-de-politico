@@ -1,4 +1,5 @@
 body {
+  font-family: "Ubuntu", "sans-serif";
   padding-bottom: 40px;
   color: #5a5a5a;
 }
@@ -10,7 +11,7 @@ body {
 }
 
 .carousel-inner {
-  opacity: 0.4;
+  opacity: 0.3;
   position: absolute;
 }
 
@@ -19,11 +20,12 @@ body {
   text-align: center;
   color: #fff;
   position: relative;
-  padding: 80px 40px 40px 40px;
+  padding: 100px 40px 40px 40px;
 }
 
 .carousel .item {
   height: 550px;
+  background-size: cover;
 }
 
 .carousel-inner > .item > img {
