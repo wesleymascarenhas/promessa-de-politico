@@ -1,5 +1,9 @@
 var util    = require('util');
 
+var errorMapping = {
+  'ER_DUP_ENTRY': AlreadyExistsError
+}
+
 function GenericError(statusCode, key) {
   GenericError.super_.call(this, key);
   this.statusCode = statusCode;
@@ -20,9 +24,10 @@ function AlreadyExistsError(model) {
 };
 util.inherits(AlreadyExistsError, GenericError);
 
-var errorMapping = {
-  'ER_DUP_ENTRY': AlreadyExistsError
-}
+function ValidationError(model, validationKey) {
+  ValidationError.super_.call(this, 400, model + ".validation." + validationKey);
+};
+util.inherits(ValidationError, GenericError);
 
 function fromDatabaseError(model, err) {
   var errorType = errorMapping[err.clientError.cause.code];
@@ -33,6 +38,10 @@ function fromDatabaseError(model, err) {
   }
 }
 
-exports.fromDatabaseError = fromDatabaseError;
-exports.GenericError = GenericError;
-exports.NotFoundError = NotFoundError;
+module.exports = {
+  fromDatabaseError: fromDatabaseError,
+  GenericError: GenericError,
+  NotFoundError: NotFoundError,
+  AlreadyExistsError: AlreadyExistsError,
+  ValidationError: ValidationError
+}

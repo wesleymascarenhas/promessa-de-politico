@@ -1,7 +1,8 @@
 create table user (
   id                int(11) not null auto_increment,
-  name              varchar(100) not null,  
+  name              varchar(100) not null,
   gender            enum('MALE', 'FEMALE') default null,
+  permission        enum('USER', 'MODERATOR', 'ADMIN') default 'USER',
   username          varchar(100) not null,
   email             varchar(255) default null,
   photo_filename    varchar(255) default null,
@@ -51,7 +52,7 @@ create table politician (
   email                 varchar(100) default null,
   slug                  varchar(100) not null,
   state_id              int(11) default null,
-  political_party_id    int(11) not null,  
+  political_party_id    int(11) not null,
   political_office_id   int(11) not null,
   registered_by_user_id int(11) not null,
   registration_date     timestamp default current_timestamp,
@@ -59,13 +60,29 @@ create table politician (
   unique key `uq_politician_slug` (`slug`),
   unique key `uq_politician_email` (`email`),
   key `fk_politician_registered_by_user` (`registered_by_user_id`),
-  key `fk_politician_political_office` (`political_office_id`),  
+  key `fk_politician_political_office` (`political_office_id`),
   key `fk_politician_political_party` (`political_party_id`),
   key `fk_politician_state` (`state_id`),
   constraint `fk_politician_registered_by_user` foreign key (`registered_by_user_id`) references `user` (`id`),
   constraint `fk_politician_political_office` foreign key (`political_office_id`) references `political_office` (`id`),
   constraint `fk_politician_political_party` foreign key (`political_party_id`) references `political_party` (`id`),
   constraint `fk_politician_state` foreign key (`state_id`) references `state` (`id`)
+) engine = innodb default charset = utf8;
+
+create table politician_update (
+  id              int(11) not null auto_increment,
+  politician_id   int(11) not null,
+  user_id         int(11) not null,
+  field           varchar(255) default null,
+  old_value       varchar(255) default null,
+  new_value       varchar(255) default null,
+  update_date     timestamp default current_timestamp,
+  update_type     enum('POLITICIAN_REGISTERED', 'POLITICIAN_UPDATED', 'POLITICIAN_REMOVED') not null,
+  primary key (id),
+  key `fk_politician_update_politician` (`politician_id`),
+  key `fk_politician_update_user` (`user_id`),
+  constraint `fk_politician_update_politician` foreign key (`politician_id`) references `politician` (`id`),
+  constraint `fk_politician_update_user` foreign key (`user_id`) references `user` (`id`)
 ) engine = innodb default charset = utf8;
 
 create table politician_user_vote (
@@ -95,6 +112,7 @@ create table promise (
   slug                    varchar(255) not null,
   evidence_date           date default null,
   state                   enum('NON_STARTED', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'NOT_FULFILLED') not null,
+  fulfilled_date          date default null,
   last_state_update       date default null,
   category_id             int(11) not null,
   politician_id           int(11) not null,
@@ -120,7 +138,7 @@ create table promise_update (
   old_value       varchar(255) default null,
   new_value       varchar(255) default null,
   update_date     timestamp default current_timestamp,
-  update_type     enum('PROMISE_CREATED', 'PROMISE_UPDATED', 'PROMISE_REMOVED', 'EVIDENCE_CREATED', 'EVIDENCE_REMOVED'),
+  update_type     enum('PROMISE_REGISTERED', 'PROMISE_UPDATED', 'PROMISE_REMOVED', 'EVIDENCE_REGISTERED', 'EVIDENCE_REMOVED') not null,
   primary key (id),
   key `fk_promise_update_promise` (`promise_id`),
   key `fk_promise_update_user` (`user_id`),

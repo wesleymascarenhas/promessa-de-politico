@@ -5,9 +5,16 @@ var path = require('path'),
     _publicPath = path.join(__dirname, '../public'),
     _viewsPath = path.join(__dirname, '../views'),
     _email = {
-      contact: 'sandro.csimas@gmail.com',
-      apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',
-      domain: 'promessadepolitico.com.br'
+      dev: {
+        contact: 'sandro.csimas@gmail.com',
+        apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',
+        domain: 'promessadepolitico.com.br'
+      },
+      prod: {
+        contact: 'sandro.csimas@gmail.com',
+        apiKey: 'key-8k25kie96mv1wpdi01gnqu47-nos-0y1',
+        domain: 'promessadepolitico.com.br'
+      }
     },
     _database = {
       dev: {
@@ -72,7 +79,7 @@ module.exports = {
   nodeIP: _nodeIP,
   publicPath: _publicPath,
   viewsPath: _viewsPath,
-  email: _email,
+  email: _email[_nodeEnv],
   database: _database[_nodeEnv],
   facebook: _facebook[_nodeEnv],
   twitter: _twitter[_nodeEnv],

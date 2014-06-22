@@ -8,10 +8,11 @@ var Bookshelf           = require('../models/models').Bookshelf,
     PromiseCategory     = require('../models/models').PromiseCategory;
     helper              = require('../utils/helper'),
     modelUtils          = require('../utils/modelUtils'),
+    apiErrors           = require('./errors/apiErrors'),
     BluebirdPromise     = require('bluebird'),
     $                   = this;
 
-exports.forge = function(data) { 
+exports.forge = function(data) {
   return Promise.forge(modelUtils.filterAttributes('Promise', data));
 }
 
@@ -68,7 +69,7 @@ exports.latestPromises = function(politician, related, page, pageSize) {
 }
 
 exports.majorPromises = function(politician, related, page, pageSize) {
-  return Promise.collection().query(function(qb) {  
+  return Promise.collection().query(function(qb) {
     var subQuery = Bookshelf.knex('promise_user_vote').select('promise_id', Bookshelf.knex.raw('count(*) as votes')).groupBy('promise_id').toString();
     qb
     .where('politician_id', politician.id)
@@ -115,12 +116,12 @@ exports.findUserVote = function(user, promise) {
   });
 }
 
-exports.findUserVotesByPromise = function(user, promises) {  
+exports.findUserVotesByPromise = function(user, promises) {
   return new BluebirdPromise(function(resolve, reject) {
     PromiseUserVote.collection().query({where: {user_id: user.id}, whereIn: ['promise_id', modelUtils.getIds(promises)]}).fetch()
     .then(function(userVotesByPromise) {
       var userVotesByPromiseMap = {};
-      userVotesByPromise.forEach(function(promiseUserVote) {        
+      userVotesByPromise.forEach(function(promiseUserVote) {
         userVotesByPromiseMap[promiseUserVote.get('promise_id')] = promiseUserVote;
       });
       resolve(userVotesByPromiseMap);
@@ -151,7 +152,7 @@ exports.countUsersVotesByPromise = function(promises) {
     .select(Bookshelf.knex.raw('promise_id, count(*) as votes'))
     .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
-    .then(function(usersVotesCounts) {      
+    .then(function(usersVotesCounts) {
       var usersVotesCountsMap = {};
       usersVotesCounts.forEach(function(usersVotesCount) {
         usersVotesCountsMap[usersVotesCount.promise_id] = usersVotesCount.votes;
@@ -160,7 +161,7 @@ exports.countUsersVotesByPromise = function(promises) {
     }).catch(function(err) {
       reject(err);
     });
-  }); 
+  });
 }
 
 exports.countUsersComments = function(promise) {
@@ -184,7 +185,7 @@ exports.countUsersCommentsByPromise = function(promises) {
     .select(Bookshelf.knex.raw('promise_id, count(*) as comments'))
     .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
-    .then(function(usersCommentsCounts) {    
+    .then(function(usersCommentsCounts) {
       var usersCommentsCountsMap = {};
       usersCommentsCounts.forEach(function(usersCommentsCount) {
         usersCommentsCountsMap[usersCommentsCount.promise_id] = usersCommentsCount.comments;
@@ -217,7 +218,7 @@ exports.countEvidencesByPromise = function(promises) {
     .select(Bookshelf.knex.raw('promise_id, count(*) as evidences'))
     .whereIn('promise_id', modelUtils.getIds(promises))
     .groupBy('promise_id')
-    .then(function(evidencesCounts) {      
+    .then(function(evidencesCounts) {
       var evidencesCountsMap = {};
       evidencesCounts.forEach(function(evidencesCount) {
         evidencesCountsMap[evidencesCount.promise_id] = evidencesCount.evidences;
@@ -234,7 +235,7 @@ exports.count = function(politician) {
     Bookshelf.knex('promise')
     .select(Bookshelf.knex.raw('count(*) as promises'))
     .where('politician_id', politician.id)
-    .then(function(count) {      
+    .then(function(count) {
       if(count && count.length > 0) {
         resolve(count[0].promises);
       } else {
@@ -247,12 +248,12 @@ exports.count = function(politician) {
 }
 
 exports.countGroupingByState = function(politician) {
-  return new BluebirdPromise(function(resolve, reject) {    
+  return new BluebirdPromise(function(resolve, reject) {
     Bookshelf.knex('promise')
     .select(Bookshelf.knex.raw('state, count(*) as promises'))
     .where('politician_id', politician.id)
     .groupBy('state')
-    .then(function(promisesCountsByState) {     
+    .then(function(promisesCountsByState) {
       var mapByState = {};
       promisesCountsByState.forEach(function(promiseCountByState) {
         mapByState[promiseCountByState.state] = promiseCountByState.promises;
@@ -280,16 +281,16 @@ exports.countGroupingByState = function(politician) {
 }
 
 exports.countGroupingByCategory = function(politician) {
-  return new BluebirdPromise(function(resolve, reject) {    
+  return new BluebirdPromise(function(resolve, reject) {
     Bookshelf.knex('promise')
     .select(Bookshelf.knex.raw('category_id, count(*) as promises'))
     .where('politician_id', politician.id)
     .groupBy('category_id')
-    .then(function(promisesCountsByCategory) {     
+    .then(function(promisesCountsByCategory) {
       var mapByCategory = {};
       promisesCountsByCategory.forEach(function(promiseCountByCategory) {
         mapByCategory[promiseCountByCategory.category_id] = promiseCountByCategory.promises;
-      });      
+      });
       resolve(mapByCategory);
     }).catch(function(err) {
       reject(err);
@@ -299,20 +300,20 @@ exports.countGroupingByCategory = function(politician) {
 
 exports.vote = function(user, promise) {
   return new BluebirdPromise(function(resolve, reject) {
-    var promiseUserVote = PromiseUserVote.forge({user_id: user.id, promise_id: promise.id});    
+    var promiseUserVote = PromiseUserVote.forge({user_id: user.id, promise_id: promise.id});
     promiseUserVote.save().then(function(promiseUserVote) {
       resolve(promiseUserVote);
     }).catch(function(err) {
-      if(err.clientError.cause.code === "ER_DUP_ENTRY") {   
-        Bookshelf.knex('promise_user_vote')        
+      if(err.clientError.cause.code === "ER_DUP_ENTRY") {
+        Bookshelf.knex('promise_user_vote')
         .where('user_id', user.id)
         .andWhere('promise_id', promise.id)
         .del().then(function(rowsDeleted) {
           resolve(null);
         }).catch(function(err) {
           reject(err);
-        });          
-      } else {        
+        });
+      } else {
         reject(err);
       }
     });
@@ -346,12 +347,20 @@ exports.update = function(user, promise, evidences) {
       if(oldPromise.get('state') !== promise.get('state')) {
         promise.set('last_state_update', new Date());
       }
+      if(promise.get('state') !== 'FULFILLED') {
+        promise.set('fulfilled_date', null);
+      } else if(!promise.get('fulfilled_date')) {
+        throw new apiErrors.ValidationError('promise', 'fulfilledDateRequired');
+      }
+      if(promise.get('fulfilled_date') && promise.get('evidence_date') && promise.get('fulfilled_date') < promise.get('evidence_date')) {
+        throw new apiErrors.ValidationError('promise', 'fulfilledDateAfterEvidenceDate');
+      }
       return promise.save();
     }).then(function(promise) {
       return generatePromiseUpdates(user, this.oldPromise, promise);
     }).then(function(promiseUpdates) {
       evidences.forEach(function(evidence) {
-        if(evidence.isNew()) {          
+        if(evidence.isNew()) {
           evidence.set('promise_id', promise.id);
           evidence.set('registered_by_user_id', user.id);
         }
@@ -360,7 +369,7 @@ exports.update = function(user, promise, evidences) {
     }).then(function(evidences) {
       return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
     }).then(function(promise) {
-      resolve(promise);      
+      resolve(promise);
     }).catch(function(err) {
       reject(err);
     });
@@ -372,21 +381,25 @@ exports.register = function(user, politician, promise, evidences) {
     promise.set('politician_id', politician.id);
     promise.set('registered_by_user_id', user.id);
     promise.set('slug', helper.slugify(promise.get('title')));
-    promise.save().then(function(promise) {
-      return PromiseUpdate.forge({promise_id: promise.id, user_id: user.id, update_type: 'PROMISE_CREATED'}).save();
-    }).then(function(promiseUpdate) {
-      evidences.forEach(function(evidence) {
-        evidence.set('promise_id', promise.id);
-        evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
+    if(promise.get('state') === 'FULFILLED' && !promise.get('fulfilled_date')) {
+      reject(new apiErrors.BadStateError('promise', 'fulfilledDateRequired'));
+    } else {
+      promise.save().then(function(promise) {
+        return PromiseUpdate.forge({promise_id: promise.id, user_id: user.id, update_type: 'PROMISE_CREATED'}).save();
+      }).then(function(promiseUpdate) {
+        evidences.forEach(function(evidence) {
+          evidence.set('promise_id', promise.id);
+          evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
+        });
+        return evidences.invokeThen('save');
+      }).then(function(evidences) {
+        return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
+      }).then(function(promise) {
+        resolve(promise);
+      }).catch(function(err) {
+        reject(err);
       });
-      return evidences.invokeThen('save');
-    }).then(function(evidences) {        
-      return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
-    }).then(function(promise) {          
-      resolve(promise);      
-    }).catch(function(err) {
-      reject(err);
-    });
+    }
   });
 }
 

@@ -31,7 +31,7 @@ angular
     }
     $scope.searchPoliticians = function(value) {
       NProgress.start();
-      return politicianService.searchPoliticians(value, ['id', 'name', 'nickname', 'slug']).then(function(response) {
+      return politicianService.searchPoliticians(value, ["id", "name", "nickname", "slug"]).then(function(response) {
         NProgress.done();
         var politicians = []
         response.data.data.forEach(function(politician) {
@@ -66,6 +66,9 @@ angular
     };
     dataService.mergeData(backendData, $scope);
 
+    $scope.hasPermissionToEditPolitician = function() {
+      return authenticationService.isUserAuthenticated() && (authenticationService.getUser().permission === "ADMIN" || authenticationService.getUser().id === politician.registeredByUser.id);
+    };
     $scope.hasOnePromise = function() {
       return $scope.totalPromises == 1;
     };
@@ -278,7 +281,7 @@ angular
         $scope.flowModel.flow.upload();
       }).catch(function(response) {
         NProgress.done();
-        alertService.addAlert("danger", errorMessage('politicianRegistration', response.data.key));
+        alertService.addAlert("danger", errorMessage("politicianRegistration", response.data.key));
       });
     };
     $scope.isPresidentOfficeSelected = function() {
@@ -298,11 +301,16 @@ angular
     $scope.editingPromise = false;
     $scope.registeringPromise = false;
     dataService.mergeData(backendData, $scope);
+
     if($scope.registeringPromise) {
-      $scope.editedPromise = {category: backendData.category, category_id: backendData.category.id, evidences: [{}]};
+      $scope.editedPromise = {state: "NON_STARTED", category: backendData.category, category_id: backendData.category.id, evidences: [{}]};
+      $scope.showFulfilledDateInput = false;
     } else {
       $scope.editedPromise = {};
+      $scope.showFulfilledDateInput = backendData.promise && backendData.promise.state === "FULFILLED";
     }
+
+
     $scope.evidenceDatePickerFormat = "dd/MM/yyyy";
     $scope.openEvidenceDatePicker = function($event) {
       $event.preventDefault();
@@ -312,6 +320,21 @@ angular
     $scope.evidenceDatePickerMaxDate = new Date();
     $scope.evidenceDatePickerMinDate = new Date("2005-01-01");
 
+    $scope.fulfilledDatePickerFormat = "dd/MM/yyyy";
+    $scope.openFulfilledDatePicker = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.fulfilledDatePickerOpened = true;
+    };
+    $scope.fulfilledDatePickerMaxDate = new Date();
+    $scope.fulfilledDatePickerMinDate = new Date("2005-01-01");
+
+    $scope.isUserAuthenticated = function() {
+      return authenticationService.isUserAuthenticated();
+    };
+    $scope.authenticate = function() {
+      authenticationService.ensureAuth();
+    };
     $scope.comment = function(content) {
       if(authenticationService.ensureAuth()) {
         promiseService.commentPromise($scope.promise, content).then(function(response) {
@@ -460,12 +483,15 @@ angular
 
       NProgress.start();
       promiseService.editPromise(editedPromise, evidencesData).then(function(response) {
-        NProgress.done();
         $scope.promise = angular.copy(editedPromise);
         dataService.mergeData(response.data.data.promise, $scope.promise);
         $scope.totalPromiseEvidences = response.data.data.totalPromiseEvidences;
         $scope.cancelPromiseEdition();
         alertService.addAlert("success", "Promessa editada com sucesso!");
+      }).catch(function(response) {
+        alertService.addAlert("danger", errorMessage("promiseEdition", response.data.key));
+      }).finally(function() {
+        NProgress.done();
       });
     };
     $scope.isPromiseStateChoosed = function(state) {
@@ -473,6 +499,12 @@ angular
     };
     $scope.choosePromiseState = function(state) {
       $scope.editedPromise.state = state;
+      $scope.showFulfilledDateInput = state === "FULFILLED";
+      if(state !== "FULFILLED" || (state === "FULFILLED" && $scope.editedPromise.fulfilled_date)) {
+        $scope.promiseForm.fulfilled_date.$setValidity("required", true);
+      } else {
+        $scope.promiseForm.fulfilled_date.$setValidity("required", false);
+      }
     };
     $scope.isLastEvidence = function(index) {
       return $scope.editedPromise.evidences.length === index + 1;

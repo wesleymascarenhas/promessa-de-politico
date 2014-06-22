@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+  <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="O Promessa de Político é um banco de promessas dos políticos brasileiros. Saiba quem são os políticos que estão cumprindo ou não as suas promessas.">
   <meta name="author" content="Sandro Simas e Maday Avila">
-  <% block meta %>
-  <% endblock %>
+
   <title>Promessa de Político</title>
+
   <link href="/img/favicon.ico" rel="shortcut icon">
   <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
   <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -83,8 +84,8 @@
         <div class="col-md-4">
           <h4>Redes Sociais</h4>
           <ul>
-            <li><a href="http://www.facebook.com/promessa-de-politico">Facebook</a></li>
-            <li><a href="http://www.twitter.com/promessa-de-politico">Twitter</a></li>
+            <li><a href="http://www.facebook.com/promessadepolitico">Facebook</a></li>
+            <li><a href="http://www.twitter.com/promessadepolitico">Twitter</a></li>
           </ul>
         </div>
         <div class="col-md-4">
@@ -153,5 +154,21 @@
   </script>
   <% block scripts %>
   <% endblock %>
+  <script type="text/javascript">
+    var _sf_async_config = { uid: 56362, domain: 'promessadepolitico.com.br', useCanonical: true };
+    (function() {
+      function loadChartbeat() {
+        window._sf_endpt = (new Date()).getTime();
+        var e = document.createElement('script');
+        e.setAttribute('language', 'javascript');
+        e.setAttribute('type', 'text/javascript');
+        e.setAttribute('src','//static.chartbeat.com/js/chartbeat.js');
+        document.body.appendChild(e);
+      };
+      var oldonload = window.onload;
+      window.onload = (typeof window.onload != 'function') ?
+        loadChartbeat : function() { oldonload(); loadChartbeat(); };
+    })();
+  </script>
 </body>
 </html>

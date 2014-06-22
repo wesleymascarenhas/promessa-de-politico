@@ -211,7 +211,7 @@ var rankPoliticians = function(type, page, pageSize, politicalParty, state) {
     query.where(function() {
       this.where(function() {
         this.where('promise.state', '=', 'FULFILLED')
-        .whereRaw('datediff(now(), promise.last_state_update) ' + condition + ' ?', [120]);
+        .whereRaw('datediff(now(), promise.fulfilled_date) ' + condition + ' ?', [120]);
       });
       if(type === 'worst') {
         this.orWhere(function() {

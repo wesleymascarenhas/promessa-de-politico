@@ -86,10 +86,10 @@ module.exports = function(app, passport) {
       auth: true,
       action: function(user, params) {
         var promiseData = params[0];
-        var evidencesData = params[1];      
+        var evidencesData = params[1];
 
-        var promise = promiseService.forge(promiseData);    
-        var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
+        var promise = promiseService.forge(promiseData);
+        var evidences = promiseService.forgeEvidenceCollection(evidencesData);
         return viewService.editPromise(user, promise, evidences);
       }
     },
@@ -99,11 +99,11 @@ module.exports = function(app, passport) {
         var politician_id = params[0];
         var promiseData = params[1];
         var evidencesData = params[2];
-              
+
         var politician = politicianService.forge({id: politician_id});
-        var promise = promiseService.forge(promiseData);    
-        var evidences = promiseService.forgeEvidenceCollection(evidencesData);      
-        return viewService.registerPromise(user, politician, promise, evidences);        
+        var promise = promiseService.forge(promiseData);
+        var evidences = promiseService.forgeEvidenceCollection(evidencesData);
+        return viewService.registerPromise(user, politician, promise, evidences);
       }
     },
     getOEmbed: {
@@ -129,7 +129,7 @@ module.exports = function(app, passport) {
     },
     registerPolitician: {
       auth: true,
-      action: function(user, params) {        
+      action: function(user, params) {
         var politician = politicianService.forge(params[0]);
         return politicianService.register(user, politician);
       }
@@ -162,12 +162,12 @@ module.exports = function(app, passport) {
         var comment_id = params[0];
         return promiseService.removeComment(comment_id);
       }
-    },    
+    },
     searchPoliticians: {
       auth: false,
       action: function(user, params) {
         var value = params[0];
-        var columns = params[1];       
+        var columns = params[1];
         return politicianService.search(value, columns);
       }
     },
@@ -188,7 +188,7 @@ module.exports = function(app, passport) {
         var pageSize = params[1];
         var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
         var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
-        return politicianService.bestPoliticians(page, pageSize, politicalParty, state); 
+        return politicianService.bestPoliticians(page, pageSize, politicalParty, state);
       }
     },
     worstPoliticians: {
@@ -198,7 +198,7 @@ module.exports = function(app, passport) {
         var pageSize = params[1];
         var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
         var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
-        return politicianService.worstPoliticians(page, pageSize, politicalParty, state); 
+        return politicianService.worstPoliticians(page, pageSize, politicalParty, state);
       }
     },
     politiciansWithoutPromises: {
@@ -208,7 +208,7 @@ module.exports = function(app, passport) {
         var pageSize = params[1];
         var politicalParty = params[2] ? politicianService.forgePoliticalParty({id: params[2]}) : null;
         var state = params[3] ? politicianService.forgeState({id: params[3]}) : null;
-        return politicianService.politiciansWithoutPromises(page, pageSize, politicalParty, state);  
+        return politicianService.politiciansWithoutPromises(page, pageSize, politicalParty, state);
       }
     },
     sendEmail: {
@@ -229,7 +229,6 @@ module.exports = function(app, passport) {
     var key = req.body.key || req.query.key;
     var params = req.body.params || req.query.params;
 
-    try {
     var mappedPromise = promisesMapper[key];
     if(!mappedPromise) {
       res.status(404).send('Not found')
@@ -238,19 +237,17 @@ module.exports = function(app, passport) {
         res.status(401).send('Authentication required');
       } else {
         mappedPromise.action(user, params).then(function(data) {
-          res.json({data: data});        
+          res.json({data: data});
         }).catch(function(err) {
           if(err instanceof apiErrors.GenericError) {
             res.json(err.statusCode, err.toJSON());
           } else {
+            console.log(err.stack)
             res.json(500, {statusCode: 500, key: 'internalError'});
           }
         });
       }
     }
-    } catch(err) {
-      console.log(err.stack)
-    };
   });
 
 }

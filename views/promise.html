@@ -75,12 +75,13 @@
           <div class="overflow-hidden">
             <div class="pull-left">
               <h4 class="dates">
-                  <span ng-show="promise.evidence_date">
-                    Promessa feita <span am-time-ago="promise.evidence_date"></span>
-                    •
-                  </span>
-                  Registrada por {{ promise.registeredByUser.name }}
-                  <span am-time-ago="promise.registration_date"></span>
+                <span ng-show="promise.evidence_date">
+                  Promessa feita <span am-time-ago="promise.evidence_date"></span>
+                </span>
+
+                <span ng-show="promise.fulfilled_date">
+                  • Cumprida <span am-time-ago="promise.fulfilled_date"></span>
+                </span>
               </h4>
             </div>
             <div class="pull-right">
@@ -181,16 +182,40 @@
               ">Não Cumpriu</button>
             </div>
           </div>
-          <div class="form-group">
-            <label>Data em que a promessa foi feita</label>
-            <div class="row">
-              <div class="col-md-4" ng-class="{'has-error': promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine}">
-                <label class="control-label" for="evidence_date" ng-show="promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine">Formato inválido (Exemplo: 05/05/2014)</label>
-                <div class="input-group">
-                  <input type="text" name="evidence_date" class="form-control" datepicker-popup="{{evidenceDatePickerFormat}}" ng-model="editedPromise.evidence_date" is-open="evidenceDatePickerOpened" min-date="evidenceDatePickerMinDate" max-date="evidenceDatePickerMaxDate" current-text="Hoje" clear-text="Limpar" close-text="Fechar"/>
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="openEvidenceDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                  </span>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Data em que a promessa foi feita</label>
+                <div ng-class="{'has-error': promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine}">
+                  <label class="control-label" for="evidence_date" ng-show="promiseForm.evidence_date.$invalid && !promiseForm.evidence_date.$pristine">
+                    Formato inválido (Exemplo: 05/05/2014)
+                  </label>
+                  <div class="input-group">
+                    <input type="text" name="evidence_date" class="form-control" datepicker-popup="{{evidenceDatePickerFormat}}" ng-model="editedPromise.evidence_date" is-open="evidenceDatePickerOpened" min-date="evidenceDatePickerMinDate" max-date="evidenceDatePickerMaxDate" current-text="Hoje" clear-text="Limpar" close-text="Fechar"/>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openEvidenceDatePicker($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div ng-show="showFulfilledDateInput" class="col-md-8">
+              <div class="form-group">
+                <label>Data em que a promessa foi cumprida (Não precisa ser uma data exata)</label>
+                <div ng-class="{'has-error': promiseForm.fulfilled_date.$invalid}">
+                  <label class="control-label" for="fulfilled_date" ng-show="promiseForm.fulfilled_date.$error.date">
+                    Formato inválido (Exemplo: 05/05/2014)
+                  </label>
+                  <div class="input-group" style="width: 50%;">
+                    <input type="text" name="fulfilled_date" class="form-control" datepicker-popup="{{fulfilledDatePickerFormat}}" ng-model="editedPromise.fulfilled_date" is-open="fulfilledDatePickerOpened" min-date="fulfilledDatePickerMinDate" max-date="fulfilledDatePickerMaxDate" current-text="Hoje" clear-text="Limpar" close-text="Fechar" ng-required="true"/>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="openFulfilledDatePicker($event)">
+                        <i class="glyphicon glyphicon-calendar"></i>
+                      </button>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -200,8 +225,6 @@
             <div style="margin-left: 0px; margin: 5px 0px 15px 0px;">
               <small>Aperte <span class="glyphicon glyphicon-plus"></span> para adicionar ou <span class="glyphicon glyphicon-minus"></span> para remover uma evidência</small>
             </div>
-
-
             <div ng-repeat="evidence in editedPromise.evidences" style="margin-bottom: 10px;">
               <div>
                 <div class="well">
@@ -279,7 +302,7 @@
             <div class="comments-content">
               <form name="commentForm" class="form-horizontal">
                 <div class="comments-comment">
-                    <div class="form-group">
+                    <div ng-if="isUserAuthenticated()" class="form-group">
                       <div class="col-md-10">
                         <div text-angular name="userComment" ng-model="userComment" ta-toolbar="[]" required>
                         </div>
@@ -287,6 +310,13 @@
                       <div class="col-md-2">
                         <button ng-disabled="commentForm.userComment.$pristine || commentForm.userComment.$invalid" ng-click="comment(userComment);userComment = '';" type="button" class="btn btn-default btn-block">
                           Comentar
+                        </button>
+                      </div>
+                    </div>
+                    <div ng-if="!isUserAuthenticated()" class="form-group">
+                      <div class="col-md-12">
+                        <button ng-click="authenticate()" type="button" class="btn btn-default btn-block">
+                          Acesse sua conta para comentar
                         </button>
                       </div>
                     </div>
