@@ -1,12 +1,10 @@
 <% extends "template.html" %>
 
-<% block title %>
+<% block title -%>
 Promessa de <$ backendData.politician.get("displayName") $> - <$ backendData.promise.get("title") $> | Promessa de Político
-<% endblock %>
+<%- endblock %>
 
-<% block image %>
-/img/politicians/<$ backendData.politician.get("photo_filename") $>
-<% endblock %>
+<% block image -%>/img/politicians/<$ backendData.politician.get("photo_filename") $><%- endblock %>
 
 <% block content %>
 <div class="container" ng-controller="promiseController">

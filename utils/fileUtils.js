@@ -1,11 +1,11 @@
 var settings = require('../configs/settings'),
-    request = require('request'),
-    mime    = require('mime'),
-    path    = require('path'),
-    fs      = require('fs'),
-    _       = require('underscore'),
-    Promise = require('bluebird'),
-    $       = this;
+    request  = require('request'),
+    mime     = require('mime'),
+    path     = require('path'),
+    fs       = require('fs'),
+    _        = require('underscore'),
+    Promise  = require('bluebird'),
+    $        = this;
 
 exports.extensions = {
   image: ['jpg', 'jpeg', 'png', 'gif']
@@ -19,12 +19,12 @@ exports.userPhotoFilePath = function(obj) {
   return path.join(settings.publicPath, 'img/users/', obj ? obj : '');
 }
 
-exports.downloadUserPhoto = function(uri, user, extensionsAccepted) {  
+exports.downloadUserPhoto = function(uri, user, extensionsAccepted) {
   return new Promise(function(resolve, reject) {
     var photoFilename = $.userPhotoFilename(user);
     var photoPath = $.userPhotoFilePath();
     $.download(uri, photoPath, photoFilename, extensionsAccepted).then(function(filenameWithExtension) {
-      user.set('photo_filename', filenameWithExtension);      
+      user.set('photo_filename', filenameWithExtension);
       resolve(user);
     }).catch(function(err) {
       reject(err);
@@ -45,7 +45,7 @@ exports.downloadPoliticianPhoto = function(uri, politician, extensionsAccepted) 
     var photoFilename = $.politicianPhotoFilename(politician);
     var photoPath = $.politicianPhotoFilePath();
     $.download(uri, photoPath, photoFilename, extensionsAccepted).then(function(filenameWithExtension) {
-      politician.set('photo_filename', filenameWithExtension);      
+      politician.set('photo_filename', filenameWithExtension);
       resolve(politician);
     }).catch(function(err) {
       reject(err);
@@ -68,7 +68,7 @@ exports.download = function(uri, filePath, filename, extensionsAccepted) {
           pipe.on('close', function() {
             resolve(filenameWithExtension);
           });
-          pipe.on('error', reject);  
+          pipe.on('error', reject);
         }
       }
     });

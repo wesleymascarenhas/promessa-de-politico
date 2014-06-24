@@ -1,14 +1,14 @@
 <% extends "template.html" %>
 
-<% block title %>
-<% if backendData.rankType == "best" %>
+<% block title -%>
+<% if backendData.rankType == "best" -%>
 Políticos que cumpriram promessas nos últimos meses | Promessa de Político
-<% elif backendData.rankType == "worst" %>
+<% elif backendData.rankType == "worst" -%>
 Políticos que não cumpriram promessas nos últimos meses | Promessa de Político
-<% elif backendData.rankType == "withoutPromises" %>
+<% elif backendData.rankType == "withoutPromises" -%>
 Políticos que ainda não tem promessas registradas | Promessa de Político
-<% endif %>
-<% endblock %>
+<%- endif %>
+<%- endblock %>
 
 <% block content %>
 <div class="container" ng-controller="politiciansRankController">

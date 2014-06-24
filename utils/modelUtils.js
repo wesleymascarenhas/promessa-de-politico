@@ -1,5 +1,6 @@
 var _ = require('underscore');
-var filter = function(data, attributes) {
+
+function filter(data, attributes) {
   var filtered = {};
   attributes.forEach(function(attribute) {
     if(!_.isUndefined(data[attribute])) {
