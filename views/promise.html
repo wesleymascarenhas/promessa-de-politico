@@ -10,9 +10,9 @@ Promessa de <$ backendData.politician.get("displayName") $> - <$ backendData.pro
 <div class="container" ng-controller="promiseController">
   <div class="align-right">
     <div ng-if="!isRegisteringPromise()">
-      <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
-      <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
-      <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
+      <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+      <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+      <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
     </div>
   </div>
   <div class="row">
@@ -81,7 +81,6 @@ Promessa de <$ backendData.politician.get("displayName") $> - <$ backendData.pro
                 <span ng-show="promise.evidence_date">
                   Promessa feita <span am-time-ago="promise.evidence_date"></span>
                 </span>
-
                 <span ng-show="promise.fulfilled_date">
                   • Cumprida <span am-time-ago="promise.fulfilled_date"></span>
                 </span>

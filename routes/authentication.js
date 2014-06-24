@@ -4,7 +4,7 @@ module.exports = function(app, passport) {
 
   app.get('/logout', authorization.isAuthenticated, function(req, res) {
     req.logout();
-    res.redirect('/home');
+    res.redirect('/politicos');
   });
 
   app.get('/auth-success', function(req, res) {

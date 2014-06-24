@@ -2,8 +2,8 @@ angular
   .module("politiciansPromiseApp")
   .service("dataService", [function() {
     this.mergeData = function(source, destiny) {
-      for (var attr in source) { 
-        destiny[attr] = source[attr]; 
+      for (var attr in source) {
+        destiny[attr] = source[attr];
       }
     };
   }])
@@ -15,7 +15,7 @@ angular
     this.addAlert = function(type, message) {
       var that = this;
       var alert = {type: type, msg: message};
-      this.getAlerts().push(alert);      
+      this.getAlerts().push(alert);
       $timeout(function() {
         that.getAlerts().splice(that.getAlerts().indexOf(alert), 1);
       }, 5000);
@@ -103,7 +103,7 @@ angular
     this.getAllCategories = function() {
       return $http.post("/ajax", {key: "getAllCategories"});
     };
-  }]) 
+  }])
   .service("authenticationService", ["$modal", "$window", "backendData", function($modal, $window, backendData) {
     var $ = this;
     var user = angular.isDefined(backendData.user) ? backendData.user : null;
@@ -112,11 +112,11 @@ angular
       backdrop: true,
       keyboard: true,
       templateUrl: "/partials/login-modal.html",
-      controller: function($scope, $modalInstance) {  
-        $scope.modalScope = {};     
+      controller: function($scope, $modalInstance) {
+        $scope.modalScope = {};
         $scope.modalScope.close = function(result) {
           $modalInstance.dismiss("cancel");
-        };   
+        };
         $scope.modalScope.auth = function(provider) {
           var authWindow = $window.open("/auth/" + provider + "", "", "");
           $window.authResult = function(result) {
@@ -128,7 +128,7 @@ angular
               $modalInstance.close($.isUserAuthenticated());
             }
           }
-        }; 
+        };
       }
     };
     this.getUser = function() {
@@ -138,10 +138,10 @@ angular
       return userAuthenticated;
     };
     this.ensureAuth = function() {
-      if(!this.isUserAuthenticated()) {              
+      if(!this.isUserAuthenticated()) {
         $modal.open(modalOptions).result.then(function(authenticated) {
           if(authenticated === true) {
-            $window.location.reload(); 
+            $window.location.reload();
           } else {
             return false;
           }
@@ -151,31 +151,31 @@ angular
       }
     };
   }])
-  .service("modalService", ["$modal", function($modal) {    
+  .service("modalService", ["$modal", function($modal) {
     var modalOptions = {
       backdrop: true,
       keyboard: true,
-      templateUrl: "/partials/modal.html",      
+      templateUrl: "/partials/modal.html",
     };
     var modalScope = {
       headerText: "Deseja realmente proceder ?",
       bodyText: "",
-      closeButtonText: 'Cancelar',
-      actionButtonText: 'Continuar',
-    };  
-    this.show = function(customModalOptions, customModalScope) { 
+      closeButtonText: "Cancelar",
+      actionButtonText: "Continuar",
+    };
+    this.show = function(customModalOptions, customModalScope) {
       var extendedOptions = {};
       var extendedScope = {};
       angular.extend(extendedOptions, modalOptions, customModalOptions);
       angular.extend(extendedScope, modalScope, customModalScope);
-      extendedOptions.controller = function($scope, $modalInstance) {  
+      extendedOptions.controller = function($scope, $modalInstance) {
         $scope.modalScope = extendedScope;
         $scope.modalScope.action = function() {
           $modalInstance.close("action");
-        };    
+        };
         $scope.modalScope.close = function() {
           $modalInstance.dismiss("cancel");
-        };        
+        };
       };
       return $modal.open(extendedOptions).result;
     };

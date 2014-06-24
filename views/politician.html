@@ -93,9 +93,9 @@
                   <h4>Promessas cumpridas</h4>
                 </div>
                 <div>
-                  <a ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Facebook" class="icon icon-facebook" target="_blank"></a>
-                  <a ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Twitter" class="icon icon-twitter"target="_blank"></a>
-                  <a ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Google+" class="icon icon-googleplus"target="_blank"></a>
+                  <a ng-href="http://www.facebook.com/sharer/sharer.php?u=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Facebook" class="icon icon-facebook" target="_blank"></a>
+                  <a ng-href="http://twitter.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Twitter" class="icon icon-twitter"target="_blank"></a>
+                  <a ng-href="https://plus.google.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}" title="Compartilhe as promessas de {{ politician.name }} no Google+" class="icon icon-googleplus"target="_blank"></a>
                 </div>
               </div>
             </div>
@@ -341,17 +341,17 @@
                           <div class="promise-author">
                             <span ng-if="promise.evidence_date">
                               Promessa feita <span am-time-ago="promise.evidence_date"></span>
-                              •
                             </span>
-                            Registrada por {{ promise.registeredByUser.name }}
-                            <span am-time-ago="promise.registration_date"></span>
+                            <span ng-if="promise.fulfilled_date">
+                              • Cumprida <span am-time-ago="promise.fulfilled_date"></span>
+                            </span>
                           </div>
                         </div>
                         <div class="col-md-2">
                           <span class="social pull-right">
-                            <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
-                            <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
-                            <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
+                            <a class="icon icon-facebook" ng-href="http://www.facebook.com/sharer/sharer.php?u=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Facebook" target="_blank"></a>
+                            <a class="icon icon-twitter" ng-href="http://twitter.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Twitter" target="_blank"></a>
+                            <a class="icon icon-googleplus" ng-href="https://plus.google.com/share?url=http://www.promessadepolitico.com.br/politico/{{ politician.slug }}/{{ promise.id }}/{{ promise.slug }}" title="Compartilhe essa promessa no Google+" target="_blank"></a>
                           </span>
                         </div>
                       </div>
