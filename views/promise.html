@@ -1,6 +1,11 @@
 <% extends "template.html" %>
 
-<% block stylesheets %>
+<% block title %>
+Promessa de <$ backendData.politician.get("displayName") $> - <$ backendData.promise.get("title") $> | Promessa de Político
+<% endblock %>
+
+<% block image %>
+/img/politicians/<$ backendData.politician.get("photo_filename") $>
 <% endblock %>
 
 <% block content %>

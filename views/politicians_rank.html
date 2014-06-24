@@ -1,6 +1,13 @@
 <% extends "template.html" %>
 
-<% block stylesheets %>
+<% block title %>
+<% if backendData.rankType == "best" %>
+Políticos que cumpriram promessas nos últimos meses | Promessa de Político
+<% elif backendData.rankType == "worst" %>
+Políticos que não cumpriram promessas nos últimos meses | Promessa de Político
+<% elif backendData.rankType == "withoutPromises" %>
+Políticos que ainda não tem promessas registradas | Promessa de Político
+<% endif %>
 <% endblock %>
 
 <% block content %>
@@ -19,14 +26,14 @@
       <div class="col-md-8">
         <div class="row">
           <div class="col-md-4">
-            <select class="form-control" nya-selectpicker ng-model="selectedPoliticalParty" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="filterSelected()" data-container="body"></select>        
-          </div>        
-          <div class="col-md-4">                      
+            <select class="form-control" nya-selectpicker ng-model="selectedPoliticalParty" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="filterSelected()" data-container="body"></select>
+          </div>
+          <div class="col-md-4">
             <select class="form-control" nya-selectpicker ng-model="selectedState" ng-options="state.name for state in states" ng-change="filterSelected()" data-container="body"></select>
           </div>
         </div>
       </div>
-      <div class="col-md-4 align-right">         
+      <div class="col-md-4 align-right">
         <a class="btn btn-primary btn-lg" ng-click="registerPolitician()">
           <span class="glyphicon glyphicon-plus"></span>
           Adicionar Político
@@ -37,7 +44,7 @@
       <div ng-if="!existsPoliticians()" class="col-md-12 align-center">
         <div ng-if="isBestRank()" class="jumbotron">
           <h2>
-            Ajude-nos a encontrar políticos exemplares 
+            Ajude-nos a encontrar políticos exemplares
             <span ng-show="hasPoliticalPartySelected()">
               do {{ selectedPoliticalParty.acronym }}
             </span>
@@ -53,7 +60,7 @@
         </div>
         <div ng-if="isWorstRank()" class="jumbotron">
           <h2>
-            Ajude-nos a encontrar políticos 
+            Ajude-nos a encontrar políticos
             <span ng-show="hasPoliticalPartySelected()">
               do {{ selectedPoliticalParty.acronym }}
             </span>
@@ -89,7 +96,7 @@
                       ({{ politician.total_fulfilled_promises }}/{{ politician.total_promises }})
                     </small>
                   </p>
-                  <div class="overflow-hidden">                   
+                  <div class="overflow-hidden">
                     <div class="votes">
                       <div class="vote">
                         <div class="vote-up">
@@ -114,19 +121,16 @@
                             {{ totalPoliticianDownUsersVotes(politician) }}
                           </span>
                         </div>
-                      </div>     
-                    </div>                    
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>      
+        </div>
       </div>
     </div>
   </div>
 </div>
-<% endblock %>
-
-<% block scripts %> 
 <% endblock %>

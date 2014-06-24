@@ -5,13 +5,19 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="O Promessa de Político é um banco de promessas dos políticos brasileiros. Saiba quem são os políticos que estão cumprindo ou não as suas promessas.">
+  <meta name="description" content="<% block description %>O Promessa de Político é um banco de promessas dos políticos brasileiros. Saiba quem são os políticos que estão cumprindo ou não as suas promessas.<% endblock %>">
   <meta name="author" content="Sandro Simas e Maday Avila">
 
-  <title>Promessa de Político</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<% block title %>Promessa de Político<% endblock %>">
+  <meta property="og:description" content="<% block description %>O Promessa de Político é um banco de promessas dos políticos brasileiros. Saiba quem são os políticos que estão cumprindo ou não as suas promessas.<% endblock %>">
+  <meta property="og:image" content="http://www.promessadepolitico.com.br<% block image %>/img/og_index.jpg<% endblock %>">
+  <% block meta %>
+  <% endblock %>
 
-  <link href="/img/favicon.ico" rel="shortcut icon">
-  <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+  <title><% block title %>Promessa de Político<% endblock %></title>
+
+  <link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
   <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="/bower_components/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
   <link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -19,10 +25,10 @@
   <link href="/bower_components/angular-social/angular-social.css" rel="stylesheet">
   <link href="/css/nprogress.css" rel="stylesheet">
   <link href="/css/main.css" rel="stylesheet">
+  <link href="/img/favicon.ico" rel="shortcut icon">
 
   <script src="/bower_components/jquery/dist/jquery.min.js"></script>
   <script src="/bower_components/angular/angular.min.js"></script>
-
   <% block stylesheets %>
   <% endblock %>
 </head>
