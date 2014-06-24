@@ -1,8 +1,19 @@
 var slug = require('slug');
 slug.charmap['.'] = ' ';
+slug.charmap['('] = ' ';
+slug.charmap[')'] = ' ';
+slug.charmap['{'] = ' ';
+slug.charmap['}'] = ' ';
+slug.charmap['['] = ' ';
+slug.charmap[']'] = ' ';
+slug.charmap['"'] = ' ';
 
 exports.slugify = function(str) {
-  return slug(str).toLowerCase();
+  var slugified = '';
+  if(str) {
+    slugified = slug(str).toLowerCase();
+  }
+  return slugified;
 }
 
 exports.randomInt = function(min, max) {
@@ -14,7 +25,7 @@ exports.randomIndex = function(collection) {
 }
 
 exports.merge = function(first, second) {
-  for (var attr in first) { 
-    second[attr] = first[attr]; 
+  for (var attr in first) {
+    second[attr] = first[attr];
   }
 }

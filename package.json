@@ -6,7 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "newrelic": "1.7.3",
+    "bunyan": "0.23.1",
     "express": "3.4.4",
     "connect-multiparty": "1.0.3",
     "nunjucks": "1.0.4",
@@ -23,6 +23,7 @@
     "bluebird": "1.2.4",
     "request": "2.36.0",
     "mime": "1.2.11",
-    "mailgun-js": "0.4.13"
+    "mailgun-js": "0.4.13",
+    "newrelic": "1.7.3"
   }
 }
