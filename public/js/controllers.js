@@ -304,12 +304,11 @@ angular
 
     if($scope.registeringPromise) {
       $scope.editedPromise = {state: "NON_STARTED", category: backendData.category, category_id: backendData.category.id, evidences: [{}]};
-      $scope.showFulfilledDateInput = false;
+      $scope.fulfilledPromise = false;
     } else {
       $scope.editedPromise = {};
-      $scope.showFulfilledDateInput = backendData.promise && backendData.promise.state === "FULFILLED";
+      $scope.fulfilledPromise = backendData.promise && backendData.promise.state === "FULFILLED";
     }
-
 
     $scope.evidenceDatePickerFormat = "dd/MM/yyyy";
     $scope.openEvidenceDatePicker = function($event) {
@@ -427,11 +426,9 @@ angular
     $scope.editPromise = function() {
       if(authenticationService.ensureAuth()) {
         $scope.editedPromise = angular.copy($scope.promise);
+        $scope.editedPromise.evidences.push({});
         if($scope.editedPromise.evidence_date) {
           $scope.editedPromise.evidence_date = new Date($scope.editedPromise.evidence_date);
-        }
-        if($scope.editedPromise.evidences.length === 0) {
-          $scope.editedPromise.evidences.push({});
         }
         if(!$scope.categories) {
           NProgress.start();
@@ -499,7 +496,7 @@ angular
     };
     $scope.choosePromiseState = function(state) {
       $scope.editedPromise.state = state;
-      $scope.showFulfilledDateInput = state === "FULFILLED";
+      $scope.fulfilledPromise = state === "FULFILLED";
       if(state !== "FULFILLED" || (state === "FULFILLED" && $scope.editedPromise.fulfilled_date)) {
         $scope.promiseForm.fulfilled_date.$setValidity("required", true);
       } else {
@@ -525,7 +522,7 @@ angular
         } else {
           var modalScope = {
             headerText: "Deseja remover essa evidência ?",
-            bodyText: "As evidências são importantes, pois comprovam essa promessa."
+            bodyText: "A evidência é o meio mais importante para comprovar o andamento da promessa. Deseja realmente remover essa evidência ?"
           };
           modalService.show({}, modalScope).then(function(result) {
             NProgress.start();
@@ -544,7 +541,6 @@ angular
       var url = event.originalEvent.clipboardData.getData("text/plain");
       NProgress.start();
       oembedService.getOEmbed(encodeURIComponent(url)).then(function(response) {
-        NProgress.done();
         var data = response.data.data;
         var meta = data.meta;
         if(meta.title) {
@@ -560,28 +556,24 @@ angular
           evidence.host = data.host;
         }
 
-        var foundThumbnail = false;
-        var thumbnailLink = null;
-        var iconLink = null;
-        for(index in data.links) {
-          var link = data.links[index];
-          if(link.rel) {
-            for(relIndex in link.rel) {
-              var rel = link.rel[relIndex];
-              if(!thumbnailLink && rel === "thumbnail") {
-                thumbnailLink = link.href;
-              }
-              if(!iconLink && rel === "icon") {
-                iconLink = link.href;
-              }
-            }
+        for(index in data.links.thumbnail) {
+          var link = data.links.thumbnail[index];
+          evidence.image = link.href;
+          break;
+        }
+        if(!evidence.image) {
+          for(index in data.links.icon) {
+            var link = data.links.icon[index];
+            evidence.image = link.href;
           }
         }
-        if(thumbnailLink) {
-          evidence.image = thumbnailLink;
-        } else if(iconLink) {
-          evidence.image = iconLink;
-        }
+
+        $scope.addEvidence();
+      }).catch(function() {
+        evidence.url = url;
+        $scope.addEvidence();
+      }).finally(function() {
+        NProgress.done();
       });
     };
   }])

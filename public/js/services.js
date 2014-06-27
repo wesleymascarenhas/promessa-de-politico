@@ -63,7 +63,7 @@ angular
   }])
   .service("oembedService", ["$http", function($http) {
     this.getOEmbed = function(url) {
-      return $http.post("/ajax", {key: "getOEmbed", params: url});
+      return $http.post("/ajax", {key: "getOEmbed", params: [url]});
     };
   }])
   .service("promiseService", ["$http", function($http) {

@@ -14,25 +14,25 @@ function GenericError(statusCode, key) {
 };
 util.inherits(GenericError, Error);
 
-function NotFoundError(model) {
-  NotFoundError.super_.call(this, 404, model + ".notFound");
+function NotFoundError(entity) {
+  NotFoundError.super_.call(this, 404, entity + ".notFound");
 };
 util.inherits(NotFoundError, GenericError);
 
-function AlreadyExistsError(model) {
-  AlreadyExistsError.super_.call(this, 400, model + ".alreadyExists");
+function AlreadyExistsError(entity) {
+  AlreadyExistsError.super_.call(this, 400, entity + ".alreadyExists");
 };
 util.inherits(AlreadyExistsError, GenericError);
 
-function ValidationError(model, validationKey) {
-  ValidationError.super_.call(this, 400, model + ".validation." + validationKey);
+function ValidationError(entity, validationKey) {
+  ValidationError.super_.call(this, 400, entity + ".validation." + validationKey);
 };
 util.inherits(ValidationError, GenericError);
 
-function fromDatabaseError(model, err) {
+function fromDatabaseError(entity, err) {
   var errorType = errorMapping[err.clientError.cause.code];
   if(errorType) {
-    return new errorType(model);
+    return new errorType(entity);
   } else {
     return new GenericError(400, 'unknown');
   }

@@ -4,6 +4,7 @@ var path = require('path'),
     _nodePort = process.env.NODE_PORT || 3000,
     _publicPath = path.join(__dirname, '../public'),
     _viewsPath = path.join(__dirname, '../views'),
+    _oembedApiKey = '1e9d27d76b02e60bc0afdf',
     _email = {
       dev: {
         contact: 'sandro.csimas@gmail.com',
@@ -83,5 +84,6 @@ module.exports = {
   database: _database[_nodeEnv],
   facebook: _facebook[_nodeEnv],
   twitter: _twitter[_nodeEnv],
-  google: _google[_nodeEnv]
+  google: _google[_nodeEnv],
+  oembedApiKey: _oembedApiKey
 };

@@ -1,7 +1,20 @@
 <% extends "template.html" %>
 
-<% block title -%>Promessas de <$ backendData.politician.get("displayName") $> | Promessa de Político<%- endblock %>
-<% block image -%>/img/politicians/<$ backendData.politician.get("photo_filename") $><%- endblock %>
+<% block title -%>
+  <% if backendData.registeringPolitician == false -%>
+    Promessas de <$ backendData.politician.get("displayName") $> | Promessa de Político
+  <% else -%>
+    Novo político
+  <%- endif %>
+<%- endblock %>
+
+<% block image -%>
+  <% if backendData.registeringPolitician == false -%>
+    /img/politicians/<$ backendData.politician.get("photo_filename") $>
+  <% else -%>
+    /img/no-image.gif
+  <%- endif %>
+<%- endblock %>
 
 <% block stylesheets %>
 <% endblock %>

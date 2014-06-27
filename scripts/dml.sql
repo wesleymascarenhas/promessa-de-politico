@@ -77,7 +77,7 @@ insert into promise_category (id, name, slug) values (6, 'Copa e Olimpíadas', '
 insert into promise_category (id, name, slug) values (7, 'Habitação', 'habitacao');
 insert into promise_category (id, name, slug) values (8, 'Urbanização', 'urbanizacao');
 insert into promise_category (id, name, slug) values (9, 'Segurança e Defesa', 'seguranca-e-defesa');
-insert into promise_category (id, name, slug) values (10, 'Transporte e Infraestrutura', 'transporte-e-infraestrutura');
+insert into promise_category (id, name, slug) values (10, 'Mobilidade Urbana, Transporte e Infraestrutura', 'mobilidade-urbana-transporte-e-infraestrutura');
 insert into promise_category (id, name, slug) values (11, 'Emprego e Renda', 'emprego-e-renda');
 insert into promise_category (id, name, slug) values (12, 'Impostos', 'impostos');
 insert into promise_category (id, name, slug) values (13, 'Administração', 'administracao');
@@ -87,10 +87,11 @@ insert into promise_category (id, name, slug) values (16, 'Indústria', 'industr
 insert into promise_category (id, name, slug) values (17, 'Pequenas Empresas', 'pequenas-empresas');
 insert into promise_category (id, name, slug) values (18, 'Petróleo', 'petroleo');
 insert into promise_category (id, name, slug) values (19, 'Outras Fontes de Energia', 'outras-fontes-de-energia');
-insert into promise_category (id, name, slug) values (20, 'Meio Ambiente', 'meio-ambiente');
+insert into promise_category (id, name, slug) values (20, 'Meio Ambiente e Sustentabilidade', 'meio-ambiente-e-sustentabilidade');
 insert into promise_category (id, name, slug) values (21, 'Reforma Agrária e Agricultura', 'reforma-agraria-e-agricultura');
 insert into promise_category (id, name, slug) values (22, 'Irrigação', 'irrigacao');
 insert into promise_category (id, name, slug) values (23, 'Família e Religião', 'familia-e-religiao');
 insert into promise_category (id, name, slug) values (24, 'Cultura', 'cultura');
 insert into promise_category (id, name, slug) values (25, 'Mídia e Livre Expressão', 'midia-e-livre-expressao');
 insert into promise_category (id, name, slug) values (26, 'Política Externa', 'politica-externa');
+insert into promise_category (id, name, slug) values (27, 'Servidor Público', 'servidor-publico');

@@ -5,7 +5,7 @@ var politicianService = require('../apis/politicianService'),
     BluebirdPromise   = require('bluebird');
 
 module.exports = function(app, passport) {
-  
+
   app.get('/politico/:politicianSlug/nova-promessa', authorization.isAuthenticated, function(req, res, next) {
     var user = req.user;
     var slug = req.params.politicianSlug;
@@ -15,7 +15,7 @@ module.exports = function(app, passport) {
       if(!politician) {
         data.next = true;
         return data;
-      } 
+      }
       data.user = user;
       data.politician = politician;
       data.registeringPromise = true;
@@ -49,6 +49,7 @@ module.exports = function(app, passport) {
       data.user = user;
       data.promise = promise;
       data.politician = promise.related('politician');
+      data.registeringPromise = false;
       if(req.params.promiseSlug !== promise.get('slug') || req.params.politicianSlug !== data.politician.get('slug')) {
         data.redirect = true;
         return data;
