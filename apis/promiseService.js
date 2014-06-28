@@ -1,11 +1,11 @@
 var Bookshelf           = require('../models/models').Bookshelf,
     Promise             = require('../models/models').Promise,
-    PromiseUpdate       = require('../models/models').PromiseUpdate,
     PromiseUserVote     = require('../models/models').PromiseUserVote,
     PromiseEvidence     = require('../models/models').PromiseEvidence,
     PromiseEvidences    = require('../models/models').PromiseEvidences,
     PromiseUserComment  = require('../models/models').PromiseUserComment,
     PromiseCategory     = require('../models/models').PromiseCategory;
+    PoliticianUpdate    = require('../models/models').PoliticianUpdate,
     helper              = require('../utils/helper'),
     modelUtils          = require('../utils/modelUtils'),
     apiErrors           = require('./errors/apiErrors'),
@@ -102,9 +102,8 @@ exports.findUserComment = function(comment_id, related) {
 }
 
 exports.findUserVote = function(user, promise) {
-  var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    that.findUserVotesByPromise(user, [promise]).then(function(userVotesByPromise) {
+    $.findUserVotesByPromise(user, [promise]).then(function(userVotesByPromise) {
       if(promise.id in userVotesByPromise) {
         resolve(userVotesByPromise[promise.id]);
       } else {
@@ -132,9 +131,8 @@ exports.findUserVotesByPromise = function(user, promises) {
 }
 
 exports.countUsersVotes = function(promise) {
-  var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    that.countUsersVotesByPromise([promise]).then(function(usersVotesCounts) {
+    $.countUsersVotesByPromise([promise]).then(function(usersVotesCounts) {
       if(promise.id in usersVotesCounts) {
         resolve(usersVotesCounts[promise.id]);
       } else {
@@ -165,9 +163,8 @@ exports.countUsersVotesByPromise = function(promises) {
 }
 
 exports.countUsersComments = function(promise) {
-  var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    that.countUsersCommentsByPromise([promise]).then(function(usersCommentsCounts) {
+    $.countUsersCommentsByPromise([promise]).then(function(usersCommentsCounts) {
       if(promise.id in usersCommentsCounts) {
         resolve(usersCommentsCounts[promise.id]);
       } else {
@@ -198,9 +195,8 @@ exports.countUsersCommentsByPromise = function(promises) {
 }
 
 exports.countEvidences = function(promise) {
-  var that = this;
   return new BluebirdPromise(function(resolve, reject) {
-    that.countEvidencesByPromise([promise]).then(function(evidencesCounts) {
+    $.countEvidencesByPromise([promise]).then(function(evidencesCounts) {
       if(promise.id in evidencesCounts) {
         resolve(evidencesCounts[promise.id]);
       } else {
@@ -320,14 +316,13 @@ exports.vote = function(user, promise) {
   });
 }
 
-var generatePromiseUpdates = function(user, oldPromise, newPromise) {
-  var promiseUpdates = PromiseUpdate.collection();
-  var promiseFilteredData = newPromise.pick(modelUtils.modelsAttributes.PromiseUpdateFieldsToAnalyze);
-  _.each(_.pairs(promiseFilteredData), function(pair) {
-    var key = pair[0];
-    var value = pair[1];
+var registerPoliticianUpdates = function(user, oldPromise, newPromise) {
+  var politicianUpdates = PoliticianUpdate.collection();
+  var promiseFilteredData = newPromise.pick(modelUtils.modelsAttributes.PromiseFieldsToCompare);
+  _.each(_.keys(promiseFilteredData), function(key) {
     if(oldPromise.get(key) !== promiseFilteredData[key]) {
-      promiseUpdates.add({
+      politicianUpdates.add({
+        politician_id: newPromise.get('politician_id'),
         promise_id: newPromise.id,
         user_id: user.id,
         field: key,
@@ -337,13 +332,12 @@ var generatePromiseUpdates = function(user, oldPromise, newPromise) {
       });
     }
   });
-  return promiseUpdates.invokeThen('save');
+  return politicianUpdates.invokeThen('save');
 }
 
 exports.update = function(user, promise, evidences) {
   return new BluebirdPromise(function(resolve, reject) {
-    $.findById(promise.id).bind({}).then(function(oldPromise) {
-      this.oldPromise = oldPromise;
+    $.findById(promise.id).then(function(oldPromise) {
       if(oldPromise.get('state') !== promise.get('state')) {
         promise.set('last_state_update', new Date());
       }
@@ -355,10 +349,10 @@ exports.update = function(user, promise, evidences) {
       if(promise.get('fulfilled_date') && promise.get('evidence_date') && promise.get('fulfilled_date') < promise.get('evidence_date')) {
         throw new apiErrors.ValidationError('promise', 'fulfilledDateAfterEvidenceDate');
       }
-      return promise.save();
-    }).then(function(promise) {
-      return generatePromiseUpdates(user, this.oldPromise, promise);
-    }).then(function(promiseUpdates) {
+      return [promise.save(), oldPromise];
+    }).spread(function(promise, oldPromise) {
+      return registerPoliticianUpdates(user, oldPromise, promise);
+    }).then(function(politicianUpdates) {
       evidences.forEach(function(evidence) {
         if(evidence.isNew()) {
           evidence.set('promise_id', promise.id);
@@ -385,14 +379,14 @@ exports.register = function(user, politician, promise, evidences) {
       reject(new apiErrors.BadStateError('promise', 'fulfilledDateRequired'));
     } else {
       promise.save().then(function(promise) {
-        return PromiseUpdate.forge({promise_id: promise.id, user_id: user.id, update_type: 'PROMISE_CREATED'}).save();
-      }).then(function(promiseUpdate) {
         evidences.forEach(function(evidence) {
           evidence.set('promise_id', promise.id);
           evidence.set('registered_by_user_id', promise.get('registered_by_user_id'));
         });
         return evidences.invokeThen('save');
       }).then(function(evidences) {
+        return PoliticianUpdate.forge({politician_id: politician.id, promise_id: promise.id, user_id: user.id, update_type: 'PROMISE_CREATED'}).save();
+      }).then(function(politicianUpdate) {
         return promise.load(['category', 'evidences', 'evidences.registeredByUser']);
       }).then(function(promise) {
         resolve(promise);

@@ -49,13 +49,13 @@ var path = require('path'),
     },
     _twitter = {
       dev: {
-        clientID: 'SXAZVFlQalUVp1hZwFX2gYK0l',
-        clientSecret: '0gmtYviV8VpASXmtLG5cLB41jI8ofcAVIP7Wfy16tIGoUXAGmX',
+        consumerKey: 'SXAZVFlQalUVp1hZwFX2gYK0l',
+        consumerSecret: '0gmtYviV8VpASXmtLG5cLB41jI8ofcAVIP7Wfy16tIGoUXAGmX',
         callbackURL: 'http://www.promessadepolitico.com.br:' + _nodePort + '/auth/twitter/callback'
       },
       prod: {
-        clientID: 'SXAZVFlQalUVp1hZwFX2gYK0l',
-        clientSecret: '0gmtYviV8VpASXmtLG5cLB41jI8ofcAVIP7Wfy16tIGoUXAGmX',
+        consumerKey: 'SXAZVFlQalUVp1hZwFX2gYK0l',
+        consumerSecret: '0gmtYviV8VpASXmtLG5cLB41jI8ofcAVIP7Wfy16tIGoUXAGmX',
         callbackURL: 'http://www.promessadepolitico.com.br/auth/twitter/callback'
       }
     },

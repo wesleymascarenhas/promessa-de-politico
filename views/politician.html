@@ -64,10 +64,10 @@
               <div style="padding-bottom: 10px;">
                 <h1 class="bolder-text line-height-1-0">
                   {{ politician.name }}
-                  <small ng-if="politician.nickname">
-                    ({{ politician.nickname }})
-                  </small>
                 </h1>
+                <h4 ng-if="politician.nickname" class="bolder-text" style="color: #999;">
+                  ({{ politician.nickname }})
+                </h4>
               </div>
               <div>
                 <p style="font-size: 16px;">

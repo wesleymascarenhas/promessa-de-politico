@@ -25,11 +25,7 @@ exports.configure = function(app, passport) {
     }).nodeify(done);
   });
 
-  passport.use(new FacebookStrategy({
-      clientID: settings.facebook.clientID,
-      clientSecret: settings.facebook.clientSecret,
-      callbackURL: settings.facebook.callbackURL
-    },
+  passport.use(new FacebookStrategy(settings.facebook,
     function(accessToken, refreshToken, profile, done) {
       var profileInfos = {
         id: profile.id,
@@ -69,11 +65,7 @@ exports.configure = function(app, passport) {
     }
   ));
 
-  passport.use(new TwitterStrategy({
-      consumerKey: settings.twitter.clientID,
-      consumerSecret: settings.twitter.clientSecret,
-      callbackURL: settings.twitter.callbackURL
-    },
+  passport.use(new TwitterStrategy(settings.twitter,
     function(accessToken, refreshToken, profile, done) {
       var profileInfos = {
         id: profile.id,
@@ -100,11 +92,7 @@ exports.configure = function(app, passport) {
     }
   ));
 
-  passport.use(new GoogleStrategy({
-      clientID: settings.google.clientID,
-      clientSecret: settings.google.clientSecret,
-      callbackURL: settings.google.callbackURL
-    },
+  passport.use(new GoogleStrategy(settings.google,
     function(accessToken, refreshToken, profile, done) {
       var profileInfos = {
         id: profile.id,

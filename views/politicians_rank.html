@@ -75,9 +75,21 @@ Políticos que ainda não tem promessas registradas | Promessa de Político
             </a>
           </h3>
         </div>
+        <div ng-if="!existsWorstPoliticians()" class="jumbotron">
+          <h2>
+            Nenhum político
+            <span ng-show="hasPoliticalPartySelected()">
+              do {{ selectedPoliticalParty.acronym }}
+            </span>
+            <span ng-show="hasStateSelected()">
+              {{ selectedState.preposition }} {{ selectedState.name }}
+            </span>
+            foi encontrado
+          </h2>
+        </div>
       </div>
-      <div ng-if="existsPoliticians()" class="col-md-12">
-        <div class="row" ng-repeat="row in politicians | partition:4" infinite-scroll="appendNextRankPage()" infinite-scroll-disabled="!hasMorePoliticians">
+      <div ng-if="existsPoliticians()" class="col-md-12" infinite-scroll="appendNextRankPage()" infinite-scroll-disabled="!hasMorePoliticians">
+        <div class="row" ng-repeat="row in politicians | partition:4">
           <div ng-repeat="politician in row" class="col-md-3">
             <div class="politician-thumbnail">
               <div class="row">
@@ -92,7 +104,7 @@ Políticos que ainda não tem promessas registradas | Promessa de Político
                     <a ng-href="/politico/{{ politician.slug }}">
                       {{ politician.displayName }}
                     </a>
-                    <small ng-if="politician.total_fulfilled_promises">
+                    <small ng-if="politician.total_promises">
                       ({{ politician.total_fulfilled_promises }}/{{ politician.total_promises }})
                     </small>
                   </p>

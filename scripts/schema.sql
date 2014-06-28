@@ -1,7 +1,7 @@
 create table user (
   id                int(11) not null auto_increment,
   name              varchar(100) not null,
-  gender            enum('MALE', 'FEMALE') default null,
+  gender            enum('MALE', 'FEMALE') default 'MALE',
   permission        enum('USER', 'MODERATOR', 'ADMIN') default 'USER',
   username          varchar(100) not null,
   email             varchar(255) default null,
@@ -69,22 +69,6 @@ create table politician (
   constraint `fk_politician_state` foreign key (`state_id`) references `state` (`id`)
 ) engine = innodb default charset = utf8;
 
-create table politician_update (
-  id              int(11) not null auto_increment,
-  politician_id   int(11) not null,
-  user_id         int(11) not null,
-  field           varchar(255) default null,
-  old_value       varchar(255) default null,
-  new_value       varchar(255) default null,
-  update_date     timestamp default current_timestamp,
-  update_type     enum('POLITICIAN_REGISTERED', 'POLITICIAN_UPDATED', 'POLITICIAN_REMOVED') not null,
-  primary key (id),
-  key `fk_politician_update_politician` (`politician_id`),
-  key `fk_politician_update_user` (`user_id`),
-  constraint `fk_politician_update_politician` foreign key (`politician_id`) references `politician` (`id`),
-  constraint `fk_politician_update_user` foreign key (`user_id`) references `user` (`id`)
-) engine = innodb default charset = utf8;
-
 create table politician_user_vote (
   politician_id int(11) not null,
   user_id       int(11) not null,
@@ -130,22 +114,6 @@ create table promise (
   constraint `fk_promise_last_edited_by_user` foreign key (`last_edited_by_user_id`) references `user` (`id`)
 ) engine = innodb default charset = utf8;
 
-create table promise_update (
-  id              int(11) not null auto_increment,
-  promise_id      int(11) not null,
-  user_id         int(11) not null,
-  field           varchar(255) default null,
-  old_value       varchar(255) default null,
-  new_value       varchar(255) default null,
-  update_date     timestamp default current_timestamp,
-  update_type     enum('PROMISE_REGISTERED', 'PROMISE_UPDATED', 'PROMISE_REMOVED', 'EVIDENCE_REGISTERED', 'EVIDENCE_REMOVED') not null,
-  primary key (id),
-  key `fk_promise_update_promise` (`promise_id`),
-  key `fk_promise_update_user` (`user_id`),
-  constraint `fk_promise_update_promise` foreign key (`promise_id`) references `promise` (`id`),
-  constraint `fk_promise_update_user` foreign key (`user_id`) references `user` (`id`)
-) engine = innodb default charset = utf8;
-
 create table promise_evidence (
   id                    int(11) not null auto_increment,
   title                 varchar(255) not null,
@@ -185,4 +153,23 @@ create table promise_user_comment (
   key `fk_promise_user_comment_user` (`user_id`),
   constraint `fk_promise_user_comment_promise` foreign key (`promise_id`) references `promise` (`id`),
   constraint `fk_promise_user_comment_user` foreign key (`user_id`) references `user` (`id`)
+) engine = innodb default charset = utf8;
+
+create table politician_update (
+  id              int(11) not null auto_increment,
+  politician_id   int(11) not null,
+  promise_id      int(11) default null,
+  user_id         int(11) not null,
+  field           varchar(255) default null,
+  old_value       varchar(255) default null,
+  new_value       varchar(255) default null,
+  update_date     timestamp default current_timestamp,
+  update_type     enum('POLITICIAN_REGISTERED', 'POLITICIAN_UPDATED', 'PROMISE_REGISTERED', 'PROMISE_UPDATED', 'PROMISE_REMOVED', 'EVIDENCE_REGISTERED', 'EVIDENCE_REMOVED') not null,
+  primary key (id),
+  key `fk_politician_update_politician` (`politician_id`),
+  key `fk_politician_update_promise` (`promise_id`),
+  key `fk_politician_update_user` (`user_id`),
+  constraint `fk_politician_update_politician` foreign key (`politician_id`) references `politician` (`id`),
+  constraint `fk_politician_update_promise` foreign key (`promise_id`) references `promise` (`id`),
+  constraint `fk_politician_update_user` foreign key (`user_id`) references `user` (`id`)
 ) engine = innodb default charset = utf8;

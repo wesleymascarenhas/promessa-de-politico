@@ -25,7 +25,7 @@ insert into politician (id, name, nickname, biography, photo_filename, email, sl
 (24, 'Siqueira Campos', null, null, '24_1402265279171.jpg', null, 'siqueira-campos', 17, 8, 4, 1),
 (25, 'Fernando Haddad', null, null, '25_1402359788839.jpg', null, 'fernando-haddad', 35, 4, 5, 1),
 (26, 'Eduardo Paes', null, null, '26_1402359878146.jpg', null, 'eduardo-paes', 33, 1, 5, 1),
-(27, 'Antonio Carlos Magalhães Neto', null, null, '27_1402359896039.jpg', null, 'antonio-carlos-magalhaes-neto', 29, 5, 5, 1),
+(27, 'Antonio Carlos Magalhães Neto', 'ACM Neto', null, '27_1402359896039.jpg', null, 'antonio-carlos-magalhaes-neto', 29, 5, 5, 1),
 (28, 'Roberto Cláudio', null, null, '28_1402359973137.jpg', null, 'roberto-claudio', 23, 7, 5, 1),
 (29, 'Márcio Lacerda', null, null, '29_1402360021997.jpg', null, 'marcio-lacerda', 31, 7, 5, 1),
 (30, 'Arthur Virgílio Neto', null, null, '30_1402360130111.jpg', null, 'arthur-virgilio-neto', 13, 8, 5, 1),

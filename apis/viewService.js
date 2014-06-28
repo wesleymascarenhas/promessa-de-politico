@@ -221,9 +221,9 @@ exports.commentPromise = function(user, promise, comment) {
 
 exports.filterPoliticians = function(page, pageSize, politicalParty, state) {
   return new BluebirdPromise(function(resolve, reject) {
-    BluebirdPromise.all([politicianService.bestPoliticians(page, pageSize, politicalParty, state), politicianService.worstPoliticians(page, pageSize, politicalParty, state)])
-    .spread(function(bestPoliticians, worstPoliticians) {
-      resolve({bestPoliticians: bestPoliticians, worstPoliticians: worstPoliticians});
+    BluebirdPromise.all([politicianService.bestPoliticians(page, pageSize, politicalParty, state), politicianService.worstPoliticians(page, pageSize, politicalParty, state), politicianService.politiciansWithoutPromises(page, pageSize, politicalParty, state)])
+    .spread(function(bestPoliticians, worstPoliticians, politiciansWithoutPromises) {
+      resolve({bestPoliticians: bestPoliticians, worstPoliticians: worstPoliticians, politiciansWithoutPromises: politiciansWithoutPromises});
     }).catch(function(err) {
       reject(err);
     });

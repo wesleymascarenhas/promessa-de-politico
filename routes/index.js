@@ -13,6 +13,10 @@ module.exports = function(app) {
     res.render('how-it-works.html', {backendData: {howItWorksActive: true}});
   });
 
+  app.get('/contribua', function(req, res, next) {
+    res.render('contribute.html', {backendData: {contributeActive: true}});
+  });
+
   // app.get('/quem-somos', function(req, res, next) {
   //   res.render('who-we-are.html', {backendData: {whoWeAreActive: true}});
   // });

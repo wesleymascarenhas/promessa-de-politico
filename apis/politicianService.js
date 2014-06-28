@@ -11,6 +11,8 @@ var Politician          = require('../models/models').Politician,
     BluebirdPromise     = require('bluebird'),
     $                   = this;
 
+var PRESIDENT = 1;
+
 exports.forge = function(data) {
   return Politician.forge(modelUtils.filterAttributes('Politician', data));
 }
@@ -150,10 +152,34 @@ exports.countUsersVotes = function(politician) {
 }
 
 exports.update = function(politician) {
-  if(politician.get('political_office_id') === 1) {
-    politician.set('state_id', null);
-  }
-  return politician.save();
+  return new BluebirdPromise(function(resolve, reject) {
+    $.findById(politician.id).then(function(oldPolitician) {
+      if(politician.get('political_office_id') === PRESIDENT) {
+        politician.set('state_id', null);
+      }
+      return [politician.save(), oldPolitician];
+    }).spread(function(politician, oldPolitician) {
+      var politicianUpdates = PoliticianUpdate.collection();
+      var politicianFilteredData = politician.pick(modelUtils.modelsAttributes.PoliticianFieldsToCompare);
+      _.each(_.keys(politicianFilteredData), function(key) {
+        if(oldPolitician.get(key) !== politicianFilteredData[key]) {
+          politicianUpdates.add({
+            politician_id: politician.politician_id,
+            user_id: user.id,
+            field: key,
+            old_value: oldPolitician.get(key),
+            new_value: promiseFilteredData[key],
+            update_type: 'POLITICIAN_UPDATED'
+          });
+        }
+      });
+      return politicianUpdates.invokeThen('save');
+    }).then(function(politicianUpdates) {
+      resolve(politician);
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
 }
 
 exports.register = function(user, politician) {

@@ -13,8 +13,9 @@ function filter(data, attributes) {
 exports.modelsAttributes = {
   User: ['id', 'name', 'gender', 'permission', 'username', 'email', 'facebook_account', 'twitter_account', 'google_account', 'registration_date'],
   Politician: ['id', 'name', 'nickname', 'biography', 'photo_filename', 'email', 'slug', 'state_id', 'political_party_id', 'political_office_id', 'registered_by_user_id', 'registration_date'],
+  PoliticianFieldsToCompare: ['name', 'nickname', 'biography', 'photo_filename', 'email', 'state_id', 'political_party_id', 'political_office_id'],
   Promise: ['id', 'title', 'description', 'slug', 'evidence_date', 'fulfilled_date', 'state', 'category_id', 'politician_id', 'registered_by_user_id', 'last_edited_by_user_id', 'registration_date'],
-  PromiseUpdateFieldsToAnalyze: ['title', 'description', 'evidence_date', 'state', 'category_id'],
+  PromiseFieldsToCompare: ['title', 'description', 'evidence_date', 'fulfilled_date', 'state', 'category_id'],
   PromiseEvidence: ['id', 'title', 'description', 'url', 'host', 'image', 'promise_id', 'registered_by_user_id', 'registration_date']
 }
 

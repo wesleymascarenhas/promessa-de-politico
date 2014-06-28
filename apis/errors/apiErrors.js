@@ -29,6 +29,11 @@ function ValidationError(entity, validationKey) {
 };
 util.inherits(ValidationError, GenericError);
 
+function PermissionError(entity, permissionKey) {
+  PermissionError.super_.call(this, 400, entity + ".permission." + permissionKey);
+}
+util.inherits(PermissionError, GenericError);
+
 function fromDatabaseError(entity, err) {
   var errorType = errorMapping[err.clientError.cause.code];
   if(errorType) {

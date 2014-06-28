@@ -219,13 +219,12 @@ insert into promise (title, description, slug, evidence_date, state, category_id
 -- Promises of ACM Neto --
 
 -- UMA GESTÃO MAIS PRÓXIMA DAS PESSOAS
-
 insert into promise (title, slug, state, category_id, politician_id, registered_by_user_id) values
-('Criação das Prefeituras-Bairros', 'criacao-das-prefeituras-bairros', 'NON_STARTED', 'NON_STARTED', 1, 27, 1),
-('Criação do Centro de Operações de Salvador', 'criacao-do-centro-de-operacoes-de-salvador', 'NON_STARTED', 1, 27, 1),
-('Disque Salvador', 'disque-salvador', 'NON_STARTED', 1, 27, 1),
+('Criação das Prefeituras-Bairros', 'criacao-das-prefeituras-bairros', 'NON_STARTED', 13, 27, 1),
+('Criação do Centro de Operações de Salvador', 'criacao-do-centro-de-operacoes-de-salvador', 'NON_STARTED', 9, 27, 1),
+('Disque Salvador', 'disque-salvador', 'NON_STARTED', 99, 27, 1),
 
---A MOBILIDADE URBANA
+-- A MOBILIDADE URBANA
 
 ('Incentivo à autonomia de bairros e regiões', 'incentivo-a-autonomia-de-bairros-e-regioes', 'NON_STARTED', 10, 27, 1),
 ('Monitoramento, inteligência e intervenção em tempo real pelo Centro de Operações de Salvador', 'monitoramento-inteligencia-e-intervencao-em-tempo-real-pelo-centro-de-operacoes-de-salvador', 'NON_STARTED', 10, 27, 1),
@@ -240,7 +239,7 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Bilhete Único Integrado por três horas, com apenas um bilhete o passageiro poderá usar trem, ônibus e metrô (quando em funcionamento)', 'bilhete-unico-integrado-por-tres-horas-com-apenas-um-bilhete-o-passageiro-podera-usar-trem-onibus-e-metro-quando-em-funcionamento', 'NON_STARTED', 10, 27, 1),
 ('Meia passagem de ônibus aos domingos.', 'meia-passagem-de-onibus-aos-domingos', 'NON_STARTED', 10, 27, 1),
 
---AS FINANÇAS PÚBLICAS
+-- AS FINANÇAS PÚBLICAS
 
 ('Modernização da Gestão Orientada para Resultados e otimização das finanças públicas', 'modernizacao-da-gestao-orientada-para-resultados-e-otimizacao-das-financas-publicas', 'NON_STARTED', 14, 27, 1),
 ('Controle e austeridade para recuperar a capacidade financeira do município', 'controle-e-austeridade-para-recuperar-a-capacidade-financeira-do-municipio', 'NON_STARTED', 14, 27, 1),
@@ -248,19 +247,19 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Agência de fomento', 'agencia-de-fomento', 'NON_STARTED', 14, 27, 1),
 ('Salvador com mais recursos', 'salvador-com-mais-recursos', 'NON_STARTED', 14, 27, 1),
 
---OS SERVIDORES MUNICIPAIS
+-- OS SERVIDORES MUNICIPAIS
 
 ('Diálogo e Transparência com os servidores municipais', 'dialogo-e-transparencia-com-os-servidores-municipais', 'NON_STARTED', 27, 27, 1),
 ('Valorização e Produtividade dos servidores municipais', 'valorizacao-e-produtividade-dos-servidores-municipais', 'NON_STARTED', 27, 27, 1),
 
---O MEIO AMBIENTE E A SUSTENTABILIDADE
+-- O MEIO AMBIENTE E A SUSTENTABILIDADE
 
 ('Implantação da Coleta Seletiva', 'implantacao-da-coleta-seletiva', 'NON_STARTED', 20, 27, 1),
 ('Economia Criativa', 'economia-criativa', 'NON_STARTED', 20, 27, 1),
 ('Atenção às áreas de preservação ambiental', 'atencao-as-areas-de-preservacao-ambiental', 'NON_STARTED', 20, 27, 1),
 ('Salvador Cidade Sustentável', 'salvador-cidade-sustentavel', 'NON_STARTED', 20, 27, 1),
 
---A CULTURA
+-- A CULTURA
 
 ('Conceber e implantar um plano estratégico para a cultura', 'conceber-e-implantar-um-plano-estrategico-para-a-cultura', 'NON_STARTED', 24, 27, 1),
 ('Realizar um censo cultural de Salvador', 'realizar-um-censo-cultural-de-salvador', 'NON_STARTED', 24, 27, 1),
@@ -268,7 +267,7 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Dinamização do Conselho Municipal de Cultura e do Fundo da Cultura.', 'dinamizacao-do-conselho-municipal-de-cultura-e-do-fundo-da-cultura', 'NON_STARTED', 24, 27, 1),
 ('Lei Municipal de Incentivo à Cultura', 'lei-municipal-de-incentivo-a-cultura', 'NON_STARTED', 24, 27, 1),
 
---A PAZ
+-- A PAZ
 
 ('Criação da Secretaria de Ordem Pública e Prevenção à Violência', 'criacao-da-secretaria-de-ordem-publica-e-prevencao-a-violencia', 'NON_STARTED', 9, 27, 1),
 ('Integração com Programas Urbanísticos e Sociais', 'integracao-com-programas-urbanisticos-e-sociais', 'NON_STARTED', 9, 27, 1),
@@ -276,7 +275,7 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Videomonitoramento', 'videomonitoramento', 'NON_STARTED', 9, 27, 1),
 ('Modernização e ampliação da rede pública de iluminação', 'modernizacao-e-ampliacao-da-rede-publica-de-iluminacao', 'NON_STARTED', 9, 27, 1),
 
---A SAÚDE
+-- A SAÚDE
 
 ('Multicentro de Salvador: Centro de Promoção da Saúde e de Exames Especializados', 'multicentro-de-salvador:-centro-de-promocao-da-saude-e-de-exames-especializados', 'NON_STARTED', 9, 27, 1),
 ('Ampliar de 17% para 50% a cobertura do Programa Saúde da Família (PSF)', 'ampliar-de-17-para-50-a-cobertura-do-programa-saude-da-familia-psf', 'NON_STARTED', 1, 27, 1),
@@ -287,17 +286,17 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Expansão da Rede de Atenção em Saúde Mental', 'expansao-da-rede-de-atencao-em-saude-mental', 'NON_STARTED', 1, 27, 1),
 ('Criação do Prontuário Eletrônico Ambulatorial', 'criacao-do-prontuario-eletronico-ambulatorial', 'NON_STARTED', 1, 27, 1),
 
---A EDUCAÇÃO
+-- A EDUCAÇÃO
 
-('Programa Integrado para a Infância', 'programa-integrado-para-a-infancia', 'NON_STARTED' 3, 27, 1),
-('Expansão no sistema de atendimento de creches', 'expansao-no-sistema-de-atendimento-de-creches', 'NON_STARTED' 3, 27, 1),
-('Creche o dia todo', 'creche-o-dia-todo', 'NON_STARTED' 3, 27, 1),
-('Programa Alfabetização na Idade Certa', 'programa-alfabetizacao-na-idade-certa', 'NON_STARTED' 3, 27, 1),
-('Construção de Centros de Educação Integral', 'construcao-de-centros-de-educacao-integral', 'NON_STARTED' 3, 27, 1),
-('Programa Uma Hora a mais de Aula', 'programa-uma-hora-a-mais-de-aula', 'NON_STARTED' 3, 27, 1),
-('Cursos de qualificação para jovens', 'cursos-de-qualificacao-para-jovens', 'NON_STARTED' 3, 27, 1),
+('Programa Integrado para a Infância', 'programa-integrado-para-a-infancia', 'NON_STARTED', 3, 27, 1),
+('Expansão no sistema de atendimento de creches', 'expansao-no-sistema-de-atendimento-de-creches', 'NON_STARTED', 3, 27, 1),
+('Creche o dia todo', 'creche-o-dia-todo', 'NON_STARTED', 3, 27, 1),
+('Programa Alfabetização na Idade Certa', 'programa-alfabetizacao-na-idade-certa', 'NON_STARTED', 3, 27, 1),
+('Construção de Centros de Educação Integral', 'construcao-de-centros-de-educacao-integral', 'NON_STARTED', 3, 27, 1),
+('Programa Uma Hora a mais de Aula', 'programa-uma-hora-a-mais-de-aula', 'NON_STARTED', 3, 27, 1),
+('Cursos de qualificação para jovens', 'cursos-de-qualificacao-para-jovens', 'NON_STARTED', 3, 27, 1),
 
---AS AÇÕES SOCIAIS
+-- AS AÇÕES SOCIAIS
 
 ('Agenda Família', 'agenda-familia', 'NON_STARTED', 2, 27, 1),
 ('Ampliar a capacidade e a qualidade do acolhimento ao morador de rua', 'ampliar-a-capacidade-e-a-qualidade-do-acolhimento-ao-morador-de-rua', 'NON_STARTED', 2, 27, 1),
@@ -305,27 +304,27 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Programa de implantação e recuperação de quadras esportivas', 'programa-de-implantacao-e-recuperacao-de-quadras-esportivas', 'NON_STARTED', 2, 27, 1),
 ('Investir em políticas afirmativas de inclusão social e de combate à discriminação', 'investir-em-politicas-afirmativas-de-inclusao-social-e-de-combate-a-discriminacao', 'NON_STARTED', 2, 27, 1),
 
---AS MULHERES
+-- AS MULHERES
 
 ('Programa de Assistência à Gestação', 'programa-de-assistencia-a-gestacao', 'NON_STARTED', 2, 27, 1),
 ('Criação de um centro de advocacia para atender mulheres vítimas de violência doméstica', 'criacao-de-um-centro-de-advocacia-para-atender-mulheres-vitimas-de-violencia-domestica', 'NON_STARTED', 9, 27, 1),
 ('Outras políticas para mulheres', 'outras-politicas-para-mulheres', 'NON_STARTED', 9, 27, 1),
 
---OS ANIMAIS
+-- OS ANIMAIS
 
 ('Construção do Hospital Veterinário', 'construcao-do-hospital-veterinario', 'NON_STARTED', 20, 27, 1),
 ('Vacinação em massa - Anti-rábica e Anti-viral', 'vacinacao-em-massa-anti-rabica-e-anti-viral', 'NON_STARTED', 20, 27, 1),
 ('Criação do Castra-móvel', 'criacao-do-castra-movel', 'NON_STARTED', 20, 27, 1),
 
---O DESENVOLVIMENTO DE TODA A CIDADE
+-- O DESENVOLVIMENTO DE TODA A CIDADE
 
-('Estabelecer novos centros de desenvolvimento', 'estabelecer-novos-centros-de-desenvolvimento', 'NON_STARTED', 1, 27, 1),
-('Potencializar e articular o Sistema Metroviário proposto pelo governo', 'potencializar-e-articular-o-sistema-metroviario-proposto-pelo-governo', 'NON_STARTED', 1, 27, 1),
-('Gestão democrática por meio da participação da população e de associações representativas dos vários segmentos da sociedade', 'gestao-democratica-por-meio-da-participacao-da-populacao-e-de-associacoes-representativas-dos-varios-segmentos-da-sociedade', 'NON_STARTED', 1, 27, 1),
-('Adequação dos instrumentos de política tributária e financeira', 'adequacao-dos-instrumentos-de-politica-tributaria-e-financeira', 'NON_STARTED', 1, 27, 1),
-('Criação de 5 restaurantes populares com refeições a R$1,00. Dois restaurantes no Subúrbio, um em Cazajeiras e mais dois em outras regiões da cidade.', 'criacao-de-5-restaurantes-populares-com-refeicoes-a-rs1-00-dois-restaurantes-no-suburbio-um-em-cazajeiras-e-mais-dois-em-outras-regioes-da-cidade', 'NON_STARTED', 1, 27, 1),
+('Estabelecer novos centros de desenvolvimento', 'estabelecer-novos-centros-de-desenvolvimento', 'NON_STARTED', 10, 27, 1),
+('Potencializar e articular o Sistema Metroviário proposto pelo governo', 'potencializar-e-articular-o-sistema-metroviario-proposto-pelo-governo', 'NON_STARTED', 10, 27, 1),
+('Gestão democrática por meio da participação da população e de associações representativas dos vários segmentos da sociedade', 'gestao-democratica-por-meio-da-participacao-da-populacao-e-de-associacoes-representativas-dos-varios-segmentos-da-sociedade', 'NON_STARTED', 13, 27, 1),
+('Adequação dos instrumentos de política tributária e financeira', 'adequacao-dos-instrumentos-de-politica-tributaria-e-financeira', 'NON_STARTED', 13, 27, 1),
+('Criação de 5 restaurantes populares com refeições a R$1,00. Dois restaurantes no Subúrbio, um em Cazajeiras e mais dois em outras regiões da cidade.', 'criacao-de-5-restaurantes-populares-com-refeicoes-a-rs1-00-dois-restaurantes-no-suburbio-um-em-cazajeiras-e-mais-dois-em-outras-regioes-da-cidade', 'NON_STARTED', 11, 27, 1),
 
---PROPOSTA PARA SALVADOR ANTIGA
+-- PROPOSTA PARA SALVADOR ANTIGA
 
 ('Museu da Música', 'museu-da-musica', 'NON_STARTED', 24, 27, 1),
 ('Museu da Baianidade - Jorge Amado, Caribé, Verger, Pancetti, Glauber', 'museu-da-baianidade-jorge-amado-caribe-verger-pancetti-glauber', 'NON_STARTED', 24, 27, 1),
@@ -338,13 +337,13 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Operação Urbana Consorciada da Calçada e Península', 'operacao-urbana-consorciada-da-calcada-e-peninsula', 'NON_STARTED', 8, 27, 1),
 ('Memorial de Irmã Dulce no Largo de Roma', 'memorial-de-irma-dulce-no-largo-de-roma', 'NON_STARTED', 8, 27, 1),
 
---PROPOSTAS PARA O SUBÚRBIO FERROVIÁRIO
+-- PROPOSTAS PARA O SUBÚRBIO FERROVIÁRIO
 
-('Criação de um novo Centro de Desenvolvimento', 'criacao-de-um-novo-centro-de-desenvolvimento', 'NON_STARTED', 10, 27, 1),
+('Criação de um novo Centro de Desenvolvimento no subúrbio ferroviário', 'criacao-de-um-novo-centro-de-desenvolvimento-no-suburbio-ferroviario', 'NON_STARTED', 10, 27, 1),
 ('Parque Paraguari e Portal Enseada de Periperi', 'parque-paraguari-e-portal-enseada-de-periperi', 'NON_STARTED', 10, 27, 1),
 ('Articulação náutica com as ilhas e os terminais turísticos da Salvador Antiga', 'articulacao-nautica-com-as-ilhas-e-os-terminais-turisticos-da-salvador-antiga', 'NON_STARTED', 10, 27, 1),
 
---PROPOSTAS PARA A REGIÃO DA SALVADOR CENTRAL
+-- PROPOSTAS PARA A REGIÃO DA SALVADOR CENTRAL
 
 ('Ligação Cajazeira 11 – Águas Claras (BR 324)', 'ligacao-cajazeira-11-aguas-claras-br-324', 'NON_STARTED', 10, 27, 1),
 ('Parque e Estação Cajazeiras', 'parque-e-estacao-cajazeiras', 'NON_STARTED', 10, 27, 1),
@@ -353,7 +352,7 @@ insert into promise (title, slug, state, category_id, politician_id, registered_
 ('Portal da Cidade, em Cajazeiras', 'portal-da-cidade-em-cajazeiras', 'NON_STARTED', 10, 27, 1),
 ('Novo terminal rodoviário em Águas Claras', 'novo-terminal-rodoviario-em-aguas-claras', 'NON_STARTED', 10, 27, 1),
 
---PROPOSTAS PARA A ORLA ATLÂNTICA
+-- PROPOSTAS PARA A ORLA ATLÂNTICA
 
 ('Complementação das vias marginais da Paralela', 'complementacao-das-vias-marginais-da-paralela', 'NON_STARTED', 10, 27, 1),
 ('Requalificação das ligações Paralela-Orla', 'requalificacao-das-ligacoes-paralela-orla', 'NON_STARTED', 10, 27, 1),

@@ -24,7 +24,7 @@ angular
   .controller("headerController", ["$scope", "$window", "backendData", "politicianService", "authenticationService", function($scope, $window, backendData, politicianService, authenticationService) {
     $scope.user = authenticationService.getUser();
     $scope.howItWorksActive = backendData.howItWorksActive;
-    $scope.whoWeAreActive = backendData.whoWeAreActive;
+    $scope.contributeActive = backendData.contributeActive;
     $scope.contactActive = backendData.contactActive;
     $scope.authenticate = function() {
       authenticationService.ensureAuth();
@@ -780,14 +780,24 @@ angular
     };
     $scope.appendNextRankPage = function() {
       $scope.rankPage++;
+
+      var promise;
+      if($scope.rankType === "best") {
+        promise = politicianService.bestPoliticians;
+      } else if($scope.rankType === "worst") {
+        promise = politicianService.worstPoliticians;
+      } else {
+        promise = politicianService.politiciansWithoutPromises;
+      }
+
       NProgress.start();
-      var promise = $scope.rankType === "best" ? politicianService.bestPoliticians : politicianService.worstPoliticians;
       promise($scope.rankPage, 24, $scope.selectedPoliticalParty, $scope.selectedState).then(function(response) {
-        NProgress.done();
         $scope.politicians = $scope.politicians.concat(response.data.data);
         if(response.data.data.length < 24) {
           $scope.hasMorePoliticians = false;
         }
+      }).finally(function() {
+        NProgress.done();
       });
     };
   }]);

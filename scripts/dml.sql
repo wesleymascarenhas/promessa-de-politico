@@ -95,3 +95,4 @@ insert into promise_category (id, name, slug) values (24, 'Cultura', 'cultura');
 insert into promise_category (id, name, slug) values (25, 'Mídia e Livre Expressão', 'midia-e-livre-expressao');
 insert into promise_category (id, name, slug) values (26, 'Política Externa', 'politica-externa');
 insert into promise_category (id, name, slug) values (27, 'Servidor Público', 'servidor-publico');
+insert into promise_category (id, name, slug) values (99, 'Outros', 'outros');

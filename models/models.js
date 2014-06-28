@@ -18,7 +18,7 @@ var State = Bookshelf.Model.extend({
 });
 
 var User = Bookshelf.Model.extend({
-  tableName: 'user'  
+  tableName: 'user'
 });
 
 var PoliticalParty = Bookshelf.Model.extend({
@@ -44,6 +44,19 @@ var Politician = Bookshelf.Model.extend({
   },
   office: function() {
     return this.belongsTo(PoliticalOffice, 'political_office_id');
+  }
+});
+
+var PoliticianUpdate = Bookshelf.Model.extend({
+  tableName: 'politician_update',
+  user: function() {
+    return this.belongsTo(User, 'user_id');
+  },
+  promise: function() {
+    return this.belongsTo(Promise, 'promise_id');
+  },
+  politician: function() {
+    return this.belongsTo(Politician, 'politician_id');
   }
 });
 
@@ -73,18 +86,8 @@ var Promise = Bookshelf.Model.extend({
   }
 });
 
-var PromiseUpdate = Bookshelf.Model.extend({
-  tableName: 'promise_update',
-  user: function() {
-    return this.belongsTo(User, 'user_id');
-  },
-  promise: function() {
-    return this.belongsTo(Promise, 'promise_id');
-  }
-});
-
 var PromiseCategory = Bookshelf.Model.extend({
-  tableName: 'promise_category'  
+  tableName: 'promise_category'
 });
 
 var PromiseEvidence = Bookshelf.Model.extend({
@@ -116,9 +119,9 @@ module.exports = {
   PoliticalParty: PoliticalParty,
   PoliticalOffice: PoliticalOffice,
   Politician: Politician,
+  PoliticianUpdate: PoliticianUpdate,
   PoliticianUserVote: PoliticianUserVote,
   Promise: Promise,
-  PromiseUpdate: PromiseUpdate,
   PromiseCategory: PromiseCategory,
   PromiseEvidence: PromiseEvidence,
   PromiseEvidences: PromiseEvidences,
