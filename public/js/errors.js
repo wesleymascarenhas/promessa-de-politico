@@ -1,6 +1,7 @@
 var errorMessagesMap = {
   "politicianRegistration": {
     "politician.alreadyExists": "Este político já foi cadastrado",
+    "politician.missingValue": "É necessário preencher todos os campos obrigatórios",
     "default": "Erro ao registrar o político"
   },
   "promiseEdition": {

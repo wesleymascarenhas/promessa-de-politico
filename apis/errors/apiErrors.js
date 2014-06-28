@@ -1,7 +1,8 @@
 var util    = require('util');
 
 var errorMapping = {
-  'ER_DUP_ENTRY': AlreadyExistsError
+  'ER_DUP_ENTRY': AlreadyExistsError,
+  'ER_NO_REFERENCED_ROW_': MissingValueError,
 }
 
 function GenericError(statusCode, key) {
@@ -23,6 +24,11 @@ function AlreadyExistsError(entity) {
   AlreadyExistsError.super_.call(this, 400, entity + ".alreadyExists");
 };
 util.inherits(AlreadyExistsError, GenericError);
+
+function MissingValueError(entity) {
+  MissingValueError.super_.call(this, 400, entity + ".missingValue");
+};
+util.inherits(MissingValueError, GenericError);
 
 function ValidationError(entity, validationKey) {
   ValidationError.super_.call(this, 400, entity + ".validation." + validationKey);
@@ -48,5 +54,7 @@ module.exports = {
   GenericError: GenericError,
   NotFoundError: NotFoundError,
   AlreadyExistsError: AlreadyExistsError,
-  ValidationError: ValidationError
+  MissingValueError: MissingValueError,
+  ValidationError: ValidationError,
+  PermissionError: PermissionError
 }

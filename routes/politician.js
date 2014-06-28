@@ -14,7 +14,7 @@ module.exports = function(app, passport) {
     viewService.getPoliticalAssociations().then(function(politicalAssociationsData) {
       data.politicalParties = politicalAssociationsData.politicalParties;
       data.politicalOffices = politicalAssociationsData.politicalOffices;
-      data.states = politicalAssociationsData.state;
+      data.states = politicalAssociationsData.states;
       res.render('politician.html', {backendData: data});
     }).catch(function(err) {
       next(err);

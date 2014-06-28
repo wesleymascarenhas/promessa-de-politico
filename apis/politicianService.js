@@ -3,6 +3,7 @@ var Politician          = require('../models/models').Politician,
     PoliticalParty      = require('../models/models').PoliticalParty,
     PoliticalOffice     = require('../models/models').PoliticalOffice,
     PoliticalOrgan      = require('../models/models').PoliticalOrgan,
+    PoliticianUpdate    = require('../models/models').PoliticianUpdate,
     State               = require('../models/models').State,
     Bookshelf           = require('../models/models').Bookshelf,
     modelUtils          = require('../utils/modelUtils'),
@@ -151,7 +152,7 @@ exports.countUsersVotes = function(politician) {
   }
 }
 
-exports.update = function(politician) {
+exports.update = function(user, politician) {
   return new BluebirdPromise(function(resolve, reject) {
     $.findById(politician.id).then(function(oldPolitician) {
       if(politician.get('political_office_id') === PRESIDENT) {
@@ -160,15 +161,15 @@ exports.update = function(politician) {
       return [politician.save(), oldPolitician];
     }).spread(function(politician, oldPolitician) {
       var politicianUpdates = PoliticianUpdate.collection();
-      var politicianFilteredData = politician.pick(modelUtils.modelsAttributes.PoliticianFieldsToCompare);
-      _.each(_.keys(politicianFilteredData), function(key) {
-        if(oldPolitician.get(key) !== politicianFilteredData[key]) {
+      var politicianFieldsToCompare = politician.pick(modelUtils.modelsAttributes.PoliticianFieldsToCompare);
+      _.each(_.keys(politicianFieldsToCompare), function(key) {
+        if(oldPolitician.get(key) !== politicianFieldsToCompare[key]) {
           politicianUpdates.add({
-            politician_id: politician.politician_id,
+            politician_id: politician.id,
             user_id: user.id,
             field: key,
             old_value: oldPolitician.get(key),
-            new_value: promiseFilteredData[key],
+            new_value: politicianFieldsToCompare[key],
             update_type: 'POLITICIAN_UPDATED'
           });
         }
@@ -185,11 +186,13 @@ exports.update = function(politician) {
 exports.register = function(user, politician) {
   return new BluebirdPromise(function(resolve, reject) {
     if(politician.id) {
-      reject();
+      reject(new apiErrors.ValidationError('politician', 'isNotNew'));
     } else {
       politician.set('registered_by_user_id', user.id);
       politician.set('slug', helper.slugify(politician.get('name')));
       politician.save().then(function(politician) {
+        return [politician, PoliticianUpdate.forge({politician_id: politician.id, user_id: user.id, update_type: 'POLITICIAN_REGISTERED'}).save()];
+      }).spread(function(politician, politicianUpdate) {
         resolve(politician);
       }).catch(function(err) {
         reject(apiErrors.fromDatabaseError('politician', err));

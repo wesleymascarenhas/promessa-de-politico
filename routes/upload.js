@@ -11,13 +11,13 @@ module.exports = function(app) {
   // Handle uploads through Flow.js
   app.post('/upload/politico', multipart(), function(req, res) {
     flow.post(req, function(status, filename, originalFilename, identifier) {
-      if(status === 'done') {        
+      if(status === 'done') {
         var politician = politicianService.forge({id: req.body.politician_id});
-        var politicianPhoto = fileUtils.politicianPhotoFilename(politician);
-        var politicianPhotoPath = path.join(settings.publicPath, 'img/politicians/', politicianPhoto);
-        politician.set('photo_filename', politicianPhoto);        
+        var politicianPhoto = fileUtils.politicianPhotoFilename(politician, path.extname(filename));
+        var politicianPhotoPath = fileUtils.politicianPhotoFilePath(politicianPhoto);
+        politician.set('photo_filename', politicianPhoto);
         fs.rename(flow.getFinalFilePath(filename), politicianPhotoPath, function() {
-          politicianService.update(politician).then(function(politician) {            
+          politicianService.update(req.user, politician).then(function(politician) {
             res.send(200, {});
           }).catch(function(err) {
             res.send(500, {});

@@ -124,7 +124,7 @@ module.exports = function(app, passport) {
       auth: true,
       action: function(user, params) {
         var politician = politicianService.forge(params[0]);
-        return politicianService.update(politician);
+        return politicianService.update(user, politician);
       }
     },
     registerPolitician: {
@@ -242,7 +242,6 @@ module.exports = function(app, passport) {
           if(err instanceof apiErrors.GenericError) {
             res.json(err.statusCode, err.toJSON());
           } else {
-            console.log(err.stack)
             res.json(500, {statusCode: 500, key: 'internalError'});
           }
         });

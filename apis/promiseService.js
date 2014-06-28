@@ -318,16 +318,16 @@ exports.vote = function(user, promise) {
 
 var registerPoliticianUpdates = function(user, oldPromise, newPromise) {
   var politicianUpdates = PoliticianUpdate.collection();
-  var promiseFilteredData = newPromise.pick(modelUtils.modelsAttributes.PromiseFieldsToCompare);
-  _.each(_.keys(promiseFilteredData), function(key) {
-    if(oldPromise.get(key) !== promiseFilteredData[key]) {
+  var promiseFieldsToCompare = newPromise.pick(modelUtils.modelsAttributes.PromiseFieldsToCompare);
+  _.each(_.keys(promiseFieldsToCompare), function(key) {
+    if(oldPromise.get(key) !== promiseFieldsToCompare[key]) {
       politicianUpdates.add({
         politician_id: newPromise.get('politician_id'),
         promise_id: newPromise.id,
         user_id: user.id,
         field: key,
         old_value: oldPromise.get(key),
-        new_value: promiseFilteredData[key],
+        new_value: promiseFieldsToCompare[key],
         update_type: 'PROMISE_UPDATED'
       });
     }

@@ -147,11 +147,6 @@
                   Cancelar
                 </button>
               </div>
-              <div class="alert alert-danger" ng-show="politicianForm.name.$invalid && !politicianForm.name.$pristine" style="padding: 6px 15px 4px 15px;">
-                <p>
-                  É obrigatório informar o nome do político
-                </p>
-              </div>
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group" ng-class="{'has-error': politicianForm.name.$invalid && !politicianForm.name.$pristine}">
@@ -179,27 +174,27 @@
               </div>
               <div class="row">
                 <div class="col-md-4">
-                  <div class="form-group">
+                  <div class="form-group" ng-class="{'has-error': politicianForm.political_party.$invalid}">
                     <label class="control-label" for="party">
                       Partido político
                     </label>
-                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.party" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="politicalPartySelected()" data-container="body"></select>
+                    <select name="political_party" class="form-control" nya-selectpicker ng-model="editedPolitician.party" ng-options="politicalParty.acronym for politicalParty in politicalParties" ng-change="politicalPartySelected()" data-container="body" required></select>
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <div class="form-group">
+                  <div class="form-group" ng-class="{'has-error': politicianForm.political_office.$invalid}">
                     <label class="control-label" for="office">
                       Cargo
                     </label>
-                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.office" ng-options="politicalOffice.title for politicalOffice in politicalOffices" ng-change="politicalOfficeSelected()" data-container="body"></select>
+                    <select name="political_office" class="form-control" nya-selectpicker ng-model="editedPolitician.office" ng-options="politicalOffice.title for politicalOffice in politicalOffices" ng-change="politicalOfficeSelected()" data-container="body" required></select>
                   </div>
                 </div>
                 <div ng-show="!isPresidentOfficeSelected()" class="col-md-3">
-                  <div class="form-group">
+                  <div class="form-group" ng-class="{'has-error': politicianForm.state.$invalid}">
                     <label class="control-label" for="state">
                       Estado
                     </label>
-                    <select class="form-control" nya-selectpicker ng-model="editedPolitician.state" ng-options="state.name for state in states" ng-change="stateSelected()" data-container="body" data-noneSelectedText="Nenhum selecionado"></select>
+                    <select name="state" class="form-control" nya-selectpicker ng-model="editedPolitician.state" ng-options="state.name for state in states" ng-change="stateSelected()" data-container="body" data-noneSelectedText="Nenhum selecionado" ng-required="!isPresidentOfficeSelected()"></select>
                   </div>
                 </div>
               </div>

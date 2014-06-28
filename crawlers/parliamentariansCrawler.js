@@ -64,7 +64,7 @@ Promise.all([politicianService.allPoliticalParties(), politicianService.allPolit
       downloadPromises.push(
         new Promise(function(resolve, reject) {
           fileUtils.downloadPoliticianPhoto(politician.get('photo_filename'), politician, fileUtils.extensions.image).then(function(politician) {
-            politicianService.update(politician).then(function(politician) {
+            politicianService.update(user, politician).then(function(politician) {
               resolve(politician);
             });
           }).catch(function(err) {

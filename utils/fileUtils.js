@@ -11,12 +11,12 @@ exports.extensions = {
   image: ['jpg', 'jpeg', 'png', 'gif']
 }
 
-exports.userPhotoFilename = function(user) {
-  return user.id + '_' + new Date().getTime();
+exports.userPhotoFilename = function(user, extension) {
+  return user.id + '_' + new Date().getTime() + (extension ? extension : '');
 }
 
-exports.userPhotoFilePath = function(obj) {
-  return path.join(settings.publicPath, 'img/users/', obj ? obj : '');
+exports.userPhotoFilePath = function(userPhotoFilename) {
+  return path.join(settings.publicPath, 'img/users/', userPhotoFilename ? userPhotoFilename : '');
 }
 
 exports.downloadUserPhoto = function(uri, user, extensionsAccepted) {
@@ -32,12 +32,12 @@ exports.downloadUserPhoto = function(uri, user, extensionsAccepted) {
   });
 }
 
-exports.politicianPhotoFilename = function(politician) {
-  return politician.id + '_' + new Date().getTime();
+exports.politicianPhotoFilename = function(politician, extension) {
+  return politician.id + '_' + new Date().getTime() + (extension ? extension : '');
 }
 
-exports.politicianPhotoFilePath = function(obj) {
-  return path.join(settings.publicPath, 'img/politicians/', obj ? obj : '');
+exports.politicianPhotoFilePath = function(politicianPhotoFilename) {
+  return path.join(settings.publicPath, 'img/politicians/', politicianPhotoFilename ? politicianPhotoFilename : '');
 }
 
 exports.downloadPoliticianPhoto = function(uri, politician, extensionsAccepted) {
