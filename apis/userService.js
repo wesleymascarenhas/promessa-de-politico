@@ -4,24 +4,30 @@ var User           = require('../models/models').User,
     Promise        = require('bluebird'),
     _              = require('underscore');
 
-function forge(attributes) {
+function createUser(attributes) {
   var user = User.forge(modelUtils.filterAttributes('User', attributes));
   if(!user.get('username')) {
-    user.set('username', helper.slugify(user.get('name')));
+    var username;
+    if(user.get('email')) {
+      username = user.get('email').split('@')[0];
+    } else {
+      username = helper.slugify(user.get('name'));
+    }
+    user.set('username', username);
   }
-  return user;
+  return user.saver();
 }
 
 exports.createByFacebookAccount = function(name, gender, username, email, facebook_account) {
-  return forge({ name: name, gender: gender, username: username, email: email, facebook_account: facebook_account }).save();
+  return this.createUser({ name: name, gender: gender, username: username, email: email, facebook_account: facebook_account });
 }
 
 exports.createByTwitterAccount = function(name, gender, username, email, twitter_account) {
-  return forge({ name: name, gender: gender, username: username, email: email, twitter_account: twitter_account }).save();
+  return this.createUser({ name: name, gender: gender, username: username, email: email, twitter_account: twitter_account });
 }
 
 exports.createByGoogleAccount = function(name, gender, username, email, google_account) {
-  return forge({ name: name, gender: gender, username: username, email: email, google_account: google_account }).save();
+  return this.createUser({ name: name, gender: gender, username: username, email: email, google_account: google_account });
 }
 
 exports.update = function(user, attributes) {
@@ -54,10 +60,4 @@ exports.findByEmail = function(email) {
 
 exports.findByUsername = function(username) {
   return User.forge({ username: username }).fetch();
-}
-
-exports.sendEmail = function(name, email, message) {
-  return new Promise(function(resolve, reject) {
-
-  });
 }

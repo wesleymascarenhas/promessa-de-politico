@@ -39,12 +39,14 @@ var path = require('path'),
       dev: {
         clientID: '235774129950285',
         clientSecret: '329ada86e67ca322ae5c56af8f5a167d',
-        callbackURL: 'http://www.promessadepolitico.com.br:' + _nodePort + '/auth/facebook/callback'
+        callbackURL: 'http://www.promessadepolitico.com.br:' + _nodePort + '/auth/facebook/callback',
+        profileFields: ['name', 'displayName', 'gender', 'picture.type(small)', 'emails']
       },
       prod: {
         clientID: '235774129950285',
         clientSecret: '329ada86e67ca322ae5c56af8f5a167d',
-        callbackURL: 'http://www.promessadepolitico.com.br/auth/facebook/callback'
+        callbackURL: 'http://www.promessadepolitico.com.br/auth/facebook/callback',
+        profileFields: ['name', 'displayName', 'gender', 'picture.type(small)', 'emails']
       }
     },
     _twitter = {

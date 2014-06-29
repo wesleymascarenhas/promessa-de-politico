@@ -29,11 +29,11 @@ exports.configure = function(app, passport) {
     function(accessToken, refreshToken, profile, done) {
       var profileInfos = {
         id: profile.id,
-        email: profile.emails[0].value,
         name: profile.displayName,
-        username: profile.username,
+        username: null,
         gender: profile.gender,
-        picture: 'https://graph.facebook.com/' + profile.id + '/picture?width=40&height=40&access_token=' + accessToken
+        email: profile.emails[0].value,
+        picture: profile.photos[0].value
       };
       userService.findByFacebookAccount(profileInfos.id).then(function(user) {
         if(user) {
@@ -98,7 +98,7 @@ exports.configure = function(app, passport) {
         id: profile.id,
         email: profile.emails[0].value,
         name: profile.displayName,
-        username: profile.emails[0].value.split('@')[0],
+        username: null,
         gender: profile._json.gender,
         picture: profile._json.picture
       };
