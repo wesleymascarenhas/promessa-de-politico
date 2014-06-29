@@ -32,6 +32,12 @@ footer .container {
   padding-top: 20px;
 }
 
+.navbar-logo {
+  float: left;
+  height: 50px;
+  padding: 10px 5px 10px 0px;
+}
+
 a:hover {
   cursor: pointer;
 }

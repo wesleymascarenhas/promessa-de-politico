@@ -8,7 +8,7 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name : ['Promessa de Político'],
+  app_name : ['promessa-de-politico'],
   /**
    * Your New Relic license key.
    */
