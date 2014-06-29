@@ -8,7 +8,7 @@ var	Mailgun      = require('mailgun-js'),
 
 exports.sendEmail = function(fromName, from, subject, text) {
   return new Promise(function(resolve, reject) {
-  	mailgun.messages().send({from: fromName + ' <' + from + '>', to: emailContact, subject: subject, text: text}, function (err, body) {
+  	mailgun.messages().send({from: fromName + ' <' + from + '>', to: emailContact, subject: '[Promessa de Político] ' + subject, text: text}, function (err, body) {
       if(err) {
         reject(err);
       } else {
