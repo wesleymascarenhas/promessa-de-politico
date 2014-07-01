@@ -297,11 +297,14 @@ a:hover {
 }
 
 .promise .title {
+  margin-top: 0px;
   font-size: 30px;
 }
 
 .promise .description {
+  margin-top: 0px;
   text-align: justify;
+  font-size: 18px;
 }
 
 .promise .evidences .media {

@@ -60,8 +60,8 @@
     <div class="promise col-md-9">
       <div ng-if="!isRegisteringPromise()">
         <div ng-show="!isEditingPromise()" class="header">
-          <p class="title">{{ promise.title }}</p>
-          <p class="description">{{ promise.description }}</p>
+          <h1 class="title">{{ promise.title }}</h1>
+          <h2 ng-if="promise.description" class="description">{{ promise.description }}</h2>
           <h4>
             <span class="label label-info">{{ promise.category.name }}</span>
             <span>
