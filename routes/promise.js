@@ -10,7 +10,7 @@ module.exports = function(app, passport) {
     var user = req.user;
     var slug = req.params.politicianSlug;
     var data = {};
-    politicianService.findBySlug(slug, ['party', 'office'])
+    politicianService.findBySlug(slug, ['party', 'office', 'state'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;
@@ -40,7 +40,7 @@ module.exports = function(app, passport) {
   app.get('/politico/:politicianSlug/:promiseId/:promiseSlug', function(req, res, next) {
     var user = req.user;
     var data = {};
-    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.office', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
+    promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.office', 'politician.state', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
     .then(function(promise) {
       if(!promise) {
         data.next = true;

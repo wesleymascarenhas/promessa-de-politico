@@ -16,8 +16,11 @@
   <%- endif %>
 <%- endblock %>
 
-<% block stylesheets %>
-<% endblock %>
+<% block keywords -%>
+  <% if backendData.registeringPolitician == false -%>
+    , <$ backendData.politician.get("displayName") $>, <$ backendData.politician.related("party").get("name") $>, <$ backendData.politician.related("party").get("acronym") $>, <$ backendData.politician.related("office").get("title") $><$ ", " + backendData.politician.related("state").get("name") if backendData.politician.related("state").id $>
+  <%- endif %>
+<%- endblock %>
 
 <% block content %>
 <div ng-controller="politicianController">
@@ -71,13 +74,11 @@
               </div>
               <div>
                 <p style="font-size: 16px;">
-                  Partido:
-                  {{ politician.party.name }}
-                  ({{ politician.party.acronym }})
+                  Partido: {{ politician.party.name }} ({{ politician.party.acronym }})
                 </p>
                 <p style="font-size: 16px;">
                   Cargo: {{ politician.office.title }}
-                  <span ng-if="politician.state">
+                  <span ng-if="politician.state.id">
                     / {{ politician.state.name }}
                   </span>
                 </p>

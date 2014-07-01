@@ -8,7 +8,13 @@
   <%- endif %>
 <%- endblock %>
 
-<% block image -%>/img/politicians/<$ backendData.politician.get("photo_filename") $><%- endblock %>
+<% block image -%>
+  /img/politicians/<$ backendData.politician.get("photo_filename") $>
+<%- endblock %>
+
+<% block keywords -%>
+  , <$ backendData.politician.get("displayName") $>, <$ backendData.politician.related("party").get("name") $>, <$ backendData.politician.related("party").get("acronym") $>, <$ backendData.politician.related("office").get("title") $><$ ", " + backendData.politician.related("state").get("name") if backendData.politician.related("state").id $><$ ", " + backendData.promise.related("category").get("name") if backendData.registeringPromise == false $>
+<%- endblock %>
 
 <% block content %>
 <div class="container" ng-controller="promiseController">

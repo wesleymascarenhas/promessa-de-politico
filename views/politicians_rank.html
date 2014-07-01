@@ -10,6 +10,10 @@ Políticos que ainda não tem promessas registradas | Promessa de Político
 <%- endif %>
 <%- endblock %>
 
+<% block keywords -%>
+, contribua, presidente, governadores, prefeitos, partidos políticos
+<%- endblock %>
+
 <% block content %>
 <div class="container" ng-controller="politiciansRankController">
   <div>
@@ -21,6 +25,7 @@ Políticos que ainda não tem promessas registradas | Promessa de Político
     </h1>
     <h1 ng-if="isWithoutPromisesRank()" class="page-header">
       Políticos que ainda não tem promessas registradas
+      <span class="label label-info">Contribua!</span>
     </h1>
     <div class="row">
       <div class="col-md-8">
