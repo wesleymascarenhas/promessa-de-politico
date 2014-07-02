@@ -30,7 +30,6 @@ exports.configure = function(app, passport) {
       var profileInfos = {
         id: profile.id,
         name: profile.displayName,
-        username: null,
         gender: profile.gender,
         email: profile.emails[0].value,
         picture: profile.photos[0].value
@@ -48,7 +47,7 @@ exports.configure = function(app, passport) {
               return new Error('Error associating existing account with Facebook');
             });
           } else {
-            userService.createByFacebookAccount(profileInfos.name, profileInfos.gender, profileInfos.username, profileInfos.email, profileInfos.id).then(function(user) {
+            userService.createByFacebookAccount(profileInfos.name, profileInfos.gender, profileInfos.email, profileInfos.id).then(function(user) {
               return fileUtils.downloadUserPhoto(profileInfos.picture, user);
             }).then(function(user) {
               return userService.update(user, ['photo_filename']);
@@ -71,7 +70,6 @@ exports.configure = function(app, passport) {
         id: profile.id,
         email: null,
         name: profile.displayName,
-        username: profile.username,
         gender: null,
         picture: profile.photos[0].value
       };
@@ -79,7 +77,7 @@ exports.configure = function(app, passport) {
         if(user) {
           return user;
         }
-        userService.createByTwitterAccount(profileInfos.name, profileInfos.gender, profileInfos.username, profileInfos.email, profileInfos.id).then(function(user) {
+        userService.createByTwitterAccount(profileInfos.name, profileInfos.gender, profileInfos.email, profileInfos.id).then(function(user) {
           return fileUtils.downloadUserPhoto(profileInfos.picture, user);
         }).then(function(user) {
           return userService.update(user, ['photo_filename']);
@@ -98,7 +96,6 @@ exports.configure = function(app, passport) {
         id: profile.id,
         email: profile.emails[0].value,
         name: profile.displayName,
-        username: null,
         gender: profile._json.gender,
         picture: profile._json.picture
       };
@@ -115,7 +112,7 @@ exports.configure = function(app, passport) {
               return new Error('Error associating existing account with Google');
             });
           } else {
-            userService.createByGoogleAccount(profileInfos.name, profileInfos.gender, profileInfos.username, profileInfos.email, profileInfos.id).then(function(user) {
+            userService.createByGoogleAccount(profileInfos.name, profileInfos.gender, profileInfos.email, profileInfos.id).then(function(user) {
               return fileUtils.downloadUserPhoto(profileInfos.picture, user);
             }).then(function(user) {
               return userService.update(user, ['photo_filename']);

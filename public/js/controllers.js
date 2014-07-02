@@ -471,7 +471,7 @@ angular
 
       for(var index in editedPromise.evidences) {
         var evidence = editedPromise.evidences[index];
-        if(evidence.url) {
+        if(!evidence.id && evidence.url) {
           evidencesData.push(evidence);
         } else {
           editedPromise.evidences.splice(index, 1);
@@ -552,20 +552,18 @@ angular
         if(meta.description) {
           evidence.description = meta.description;
         }
+        if(meta.site) {
+          evidence.source = meta.site;
+        }
         if(data.host) {
           evidence.host = data.host;
         }
 
-        for(index in data.links.thumbnail) {
-          var link = data.links.thumbnail[index];
-          evidence.image = link.href;
-          break;
+        if(data.links.thumbnail) {
+          evidence.image = data.links.thumbnail[0].href;
         }
-        if(!evidence.image) {
-          for(index in data.links.icon) {
-            var link = data.links.icon[index];
-            evidence.image = link.href;
-          }
+        if(!evidence.image && data.links.icon) {
+          evidence.image = data.links.icon[0].href;
         }
 
         $scope.addEvidence();

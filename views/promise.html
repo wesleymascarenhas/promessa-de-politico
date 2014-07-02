@@ -118,11 +118,14 @@
                 <p>
                   {{ evidence.description }}
                 </p>
-                <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
-                <div class="media-host">
+                <p>
+                  Fonte: <span ng-if="evidence.source">{{ evidence.source }} - </span>
+                  <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
+                </p>
+                <p>
                   Adicionado por {{ evidence.registeredByUser.name }}
                   <span am-time-ago="evidence.registration_date"></span>
-                </div>
+                </p>
               </div>
             </div>
             <button ng-show="isHiddenEvidence(promise.evidences.length - 1)" ng-click="showAllEvidences()" class="btn btn-block btn-none" style="margin-top: 10px;">Exibir todas as evidências</button>
@@ -263,11 +266,14 @@
                       <p>
                         {{ evidence.description }}
                       </p>
-                      <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
-                      <div ng-if="evidence.registeredByUser" class="media-host">
+                      <p ng-if="evidence.host">
+                        Fonte: <span ng-if="evidence.source">{{ evidence.source }} - </span>
+                        <a ng-href="{{ evidence.url }}" target="_blank">{{ evidence.host }}</a>
+                      </p>
+                      <p ng-if="evidence.registeredByUser" class="media-host">
                         Adicionado por {{ evidence.registeredByUser.name }}
                         <span am-time-ago="evidence.registration_date"></span>
-                      </div>
+                      </p>
                     </div>
                   </div>
                   <div ng-show="!evidence.url">

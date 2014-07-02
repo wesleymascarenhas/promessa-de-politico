@@ -77,7 +77,9 @@ var Promise = Bookshelf.Model.extend({
     return this.belongsTo(User, 'registered_by_user_id');
   },
   evidences: function() {
-    return this.hasMany(PromiseEvidence, 'promise_id');
+    return this.hasMany(PromiseEvidence, 'promise_id').query(function(qb) {
+      qb.orderBy('registration_date', 'desc');
+    });
   },
   comments: function() {
     return this.hasMany(PromiseUserComment, 'promise_id').query(function(qb) {

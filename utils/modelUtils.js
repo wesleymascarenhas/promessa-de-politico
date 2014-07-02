@@ -16,7 +16,7 @@ exports.modelsAttributes = {
   PoliticianFieldsToCompare: ['name', 'nickname', 'biography', 'photo_filename', 'email', 'state_id', 'political_party_id', 'political_office_id'],
   Promise: ['id', 'title', 'description', 'slug', 'evidence_date', 'fulfilled_date', 'state', 'category_id', 'politician_id', 'registered_by_user_id', 'last_edited_by_user_id', 'registration_date'],
   PromiseFieldsToCompare: ['title', 'description', 'evidence_date', 'fulfilled_date', 'state', 'category_id'],
-  PromiseEvidence: ['id', 'title', 'description', 'url', 'host', 'image', 'promise_id', 'registered_by_user_id', 'registration_date']
+  PromiseEvidence: ['id', 'title', 'description', 'url', 'host', 'image', 'source', 'promise_id', 'registered_by_user_id', 'registration_date']
 }
 
 exports.filterAttributes = function(modelName, data) {

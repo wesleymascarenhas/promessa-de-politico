@@ -26,7 +26,7 @@ insert into state (id, uf, name, preposition) values (28, 'SE', 'Sergipe', 'em')
 insert into state (id, uf, name, preposition) values (35, 'SP', 'São Paulo', 'em');
 insert into state (id, uf, name, preposition) values (17, 'TO', 'Tocantins', 'em');
 
-insert into user (id, name, gender, permission, username, email, facebook_account, twitter_account, google_account, registration_date) values (1, 'Sandro Simas', 'MALE', 'ADMIN', 'sandro.csimas', 'sandro.csimas@gmail.com', '654264634643651', null, null, '2014-04-27 11:19:10');
+insert into user (id, name, gender, permission, email, facebook_account, twitter_account, google_account) values (1, 'Sandro Simas', 'MALE', 'ADMIN', 'sandro.csimas@gmail.com', '654264634643651', null, null);
 
 insert into political_party (id, acronym, name) values (1, 'PMDB', 'Partido do Movimento Democrático Brasileiro');
 insert into political_party (id, acronym, name) values (2, 'PTB', 'Partido Trabalhista');
