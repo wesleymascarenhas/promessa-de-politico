@@ -105,7 +105,7 @@
           <div class="evidences page-section">
             <div ng-repeat="evidence in promise.evidences" class="media" ng-class="{'hide': isHiddenEvidence($index)}">
               <a class="pull-left" ng-href="{{ evidence.url }}" target="_blank" style="padding-right: 10px;">
-                <img ng-if="!evidence.image" class="media-object" src="/img/news_64_64.png">
+                <img ng-if="!evidence.image" class="media-object" src="/img/news-icon.png">
                 <img ng-if="evidence.image" class="media-object" ng-src="{{ evidence.image }}" width="100">
               </a>
               <div class="media-body">
@@ -253,7 +253,7 @@
                       </button>
                     </div>
                     <a class="pull-left" ng-href="{{ evidence.url }}" target="_blank" style="margin-right: 10px;">
-                      <img ng-show="!evidence.image" class="media-object" src="/img/news_64_64.png">
+                      <img ng-show="!evidence.image" class="media-object" src="/img/news-icon.png">
                       <img ng-show="evidence.image" class="media-object" ng-src="{{ evidence.image }}" width="100">
                     </a>
                     <div class="media-body">
