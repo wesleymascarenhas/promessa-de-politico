@@ -19,13 +19,13 @@ angular
       restrict: "E",
       replace: true,
       template: "<span class='label label-{{ getCssClass(for) }}'>{{ getLabelText(for, count) }}</span>",
-      link: function($scope, element, attrs) {       
+      link: function($scope, element, attrs) {
         $scope.getCssClass = function(forValue) {
-          var cssClass = ""; 
+          var cssClass = "";
           if(forValue === "NON_STARTED") {
             cssClass = "default";
-          } else if(forValue === "STARTED") {
-            cssClass = "info";              
+          } else if(forValue === "IN_PROGRESS") {
+            cssClass = "info";
           } else if(forValue === "FULFILLED") {
             cssClass = "success";
           } else if(forValue === "PARTIALLY_FULFILLED") {
@@ -39,8 +39,8 @@ angular
           var labelText = "";
           if(forValue === "NON_STARTED") {
             labelText = "Não iniciou";
-          } else if(forValue === "STARTED") {
-            labelText = "Iniciada";              
+          } else if(forValue === "IN_PROGRESS") {
+            labelText = "Em andamento";
           } else if(forValue === "FULFILLED") {
             labelText = "Cumprida";
           } else if (forValue === "PARTIALLY_FULFILLED") {

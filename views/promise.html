@@ -168,12 +168,12 @@
                   'btn-none': isPromiseStateChoosed('NON_STARTED')
                 }
               ">Não iniciou</button>
-              <button type="button" class="btn" ng-click="choosePromiseState('STARTED')" ng-class="
+              <button type="button" class="btn" ng-click="choosePromiseState('IN_PROGRESS')" ng-class="
                 {
-                  'btn-default': !isPromiseStateChoosed('STARTED'),
-                  'btn-info': isPromiseStateChoosed('STARTED')
+                  'btn-default': !isPromiseStateChoosed('IN_PROGRESS'),
+                  'btn-info': isPromiseStateChoosed('IN_PROGRESS')
                 }
-              ">Iniciada</button>
+              ">Em andamento</button>
               <button type="button" class="btn" ng-click="choosePromiseState('FULFILLED')" ng-class="
                 {
                   'btn-default': !isPromiseStateChoosed('FULFILLED'),

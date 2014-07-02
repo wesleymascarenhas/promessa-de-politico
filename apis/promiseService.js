@@ -257,8 +257,8 @@ exports.countGroupingByState = function(politician) {
       if(!mapByState['NON_STARTED']) {
         mapByState['NON_STARTED'] = 0;
       }
-      if(!mapByState['STARTED']) {
-        mapByState['STARTED'] = 0;
+      if(!mapByState['IN_PROGRESS']) {
+        mapByState['IN_PROGRESS'] = 0;
       }
       if(!mapByState['FULFILLED']) {
         mapByState['FULFILLED'] = 0;

@@ -95,7 +95,7 @@ create table promise (
   description             text default null,
   slug                    varchar(255) not null,
   evidence_date           date default null,
-  state                   enum('NON_STARTED', 'STARTED', 'FULFILLED', 'PARTIALLY_FULFILLED', 'NOT_FULFILLED') not null,
+  state                   enum('NON_STARTED', 'IN_PROGRESS', 'FULFILLED', 'PARTIALLY_FULFILLED', 'NOT_FULFILLED') not null,
   fulfilled_date          date default null,
   last_state_update       date default null,
   category_id             int(11) not null,
