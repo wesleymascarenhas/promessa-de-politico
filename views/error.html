@@ -4,10 +4,9 @@
 
 <% block content %>
 <div class="container">
-  <div class="jumbotron align-center" style="background-color: #fff;">
+  <div class="jumbotron align-center" style="background-color: #fff; padding-top: 0px;">
     <h1><span class="label <$ 'label-info' if statusCode == 404 else 'label-danger' $>"><$ statusCode $></span> <$ statusMessage $></h1>
-    <h3><$ errorMessage $></h3>
-    <img src="/img/vote.jpg" class="img-circle">
+    <img src="/img/vote.jpg" class="img-circle" style="width: 400px;">
   </div>
 </div>
 <% endblock %>
