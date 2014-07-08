@@ -9,7 +9,6 @@ angular
       "infinite-scroll",
       "nya.bootstrap.select",
       "textAngular",
-      "flow",
-      "seo"
+      "flow"
     ]
   );
