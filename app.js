@@ -25,8 +25,12 @@ app.use(express.cookieParser('promessa-de-politico'));
 app.use(express.session('promessa-de-politico'));
 app.use(express.static(app.get('public')));
 
+// production only
+if('prod' == app.get('env')) {
+  app.use(require('prerender-node').set('prerenderServiceUrl', settings.prerenderServiceURL));
+}
 // development only
-if ('dev' == app.get('env')) {
+if('dev' == app.get('env')) {
   app.use(express.errorHandler());
 }
 

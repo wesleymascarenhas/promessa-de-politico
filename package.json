@@ -24,6 +24,7 @@
     "request": "2.36.0",
     "mime": "1.2.11",
     "mailgun-js": "0.4.13",
-    "newrelic": "1.7.3"
+    "newrelic": "1.7.3",
+    "prerender-node": "1.0.4"
   }
 }

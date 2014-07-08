@@ -19,7 +19,7 @@ angular
       }).finally(function() {
         NProgress.done();
       });
-    }
+    };
   }])
   .controller("headerController", ["$scope", "$window", "backendData", "politicianService", "authenticationService", function($scope, $window, backendData, politicianService, authenticationService) {
     $scope.user = authenticationService.getUser();
