@@ -10,20 +10,20 @@ module.exports = function(app) {
   });
 
   app.get('/como-funciona', function(req, res, next) {
-    res.render('how-it-works.html', {backendData: {howItWorksActive: true}});
+    res.render('how-it-works.html', {backendData: {user: req.user, howItWorksActive: true}});
   });
 
   app.get('/contribua', function(req, res, next) {
-    res.render('contribute.html', {backendData: {contributeActive: true}});
+    res.render('contribute.html', {backendData: {user: req.user, contributeActive: true}});
+  });
+
+  app.get('/contato', function(req, res, next) {
+    res.render('contact.html', {backendData: {user: req.user, contactActive: true}});
   });
 
   // app.get('/quem-somos', function(req, res, next) {
   //   res.render('who-we-are.html', {backendData: {whoWeAreActive: true}});
   // });
-
-  app.get('/contato', function(req, res, next) {
-    res.render('contact.html', {backendData: {contactActive: true}});
-  });
 
   app.get('/politicos', function(req, res, next) {
     var data = {};

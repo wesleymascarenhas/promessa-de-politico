@@ -8,8 +8,7 @@ var politicianService      = require('../apis/politicianService'),
 module.exports = function(app, passport) {
 
   app.get('/politico/cadastro', authorization.isAuthenticated, function(req, res, next) {
-    var user = req.user;
-    var data = {};
+    var data = {user: req.user};
     data.registeringPolitician = true;
     viewService.getPoliticalAssociations().then(function(politicalAssociationsData) {
       data.politicalParties = politicalAssociationsData.politicalParties;
@@ -22,19 +21,17 @@ module.exports = function(app, passport) {
   });
 
   app.get('/politico/:politicianSlug', function(req, res, next) {
-    var user = req.user;
     var slug = req.params.politicianSlug;
-    var data = {};
+    var data = {user: req.user};
     politicianService.findBySlug(slug, ['party', 'office', 'state'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;
         return data;
       }
-      data.user = user;
       data.politician = politician;
       data.registeringPolitician = false;
-      return BluebirdPromise.all([promiseService.findAllCategories(), promiseService.count(politician), politicianService.countUsersVotes(politician), user ? politicianService.getUserVote(user, politician) : null])
+      return BluebirdPromise.all([promiseService.findAllCategories(), promiseService.count(politician), politicianService.countUsersVotes(politician), data.user ? politicianService.getUserVote(data.user, politician) : null])
       .spread(function(categories, totalPromises, totalPoliticianUsersVotes, politicianUserVote) {
         data.categories = categories;
         data.totalPromises = totalPromises;
@@ -67,9 +64,7 @@ module.exports = function(app, passport) {
   app.get('/politicos/:rankType', function(req, res, next) {
     var rankType = req.params.rankType;
     if(rankType === 'cumprindo-promessas' || rankType === 'nao-estao-cumprindo-promessas' || rankType === 'sem-promessas') {
-      var data = {};
-      data.user = req.user;
-
+      var data = {user: req.user};
       var rankPoliticians = null;
       if(rankType === 'cumprindo-promessas') {
         data.rankType = 'best';

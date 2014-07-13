@@ -7,19 +7,17 @@ var politicianService = require('../apis/politicianService'),
 module.exports = function(app, passport) {
 
   app.get('/politico/:politicianSlug/nova-promessa', authorization.isAuthenticated, function(req, res, next) {
-    var user = req.user;
+    var data = {user: req.user};
     var slug = req.params.politicianSlug;
-    var data = {};
     politicianService.findBySlug(slug, ['party', 'office', 'state'])
     .then(function(politician) {
       if(!politician) {
         data.next = true;
         return data;
       }
-      data.user = user;
       data.politician = politician;
       data.registeringPromise = true;
-      return BluebirdPromise.all([viewService.fillPolitician(user, data), viewService.getAllCategories()])
+      return BluebirdPromise.all([viewService.fillPolitician(data.user, data), viewService.getAllCategories()])
       .spread(function(politicianFilled, allCategories) {
         data.categories = allCategories.categories;
         data.category = allCategories.categories.at(0);
@@ -38,15 +36,13 @@ module.exports = function(app, passport) {
   });
 
   app.get('/politico/:politicianSlug/:promiseId/:promiseSlug', function(req, res, next) {
-    var user = req.user;
-    var data = {};
+    var data = {user: req.user};
     promiseService.findById(req.params.promiseId, ['politician', 'politician.party', 'politician.office', 'politician.state', 'category', 'evidences', 'evidences.registeredByUser', 'registeredByUser'])
     .then(function(promise) {
       if(!promise) {
         data.next = true;
         return data;
       }
-      data.user = user;
       data.promise = promise;
       data.politician = promise.related('politician');
       data.registeringPromise = false;
@@ -54,8 +50,8 @@ module.exports = function(app, passport) {
         data.redirect = true;
         return data;
       }
-      return viewService.fillPolitician(user, data).then(function() {
-        return viewService.fillPromiseWithUsersComments(user, data).then(function() {
+      return viewService.fillPolitician(data.user, data).then(function() {
+        return viewService.fillPromiseWithUsersComments(data.user, data).then(function() {
           return data;
         });
       });

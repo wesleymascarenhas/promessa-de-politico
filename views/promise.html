@@ -349,7 +349,8 @@
                       </a>
                     </div>
                     <div class="commenter-image">
-                      <img ng-src="/img/users/{{ comment.user.photo_filename }}" />
+                      <img ng-if="comment.user.photo_filename" ng-src="/img/users/{{ comment.user.photo_filename }}" />
+                      <img ng-if="!comment.user.photo_filename" ng-src="/img/user-no-image.png" />
                     </div>
                     <div class="comment-text line-height-1-5">
                       <div>

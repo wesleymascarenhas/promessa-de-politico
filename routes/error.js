@@ -11,7 +11,6 @@ module.exports = function(app) {
   app.use(function(err, req, res, next) {
 		res.status(500);
     res.render('error.html', {
-      statusCode: 500,
       statusMessage: 'Erro interno',
       errorMessage: err
     });
