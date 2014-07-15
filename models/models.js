@@ -1,7 +1,7 @@
 var settings  = require('../configs/settings'),
     Bookshelf = require('bookshelf').initialize({
       client: settings.database.dialect,
-      debug: true,
+      debug: settings.database.debug,
       connection: {
         host: settings.database.host,
         user: settings.database.user,
